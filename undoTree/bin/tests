@@ -1,0 +1,5 @@
+#!/bin/sh
+BINDIR=`dirname $0`
+export CLASSPATH=$($BINDIR/myJars lib):$($BINDIR/myJars derived)
+$JAVA_HOME/bin/java  org.junit.runner.JUnitCore edu.brown.cs32.mscheer.bacon.Tests ${1+"$@"}
+#`which java`  org.junit.runner.JUnitCore edu.brown.cs32.mscheer.bacon.Tests ${1+"$@"}

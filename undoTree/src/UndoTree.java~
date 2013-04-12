@@ -1,0 +1,51 @@
+package bruno.undoTree;
+
+import javax.swing.event.*;
+import javax.swing.UIManager;
+import java.util.*;
+
+public class UndoTree
+{
+    private Node<UndoableEdit> currentNode;
+
+    public void addEdit(UndoableEditEvent e)
+    {
+	//TODO
+    }
+    
+    public void undo() throws CannotUndoException
+    {
+	//TODO
+    }
+    
+    public boolean canUndo()
+    {
+	//TODO
+	return true;
+    }
+
+    public String getUndoPresentationName()
+    {
+	//TODO
+	return "";
+    }
+
+    public void redo() throws CannotRedoException
+    {
+	//TODO
+    }
+
+    public boolean canRedo()
+    {
+	//TODO
+	return true;
+    }
+
+    public String getRedoPresentationName()
+    {
+	//TODO
+	return true;
+    }
+
+
+}

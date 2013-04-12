@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="UndoTree" default="jar" basedir=".">
+  <basename property="project" file="${basedir}"/>
+
+  <property name="app.src" location="src"/>
+
+  <property name="app.derived" location="derived"/>
+  <property name="derived.classes" location="${app.derived}/classes"/>
+  <property name="derived.jar" location="${app.derived}/${project}.jar"/>
+  <property name="derived.javadoc" location="${app.derived}/javadoc"/>
+  <property name="derived.student" location="${app.derived}/student/${project}"/>
+
+  <path id="class.path">
+    <fileset dir="lib">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset>
+  </path>
+
+  <target name="compile">
+    <mkdir dir="${derived.classes}"/>
+    <javac srcdir="${app.src}" destdir="${derived.classes}" debug="true" includeantruntime="true">
+      <classpath refid="class.path"/>
+      <compilerarg value="-Xlint:all"/>
+      <compilerarg value="-Werror"/>
+    </javac>
+  </target>
+
+<!--
+  <target name="jar" depends="compile">
+    <exec executable="./bin/makeJars"/>
+  </target>
+-->
+
+  <target name="jar" depends="compile">
+    <jar destfile="${derived.jar}" basedir="${derived.classes}" includes="**/*.class"/>
+  </target>
+
+  <target name="unit_test" depends="jar">
+    <junit>
+      <classpath refid="class.path"/>
+      <classpath>
+        <pathelement location="${derived.jar}"/>
+      </classpath>
+      <formatter type="brief" usefile="false"/>
+      <sysproperty key="java.awt.headless" value="true"/>
+      <test name="${testcase}" if="testcase"/>
+      <batchtest unless="testcase">
+        <fileset dir="${derived.classes}" includes="**/*Test.class"/>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="student" depends="jar">
+    <copy todir="${derived.student}">
+      <fileset file="build.xml"/>
+    </copy>
+    <copy todir="${derived.student}/src">
+      <fileset dir="${app.src}">
+        <exclude name="**/staff/**"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${derived.student}/bin">
+      <fileset dir="bin"/>
+    </copy>
+    <apply executable="chmod" parallel="true">
+      <arg value="+x"/>
+      <fileset dir="${derived.student}/bin"/>
+    </apply>
+
+    <copy todir="${derived.student}/lib">
+      <fileset dir="lib"/>
+    </copy>
+    <copy file="${derived.jar}" tofile="${derived.student}/lib/${project}-staff.jar"/>
+  </target>
+
+  <target name="javadoc">
+    <javadoc sourcepath="src" destdir="${derived.javadoc}">
+      <classpath refid="class.path"/>
+    </javadoc>
+  </target>
+
+  <target name="dist">
+    <!--
+    <exec executable="scp">
+      <arg value="-r"/>
+      <arg value="${derived.javadoc}"/>
+      <arg value="ssh.cs.brown.edu:/course/cs032/www/docs/${project}/"/>
+    </exec>
+    -->
+    <exec executable="scp">
+      <arg value="-r"/>
+      <arg value="handout/${project}.html"/>
+      <arg value="ssh.cs.brown.edu:/course/cs032/www/docs/${project}/index.html"/>
+    </exec>
+    
+    <exec executable="scp">
+      <arg value="-r"/>
+      <arg value="handout/${project}.jpg"/>
+      <arg value="ssh.cs.brown.edu:/course/cs032/www/docs/${project}/${project}.jpg"/>
+    </exec>
+    <!--
+    <exec executable="scp">
+      <arg value="-r"/>
+      <arg value="${derived.student}"/>
+      <arg value="ssh.cs.brown.edu:/course/cs032/asgn/"/>
+    </exec>
+    -->
+  </target>
+
+  <target name="clean">
+    <delete dir="${app.derived}"/>
+  </target>
+
+<!--  <target name="system_test" depends="compile,jar">
+    <exec executable="python">
+      <arg value="./bin/tester.py"/>
+      <arg value="-t5.0"/>
+      <arg value="-aTime:"/>
+      <arg value="./bin/autocorrect-student.xml"/>
+      <arg value="bin/${project}"/>
+    </exec>
+  </target>
+-->
+
+
+  <target name="system_test">
+    <exec executable="python">
+	    <arg value="./bin/tester.py"/>
+      <arg value="-t10.0"/>
+      <arg value="-aTime:"/>
+      <arg value="./lib/bacon-student.xml"/>
+      <arg value="bin/bacon"/>
+    </exec>
+  </target>
+
+
+</project>
