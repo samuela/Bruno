@@ -21,7 +21,7 @@ public class EditorView extends JFrame {
     //undo helpers
     protected UndoAction undoAction;
     protected RedoAction redoAction;
-    protected UndoManager undo = new UndoManager();
+    protected UndoTree undo = new UndoTree();
 
     public EditorView() {
         super("Bruno");

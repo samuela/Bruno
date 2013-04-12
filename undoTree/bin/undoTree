@@ -1,5 +1,5 @@
 #!/bin/sh
 BINDIR=`dirname $0`
 export CLASSPATH=$($BINDIR/myJars lib):$($BINDIR/myJars derived)
-`which java` -Xmx384m bruno.undoTree.EditorView ${1+"$@"}
-#JAVA_HOME/bin/java -Xmx384m edu.brown.cs32.mscheer.maps.Maps ${1+"$@"}
+`which java` bruno.undoTree.EditorView ${1+"$@"}
+#JAVA_HOME/bin/java bruno.undoTree.EditorView ${1+"$@"}

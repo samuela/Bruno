@@ -3,49 +3,85 @@ package bruno.undoTree;
 import javax.swing.event.*;
 import javax.swing.UIManager;
 import java.util.*;
+import javax.swing.undo.*;
+import com.google.common.collect.Lists;
 
-public class UndoTree
+public class UndoTree //this could implement UndoableEdit or extend AbstractUndoableEdit or CompoundEdit or UndoManager
 {
     private Node<UndoableEdit> currentNode;
+    private Node<UndoableEdit> toRedo;
 
-    public void addEdit(UndoableEditEvent e)
+    public UndoTree()
     {
-	//TODO
+	currentNode = new Node<UndoableEdit>();
     }
-    
-    public void undo() throws CannotUndoException
+
+    public boolean addEdit(UndoableEdit e)
     {
-	//TODO
+	Node<UndoableEdit> newNode = new Node<UndoableEdit>(e, currentNode);
+	currentNode.addChild(newNode);
+	currentNode = newNode;
+	return true;
     }
     
     public boolean canUndo()
     {
-	//TODO
-	return true;
+	return (!currentNode.isEmpty() && currentNode.getData().canUndo());
     }
 
-    public String getUndoPresentationName()
+    public void undo() throws CannotUndoException
     {
-	//TODO
-	return "";
-    }
-
-    public void redo() throws CannotRedoException
-    {
-	//TODO
+	if(!canUndo())
+	    throw new CannotUndoException();
+	Node<UndoableEdit> parentNode = currentNode.getParent();
+	currentNode.getData().undo();
+	currentNode = parentNode;
     }
 
     public boolean canRedo()
     {
-	//TODO
-	return true;
+	List<Node<UndoableEdit>> edits = currentNode.getChildren();
+	if (edits.isEmpty())
+	    return false;
+	boolean answer = false;
+	for (Node<UndoableEdit> node : Lists.reverse(edits)){
+	    UndoableEdit edit = node.getData();
+	    if (edit.canRedo()){
+		answer = true;
+		toRedo = node;
+		break;
+	    }		
+	}
+	return answer;
+    }
+
+
+    public void redo() throws CannotRedoException
+    {
+	if (!canRedo())
+	    throw new CannotRedoException();
+	toRedo.getData().redo();
+	currentNode = toRedo;
+    }
+    
+    public String getUndoPresentationName()
+    {
+	if (canUndo()){
+	    return currentNode.getData().getUndoPresentationName();
+	}
+	else{
+	    return UIManager.getString("AbstractUndoableEdit.undoText");
+	}
     }
 
     public String getRedoPresentationName()
     {
-	//TODO
-	return true;
+	if (canRedo()){
+	    return toRedo.getData().getUndoPresentationName();
+	}
+	else{
+	    return UIManager.getString("AbstractUndoableEdit.redoText");
+	}
     }
-
-
+    
 }

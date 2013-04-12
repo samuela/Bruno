@@ -220,7 +220,7 @@ public class EditorView extends JFrame {
         String[] initString =
                 { "Use the mouse to place the caret.",
                   "Use the edit menu to cut, copy, paste, and select text",
-                  "As well as to undo and redo changes.",
+                  "as well as to undo and redo changes.",
 		  "You can also undo using command-z and redo using command-shift-z.",
                   "Use the arrow keys on the keyboard or these emacs key bindings to move the caret:",
                   "Ctrl-f, Ctrl-b, Ctrl-n, Ctrl-p." };
