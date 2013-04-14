@@ -8,3 +8,6 @@
 # Hidden files
 .*
 *~
+
+# Ignore IntelliJ .iml project files
+*.iml
