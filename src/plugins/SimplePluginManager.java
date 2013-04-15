@@ -18,12 +18,13 @@ public class SimplePluginManager implements PluginManager{
     private ScriptEngineManager factory_;
     private Map<String, ScriptEngine> enginesByExtension_;
     private Map<Script, FileReader> scriptFileReaders_;
+    private Map<String, Plugin> pluginsByScriptName_;
 
     public SimplePluginManager(){
         factory_ = new ScriptEngineManager();
         enginesByExtension_ = new HashMap<String, ScriptEngine>();
         scriptFileReaders_ = new HashMap<Script, FileReader>();
-
+        pluginsByScriptName_ = new HashMap<String, Plugin>();
     }
 
     public boolean hasEngine(String extension){
@@ -32,6 +33,10 @@ public class SimplePluginManager implements PluginManager{
 
     public boolean supportsScript(Script s){
         return scriptFileReaders_.containsKey(s) && hasEngine(s.getExtension());
+    }
+
+    public void executeScript(String name) throws ScriptException {
+        executeScript(pluginsByScriptName_.get(name).getScriptByName(name));
     }
 
     //a script cannot be executed unless its plugin has been loaded, so it is safe to assume:
@@ -66,6 +71,10 @@ public class SimplePluginManager implements PluginManager{
                 //invalid path - ignore file
                 continue;
             }
+            if(pluginsByScriptName_.containsKey(s.getName())){
+                System.err.println("A script with name: " + s.getName() + " already exists in plugin" + pluginsByScriptName_.get(s.getName()));
+                continue;
+            }
             plugin.addScript(s.getName(), s);
             String extension = s.getExtension();
             if(!enginesByExtension_.containsKey(extension)) {
@@ -76,6 +85,7 @@ public class SimplePluginManager implements PluginManager{
             try {
                 FileReader scriptReader = new FileReader(f);
                 scriptFileReaders_.put(s, scriptReader);
+                pluginsByScriptName_.put(s.getName(), plugin);
             } catch (FileNotFoundException e) {
                 System.err.println("file " + path + " has disappeared.");
             }

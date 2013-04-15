@@ -1,0 +1,21 @@
+Plugin stuff
+
+to run a script, place it inside a plugin (a folder). Create a File pointing to the plugin. Load the file with loadPlugin. 
+
+loadPlugin returns the plugin; you must save a reference to it in order to run any scripts in it. to run:
+
+get the script from the plugin with getScriptByName
+
+run executeScript(Script)
+
+
+
+This interface should change. I've implemented executeScript(String scriptName) which I can expose.
+
+A script's name is the file name without the extension. Example:
+
+The script ~/hello.py is named "hello".
+
+A particular script name can only exist in one plugin, and it can only exist once in that plugin. This makes sense: calling a script by name should not be ambiguous.
+
+If the client loads hello.py into a PluginManager and then attempts to load hello.js into the same PluginManager, a message is printed to standard error and the PluginManager skips hello.js.

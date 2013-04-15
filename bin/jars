@@ -1,0 +1,7 @@
+#!/usr/bin/perl -w
+use strict;
+my @jars = ();
+for my $dir (@ARGV) {
+    push @jars, glob("$dir/*.jar");
+}
+print join(":", @jars), "\n";

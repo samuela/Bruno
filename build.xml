@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Bruno" default = "compile" basedir=".">
+  <property name="app.src" location="src"/>
+  <property name="project" value="bruno"/>
+  <property name="app.derived" location="derived"/>
+  <property name="derived.classes" location="${app.derived}/classes"/>
+  <property name="derived.jar" location="${app.derived}/${project}.jar"/>
+  <property name="derived.javadoc" location="${app.derived}/javadoc"/>
+  <property name="derived.student" location="${app.derived}/student/${project}"/>
+
+  
+  <target name="init">
+    <mkdir dir="${app.derived}"/>
+  </target>
+
+  <path id="class.path">
+    <fileset dir="lib">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset>
+  </path>
+
+  <target name="opensrc">
+    <!--creates a property with name="paths" and stores output of pathconvert
+	in it-->
+    <pathconvert pathsep=" " property="paths">
+      <fileset dir="${app.src}">
+	<include name="**/*.java"/>
+      </fileset>
+    </pathconvert>
+
+    <exec executable="emacs" spawn="yes">
+      <arg line="${paths}"/>
+    </exec>
+  </target>
+
+  <target name="compile" depends="init">
+    <mkdir dir="${derived.classes}"/>
+    <javac srcdir="${app.src}" debug="true"  destdir="${derived.classes}" includeantruntime="false">
+      <classpath refid="class.path"/>
+      <compilerarg value="-Xlint:all"/>
+      <compilerarg value="-Werror"/>
+    </javac>
+    <jar destfile="${derived.jar}" basedir="${derived.classes}" includes="**/*.class"/>
+  </target>
+
+  <target name="gen-doc">
+    <javadoc sourcepath="src" destdir="${derived.javadoc}"/>
+  </target>
+
+  <target name="doc" depends="gen-doc">
+    <exec executable="firefox" spawn="yes">
+      <arg line="${derived.javadoc}/index.html"/>
+    </exec>
+  </target>
+
+  <target name="jar" depends="compile">
+
+  </target>
+
+<target name="unit_test" depends="jar">
+    <junit>
+      <classpath refid="class.path"/>
+      <classpath>
+        <pathelement location="${derived.jar}"/>
+      </classpath>
+      <formatter type="brief" usefile="false"/>
+      <sysproperty key="java.awt.headless" value="true"/>
+      <test name="${testcase}" if="testcase"/>
+      <batchtest unless="testcase">
+        <fileset dir="${derived.classes}" includes="**/*Test*.class"/>
+      </batchtest>
+    </junit>
+  </target>
+
+
+  <target name="test" depends="jar">
+    <junit>
+      <classpath>
+	<path refid="class.path"/>
+	<pathelement location="${derived.jar}"/>
+      </classpath>
+      <!--
+	  <classpath>
+	  <pathelement location="${derived.jar}"/>
+	  </classpath>
+      -->
+      <formatter type="brief" usefile="false"/>
+      <sysproperty key="java.awt.headless" value="true"/>
+      <test name="${testcase}" if="testcase"/>
+      <batchtest id="test.classes" unless="testcase">
+        <fileset dir="${derived.classes}" includes="**/*Test*.class"/>
+      </batchtest>
+    </junit>
+    <pathconvert property="test.classes">
+      <fileset dir="${derived.classes}" includes="**/*Test*.class"/>
+    </pathconvert>
+
+    <!--    <echo message="testers: ${test.classes}"/>-->
+  </target>
+
+  <!--
+      <target name="test" depends="compile">
+      <java classname="edu.brown.cs32.jllessin.stars.Tester">
+      <classpath>
+      <path location="${build}"/>
+      </classpath>
+      </java>
+      </target>
+  -->
+  <target name="run" depends="compile">
+    <input addproperty="args" message="args: "/>
+    <java classname="edu.brown.cs32.jllessin.bruno.Main">
+      <arg line="${args}"/>
+      <classpath>
+	<path id="run.path">
+	  <fileset dir="${app.derived}" includes="*.jar"/>
+	</path>
+	<!--	<path location="${app.derived}"/>-->
+      </classpath>
+    </java>
+  </target>
+
+  <target name="clean">
+    <delete dir="${app.derived}"/>
+  </target>
+
+  <target name="system_test" depends="compile,jar">
+    <exec executable="python">
+      <arg value="/course/cs032/bin/tester.py"/>
+      <arg value="-t5.0"/>
+      <arg value="-aTime:"/>
+      <arg value="./test-suite.xml"/>
+      <arg value="bin/bruno"/>
+    </exec>
+  </target>
+</project>

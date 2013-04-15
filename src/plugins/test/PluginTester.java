@@ -20,6 +20,10 @@ import static org.junit.Assert.*;
 public class PluginTester {
 
     @Test
+    public void badFilesTest(){
+        //TODO: 1. no extension 2. name already exists 3. permissions
+    }
+    @Test
     public void loadPluginTest() {
         PluginManager simpleManager = new SimplePluginManager();
         File f = new File("plugins/hello");
@@ -39,6 +43,13 @@ public class PluginTester {
         assertTrue(p == hello.getPlugin());
         assertEquals(f.getAbsolutePath() + "/helloworld.js", hello.getPath());
         assertEquals("helloworld", hello.getName());
+
+        /*
+        try {
+            simpleManager.executeScript(hello);
+        } catch (ScriptException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }  */
     }
 
     @Test
@@ -54,12 +65,26 @@ public class PluginTester {
         //   System.out.println(writeHello==null);
         try {
             simpleManager.executeScript(writeHello);
+
         } catch (ScriptException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
         File written = new File("plugins/hello/hello.txt");
-     //   assertTrue(written.exists());
+        assertTrue(written.exists());
         written.delete();
     }
+/*
+    //JUST SCREWING AROUND WITH JAVASCRIPT
+    @Test
+    public void alertTest(){
+        PluginManager pm = new SimplePluginManager();
+        File f = new File("plugins/hello");
+        pm.loadPlugin(f);
+        try{
+            ((SimplePluginManager) pm).executeScript("alert");
+        } catch (ScriptException e){
+            e.printStackTrace();
+        }
+    }          */
 }
