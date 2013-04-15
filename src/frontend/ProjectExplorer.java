@@ -66,7 +66,6 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 								.getLastPathComponent()).getFile();
 						if (file.isFile()) {
 							parentApp.openFile(file);
-							System.out.println("open file: " + file.getName());
 						}
 					}
 				}
