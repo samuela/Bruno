@@ -36,7 +36,7 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 	// private final DropTarget dropTarget;
 	private final JTree fileTree;
 
-	public ProjectExplorer(Bruno parentApp) {
+	public ProjectExplorer(final Bruno parentApp) {
 		this.parentApp = parentApp;
 
 		layout = new CardLayout();
@@ -65,7 +65,7 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 						File file = ((TreeFileObject) selectedPath
 								.getLastPathComponent()).getFile();
 						if (file.isFile()) {
-							// parentApp.open(file);
+							parentApp.openFile(file);
 							System.out.println("open file: " + file.getName());
 						}
 					}

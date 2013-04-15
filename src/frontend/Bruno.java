@@ -3,11 +3,15 @@ package frontend;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -38,8 +42,8 @@ public class Bruno extends JFrame {
 		// Key bindings
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_O,
-						InputEvent.META_DOWN_MASK), "openFile");
-		getRootPane().getActionMap().put("openFile", new AbstractAction() {
+						InputEvent.META_DOWN_MASK), "open");
+		getRootPane().getActionMap().put("open", new AbstractAction() {
 
 			/**
 			 * 
@@ -73,6 +77,25 @@ public class Bruno extends JFrame {
 		splitPane.setOneTouchExpandable(true);
 
 		setContentPane(splitPane);
+	}
+
+	public void openFile(File file) {
+		StringBuilder contents = new StringBuilder();
+		Scanner scanner = null;
+		try {
+			scanner = new Scanner(file);
+			while (scanner.hasNextLine()) {
+				contents.append(scanner.nextLine()
+						+ System.getProperty("line.separator"));
+			}
+			textArea.setText(contents.toString());
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "Failed to open file " + file,
+					"File opening error", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		} finally {
+			scanner.close();
+		}
 	}
 
 	public void close() {
