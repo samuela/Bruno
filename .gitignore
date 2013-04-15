@@ -11,3 +11,6 @@
 
 # Ignore IntelliJ .iml project files
 *.iml
+
+# Ingore lib
+lib/
