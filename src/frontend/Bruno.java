@@ -1,9 +1,12 @@
+package frontend;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -34,9 +37,9 @@ public class Bruno extends JFrame {
 
 		// Key bindings
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-				.put(KeyStroke.getKeyStroke(KeyEvent.VK_W,
-						InputEvent.META_DOWN_MASK), "close");
-		getRootPane().getActionMap().put("close", new AbstractAction() {
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_O,
+						InputEvent.META_DOWN_MASK), "openFile");
+		getRootPane().getActionMap().put("openFile", new AbstractAction() {
 
 			/**
 			 * 
@@ -45,7 +48,8 @@ public class Bruno extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				close();
+				JFileChooser fc = new JFileChooser();
+				fc.showOpenDialog(getRootPane());
 			}
 
 		});
@@ -60,7 +64,7 @@ public class Bruno extends JFrame {
 
 		// Side pane
 		tabPane = new JTabbedPane();
-		tabPane.addTab("Projects", new JPanel());
+		tabPane.addTab("Projects", new ProjectExplorer(this));
 		tabPane.addTab("Edit History", new JPanel());
 
 		// Split Pane
