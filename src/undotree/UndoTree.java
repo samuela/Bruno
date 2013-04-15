@@ -9,11 +9,11 @@ import javax.swing.undo.UndoableEdit;
 
 import com.google.common.collect.Lists;
 
-public class UndoTree // this could implement UndoableEdit or extend
-						// AbstractUndoableEdit or CompoundEdit or UndoManager.
-// For the moment however, it doesn't need to. It probably should though
-// eventually.
-{
+//this could implement UndoableEdit or extend
+//AbstractUndoableEdit or CompoundEdit or UndoManager.
+//For the moment however, it doesn't need to. It probably should though
+//eventually.
+public class UndoTree {
 	private Node<UndoableEdit> currentNode;
 	private Node<UndoableEdit> toRedo;
 
