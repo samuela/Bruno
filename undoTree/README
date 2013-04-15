@@ -1,4 +1,0 @@
-To compile, run ant
-To run, run ./bin/undoTree
-This will work on a mac but on a school machine you have to comment out the second to last line of this script
-and uncomment the last line.
