@@ -59,12 +59,13 @@ public class Bruno extends JFrame {
 		});
 
 		// Text area
-		textArea = new RSyntaxTextArea(20, 60);
+		textArea = new RSyntaxTextArea();
 		textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
 		textArea.setCodeFoldingEnabled(true);
 		textArea.setAntiAliasingEnabled(true);
 		RTextScrollPane sp = new RTextScrollPane(textArea);
 		sp.setFoldIndicatorEnabled(true);
+		sp.setLineNumbersEnabled(true);
 
 		// Side pane
 		tabPane = new JTabbedPane();
@@ -72,8 +73,7 @@ public class Bruno extends JFrame {
 		tabPane.addTab("Edit History", new JPanel());
 
 		// Split Pane
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, textArea,
-				tabPane);
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, tabPane);
 		splitPane.setOneTouchExpandable(true);
 
 		setContentPane(splitPane);
