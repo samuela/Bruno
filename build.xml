@@ -58,7 +58,7 @@
 
   </target>
 
-<target name="unit_test" depends="jar">
+<target name="unit_test" depends="compile, jar">
     <junit>
       <classpath refid="class.path"/>
       <classpath>
@@ -134,4 +134,22 @@
       <arg value="bin/bruno"/>
     </exec>
   </target>
+
+<taskdef name="bundleapp"
+             classname="com.oracle.appbundler.AppBundlerTask"   
+             classpath="lib/appbundler-1.0.jar" />
+
+    <target name="bundle" depends="compile">
+        <bundleapp outputdirectory="dist"
+            name="Bruno"
+            displayname="Bruno"
+            mainclassname="frontend.Bruno"
+	   identifier="frontend.Bruno"
+	   icon="resources/large_bruno-review-sacha-baron-cohen-borat-ali-g-larry-charles.icns">
+	  <classpath file="derived/*.jar"/>
+            <classpath file="lib/*.jar" />
+            <classpath file="lib/commons-io-2.4/*.jar" />
+            <classpath file="lib/cachedir/packages/*.pkc" />
+        </bundleapp>
+    </target>
 </project>

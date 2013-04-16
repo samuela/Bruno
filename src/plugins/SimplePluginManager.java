@@ -1,18 +1,24 @@
 package plugins;
 
-import org.apache.commons.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
-import javax.script.*;
-import java.io.*;
-import java.util.*;
 /**
- * Created with IntelliJ IDEA.
- * User: jonathan
- * Date: 4/10/13
- * Time: 10:29 PM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:29 PM To
+ * change this template use File | Settings | File Templates.
  */
+
 public class SimplePluginManager implements PluginManager{
 
     private ScriptEngineManager factory_;
@@ -27,13 +33,15 @@ public class SimplePluginManager implements PluginManager{
         pluginsByScriptName_ = new HashMap<String, Plugin>();
     }
 
-    public boolean hasEngine(String extension){
-        return enginesByExtension_.containsKey(extension);
-    }
 
-    public boolean supportsScript(Script s){
-        return scriptFileReaders_.containsKey(s) && hasEngine(s.getExtension());
-    }
+	public boolean hasEngine(String extension) {
+		return enginesByExtension_.containsKey(extension);
+	}
+
+	public boolean supportsScript(Script s) {
+		return scriptFileReaders_.containsKey(s) && hasEngine(s.getExtension());
+	}
+
 
     public void executeScript(String name) throws ScriptException {
         executeScript(pluginsByScriptName_.get(name).getScriptByName(name));
@@ -90,13 +98,14 @@ public class SimplePluginManager implements PluginManager{
                 System.err.println("file " + path + " has disappeared.");
             }
 
-        }
-        return plugin;
-    }
 
-    @Override
-    public LanguageBundle loadLanguageBundle(File bundle) {
-        return null;
-    }
+		}
+		return plugin;
+	}
+
+	@Override
+	public LanguageBundle loadLanguageBundle(File bundle) {
+		return null;
+	}
 
 }
