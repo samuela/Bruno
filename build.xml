@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Bruno" default="jar" basedir=".">
+	<basename property="project" file="${basedir}"/>
+
+	<property name="app.src" location="src"/>
+	<property name="app.derived" location="bin/"/>
+	<property name="derived.jar" location="${app.derived}/${project}.jar"/>
+
+	<path id="class.path">
+		<fileset dir="lib">
+			<include name="**/*.jar"/>
+			<include name="**/*.zip"/>
+		</fileset>
+	</path>
+
+	<target name="compile">
+		<mkdir dir="${app.derived}"/>
+		<javac srcdir="${app.derived}" destdir="${app.derived}" debug="true" includeantruntime="true">
+			<classpath refid="class.path"/>
+			<compilerarg value="-Xlint:all"/>
+			<compilerarg value="-Werror"/>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar destfile="${derived.jar}" basedir="${app.derived}" includes="**/*.class"/>
+	</target>
+
+	<target name="unit_test" depends="jar">
+		<junit>
+			<classpath refid="class.path"/>
+			<classpath>
+				<pathelement location="${derived.jar}"/>
+			</classpath>
+			<formatter type="brief" usefile="false"/>
+			<sysproperty key="java.awt.headless" value="true"/>
+			<!-- <test name="${testcase}" if="testcase"/> -->
+			<batchtest unless="testcase">
+				<fileset dir="${app.derived}" includes="**/*Test.class"/>
+			</batchtest>
+		</junit>
+	</target>
+
+	<target name="clean">
+		<delete dir="${app.derived}"/>
+	</target>
+
+</project>
