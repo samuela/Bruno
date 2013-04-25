@@ -6,77 +6,90 @@ import javax.swing.UIManager;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
+import javax.swing.text.BadLocationException;
 
 import com.google.common.collect.Lists;
 
-//this could implement UndoableEdit or extend
-//AbstractUndoableEdit or CompoundEdit or UndoManager.
-//For the moment however, it doesn't need to. It probably should though
-//eventually.
 public class UndoTree {
-	private Node<UndoableEdit> currentNode;
-	private Node<UndoableEdit> toRedo;
+    private UndoNode currentNode;
+    private UndoNode toRedo;
 
-	public UndoTree() {
-		currentNode = new Node<UndoableEdit>();
-	}
+    public UndoTree() {
+	currentNode = new UndoNode();
+    }
+    
+    public void addNode(UndoableEdit e)
+    {
+	UndoNode newNode = new UndoNode(e, currentNode);
+	currentNode.addChild(newNode);
+	currentNode = newNode;
+    }
 
-	public boolean addEdit(UndoableEdit e) {
-		Node<UndoableEdit> newNode = new Node<UndoableEdit>(e, currentNode);
-		currentNode.addChild(newNode);
-		currentNode = newNode;
-		return true;
+    public boolean addEdit(UndoableEdit e)
+    {
+	if (currentNode.isEmpty() || !currentNode.getChildren().isEmpty()){
+	    addNode(e);
 	}
+	else{
+	    String changedText = UndoNode.changedText(e);
+	    if (changedText.length() > 1){
+		addNode(e);
+	    }
+	    else if (currentNode.getEditSize() >= 5 && (changedText.equals(" ") ||
+							changedText.equals("\n") ||
+							changedText.equals("\t"))){
+		addNode(e);
+	    }
+	    else{
+		currentNode.addEdit(e);
+	    }
+	}
+	return true;
+    }
+	
+    public boolean canUndo()
+    {
+	return currentNode.canUndo();
+    }
 
-	public boolean canUndo() {
-		return (!currentNode.isEmpty() && currentNode.getData().canUndo());
+    public void undo() throws CannotUndoException {
+	if (!canUndo())
+	    throw new CannotUndoException();
+	UndoNode parentNode = currentNode.getParent();
+	currentNode.undo();
+	currentNode = parentNode;
+    }
+    
+    public boolean canRedo() {
+	List<UndoNode> children = currentNode.getChildren();
+	if (children.isEmpty())
+	    return false;
+	boolean answer = false;
+	for (UndoNode node : Lists.reverse(children)) {
+	    if (node.canRedo()) {
+		answer = true;
+		toRedo = node;
+		break;
+	    }
 	}
+	return answer;
+    }
 
-	public void undo() throws CannotUndoException {
-		if (!canUndo())
-			throw new CannotUndoException();
-		Node<UndoableEdit> parentNode = currentNode.getParent();
-		currentNode.getData().undo();
-		currentNode = parentNode;
-	}
+    public void redo() throws CannotRedoException {
+	if (!canRedo())
+	    throw new CannotRedoException();
+	toRedo.redo();
+	currentNode = toRedo;
+    }
 
-	public boolean canRedo() {
-		List<Node<UndoableEdit>> edits = currentNode.getChildren();
-		if (edits.isEmpty())
-			return false;
-		boolean answer = false;
-		for (Node<UndoableEdit> node : Lists.reverse(edits)) {
-			UndoableEdit edit = node.getData();
-			if (edit.canRedo()) {
-				answer = true;
-				toRedo = node;
-				break;
-			}
-		}
-		return answer;
-	}
+    public String getUndoPresentationName() {
+	return currentNode.getUndoPresentationName();
+    }
 
-	public void redo() throws CannotRedoException {
-		if (!canRedo())
-			throw new CannotRedoException();
-		toRedo.getData().redo();
-		currentNode = toRedo;
-	}
-
-	public String getUndoPresentationName() {
-		if (canUndo()) {
-			return currentNode.getData().getUndoPresentationName();
-		} else {
-			return UIManager.getString("AbstractUndoableEdit.undoText");
-		}
-	}
-
-	public String getRedoPresentationName() {
-		if (canRedo()) {
-			return toRedo.getData().getUndoPresentationName();
-		} else {
-			return UIManager.getString("AbstractUndoableEdit.redoText");
-		}
-	}
+    public String getRedoPresentationName() {
+	return currentNode.getRedoPresentationName();
+    }
 
 }
