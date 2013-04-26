@@ -69,7 +69,7 @@ import prefuse.visual.sort.TreeDepthItemSorter;
 public class TreeView extends Display {
     private static final long serialVersionUID = 1L;
 
-    public static final String TREE_CHI = "chi-ontology.xml.gz";
+    public static final String TREE_CHI = "lib/chi-ontology.xml.gz";
     
     private static final String tree = "tree";
     private static final String treeNodes = "tree.nodes";

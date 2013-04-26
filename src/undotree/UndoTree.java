@@ -33,13 +33,14 @@ public class UndoTree {
 	    addNode(e);
 	}
 	else{
-	    String changedText = UndoNode.changedText(e);
-	    if (changedText.length() > 1){
+	    // String changedText = UndoNode.changedText(e);
+	    int size = UndoNode.editSize(e);
+	    if (size > 1){
 		addNode(e);
 	    }
-	    else if (currentNode.getEditSize() >= 5 && (changedText.equals(" ") ||
+	    else if (currentNode.getEditSize() >= 5)/* && (changedText.equals(" ") ||
 							changedText.equals("\n") ||
-							changedText.equals("\t"))){
+							changedText.equals("\t")))*/{
 		addNode(e);
 	    }
 	    else{

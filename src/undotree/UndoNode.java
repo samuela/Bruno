@@ -19,21 +19,20 @@ public class UndoNode {
     private List<UndoableEdit> edits;
     private UndoNode parent;
     private List<UndoNode> children;
-    private int editSize;
+    private int size;
 
     /* Constructors */
     public UndoNode() {
 	edits = new ArrayList<>();
 	children = new ArrayList<>();
-	editSize = 0;
+	size = 0;
     }
 
     public UndoNode(UndoableEdit edit, UndoNode parent) {
 	edits = new ArrayList<>();
-	edits.add(edit);
+	addEdit(edit);
 	this.parent = parent;
 	children = new ArrayList<>();
-	editSize = changedText(edit).length();
     }
 
     /* Methods */
@@ -44,7 +43,7 @@ public class UndoNode {
     public void addEdit(UndoableEdit e)
     {
 	edits.add(e);
-	editSize += changedText(e).length();
+	size += editSize(e);
     }
 
     public boolean canUndo()
@@ -89,7 +88,7 @@ public class UndoNode {
 	}
     }
 
-    public static String changedText(UndoableEdit e)
+    /*    public static String changedText(UndoableEdit e)
     {
 	AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) e;
 	String text = "";
@@ -97,10 +96,20 @@ public class UndoNode {
 	    text = event.getDocument().getText(event.getOffset(), event.getLength());
 	}
 	catch(BadLocationException ex){
+	    System.out.println(e);
 	    ex.printStackTrace();
 	    //This should never happen
 	}
+	System.out.println(event.getOffset());
+	System.out.println(event.getLength());
+
 	return text;
+	}*/ //current implementation has a BadLocationException when you do a cut
+
+    public static int editSize(UndoableEdit e)
+    {
+	AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) e;
+	return event.getLength();
     }
 
     /* Getters and Setters */
@@ -125,7 +134,7 @@ public class UndoNode {
     }
 
     public int getEditSize(){
-	return editSize;
+	return size;
     }
 
     public String getUndoPresentationName()
