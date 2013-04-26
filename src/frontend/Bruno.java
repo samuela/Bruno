@@ -22,7 +22,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import undotree.UndoTree;
+import undotree.UndoController;
 
 public class Bruno extends JFrame {
 
@@ -34,10 +34,6 @@ public class Bruno extends JFrame {
 	private final JTabbedPane tabPane;
 	private final JSplitPane splitPane;
 	private final RSyntaxTextArea textArea;
-
-	private final UndoTree undo;
-	private final UndoAction undoAction;
-	private final RedoAction redoAction;
 
 	public Bruno() {
 		setTitle("Bruno");
@@ -74,33 +70,18 @@ public class Bruno extends JFrame {
 		sp.setFoldIndicatorEnabled(true);
 		sp.setLineNumbersEnabled(true);
 
-		// Setup editor tree
-		undo = new UndoTree();
-
-		undoAction = new UndoAction();
-		redoAction = new RedoAction();
-
-		Document doc = textArea.getDocument();
-		doc.addUndoableEditListener(new UndoableEditListener() {
-
-			@Override
-			public void undoableEditHappened(UndoableEditEvent e) {
-				// Remember the edit and update the menus.
-				undo.addEdit(e.getEdit());
-				undoAction.updateUndoState();
-				redoAction.updateRedoState();
-			}
-
-		});
+		// Setup undo tree
+		UndoController undoController = new UndoController();
+		textArea.getDocument().addUndoableEditListener(undoController);
 
 		textArea.getInputMap().put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()),
-				undoAction);
+				undoController.getUndoAction());
 		textArea.getInputMap().put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()
-						+ Event.SHIFT_MASK), redoAction);
+						       + Event.SHIFT_MASK), undoController.getRedoAction());
 
 		// Side pane
 		tabPane = new JTabbedPane();
@@ -162,67 +143,6 @@ public class Bruno extends JFrame {
 		System.exit(0);
 	}
 
-	class RedoAction extends AbstractAction {
-
-		public static final long serialVersionUID = 1L;
-
-		public RedoAction() {
-			super("Redo");
-			setEnabled(false);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			try {
-				undo.redo();
-			} catch (CannotRedoException ex) {
-				System.out.println("Unable to redo: " + ex);
-				ex.printStackTrace();
-			}
-			updateRedoState();
-			undoAction.updateUndoState();
-		}
-
-		protected void updateRedoState() {
-			if (undo.canRedo()) {
-				setEnabled(true);
-				putValue(Action.NAME, undo.getRedoPresentationName());
-			} else {
-				setEnabled(false);
-				putValue(Action.NAME, "Redo");
-			}
-		}
-	}
-
-	class UndoAction extends AbstractAction {
-
-		public static final long serialVersionUID = 1L;
-
-		public UndoAction() {
-			super("Undo");
-			setEnabled(false);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			try {
-				undo.undo();
-			} catch (CannotUndoException ex) {
-				System.out.println("Unable to undo: " + ex);
-				ex.printStackTrace();
-			}
-			updateUndoState();
-			redoAction.updateRedoState();
-		}
-
-		protected void updateUndoState() {
-			if (undo.canUndo()) {
-				setEnabled(true);
-				putValue(Action.NAME, undo.getUndoPresentationName());
-			} else {
-				setEnabled(false);
-				putValue(Action.NAME, "Undo");
-			}
-		}
-	}
 
 	/**
 	 * @param args
