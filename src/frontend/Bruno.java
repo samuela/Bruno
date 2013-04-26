@@ -23,6 +23,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import undotree.UndoController;
+import undotree.TreeView;
 
 public class Bruno extends JFrame {
 
@@ -73,28 +74,28 @@ public class Bruno extends JFrame {
 		// Setup undo tree
 		UndoController undoController = new UndoController();
 		textArea.getDocument().addUndoableEditListener(undoController);
-
+		
 		textArea.getInputMap().put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()),
-				undoController.getUndoAction());
+					   KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
+								  .getDefaultToolkit().getMenuShortcutKeyMask()),
+					   undoController.getUndoAction());
 		textArea.getInputMap().put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()
-						       + Event.SHIFT_MASK), undoController.getRedoAction());
-
+					   KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
+								  .getDefaultToolkit().getMenuShortcutKeyMask()
+								  + Event.SHIFT_MASK), undoController.getRedoAction());
+		
 		// Side pane
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Projects", new ProjectExplorer(this));
-		tabPane.addTab("Edit History", new JPanel());
-
+		tabPane.addTab("Edit History", TreeView.demo());
+		
 		// Split Pane
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, tabPane);
 		splitPane.setOneTouchExpandable(true);
-
+		
 		setContentPane(splitPane);
 	}
-
+    
     private void setBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu file = new JMenu("File");

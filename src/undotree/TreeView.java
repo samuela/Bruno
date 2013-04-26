@@ -1,4 +1,4 @@
-//package prefuse.demos;
+package undotree;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -59,13 +59,6 @@ import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
 import prefuse.visual.sort.TreeDepthItemSorter;
 
-
-/**
- * Demonstration of a node-link tree viewer
- *
- * @version 1.0
- * @author <a href="http://jheer.org">jeffrey heer</a>
- */
 public class TreeView extends Display {
     private static final long serialVersionUID = 1L;
 
@@ -278,7 +271,7 @@ public class TreeView extends Display {
     public static JComponent demo() {
         return demo(TREE_CHI, "name");
     }
-    
+
     public static JComponent demo(String datafile, final String label) {
         Color BACKGROUND = Color.WHITE;
         Color FOREGROUND = Color.BLACK;
@@ -338,6 +331,66 @@ public class TreeView extends Display {
         panel.add(box, BorderLayout.SOUTH);
         return panel;
     }
+
+    // ------------------------------------------------------------------------
+    //UndoTree view
+    
+    public static JComponent makeView(Tree t)
+    {
+	final String label = "name";
+	Color BACKGROUND = Color.WHITE;
+        Color FOREGROUND = Color.BLACK;
+        
+        // create a new treemap
+        final TreeView tview = new TreeView(t, label);
+        tview.setBackground(BACKGROUND);
+        tview.setForeground(FOREGROUND);
+        
+        // create a search panel for the tree map
+        JSearchPanel search = new JSearchPanel(tview.getVisualization(),
+            treeNodes, Visualization.SEARCH_ITEMS, label, true, true);
+        search.setShowResultCount(true);
+        search.setBorder(BorderFactory.createEmptyBorder(5,5,4,0));
+        search.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 11));
+        search.setBackground(BACKGROUND);
+        search.setForeground(FOREGROUND);
+        
+        final JFastLabel title = new JFastLabel("                 ");
+        title.setPreferredSize(new Dimension(350, 20));
+        title.setVerticalAlignment(SwingConstants.BOTTOM);
+        title.setBorder(BorderFactory.createEmptyBorder(3,0,0,0));
+        title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
+        title.setBackground(BACKGROUND);
+        title.setForeground(FOREGROUND);
+        
+        tview.addControlListener(new ControlAdapter() {
+            public void itemEntered(VisualItem item, MouseEvent e) {
+                if ( item.canGetString(label) )
+                    title.setText(item.getString(label));
+            }
+            public void itemExited(VisualItem item, MouseEvent e) {
+                title.setText(null);
+            }
+        });
+        
+        Box box = new Box(BoxLayout.X_AXIS);
+        box.add(Box.createHorizontalStrut(10));
+        box.add(title);
+        box.add(Box.createHorizontalGlue());
+        box.add(search);
+        box.add(Box.createHorizontalStrut(3));
+        box.setBackground(BACKGROUND);
+        
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(BACKGROUND);
+        panel.setForeground(FOREGROUND);
+        panel.add(tview, BorderLayout.CENTER);
+        panel.add(box, BorderLayout.SOUTH);
+        return panel;
+    }
+    
+    
+
     
     // ------------------------------------------------------------------------
    

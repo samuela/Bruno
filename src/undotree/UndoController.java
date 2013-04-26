@@ -8,6 +8,8 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import java.awt.event.ActionEvent;
 
+import prefuse.data.Tree;
+
 public class UndoController implements UndoableEditListener
 {
     UndoTree undoTree;
@@ -52,6 +54,12 @@ public class UndoController implements UndoableEditListener
     public void updateRedoState()
     {
 	redoAction.updateRedoState();
+    }
+
+    public Tree makeTree()
+    {
+	//TODO
+	return null;
     }
 
 }
