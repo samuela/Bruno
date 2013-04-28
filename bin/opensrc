@@ -1,0 +1,16 @@
+#!/bin/sh
+path="./src/"
+whichFiles="*"
+fileType=".java"
+files=${whichFiles}${fileType}
+if [ "$1" = "" ]
+then
+    `which emacs` ${path}*/$files
+else
+    dirs=""
+    for dir in $@
+    do
+	dirs="$dirs ${path}${dir}/$files"
+    done
+    `which emacs` $dirs
+fi
