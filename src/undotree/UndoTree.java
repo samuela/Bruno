@@ -29,18 +29,19 @@ public class UndoTree {
 
     public boolean addEdit(UndoableEdit e)
     {
+	UndoNode.changedText(e);
 	if (currentNode.isEmpty() || !currentNode.getChildren().isEmpty()){
 	    addNode(e);
 	}
 	else{
-	    // String changedText = UndoNode.changedText(e);
+	    String changedText = UndoNode.changedText(e);
 	    int size = UndoNode.editSize(e);
 	    if (size > 1){
 		addNode(e);
 	    }
-	    else if (currentNode.getEditSize() >= 5)/* && (changedText.equals(" ") ||
+	    else if (currentNode.getEditSize() >= 5 && (changedText.equals(" ") ||
 							changedText.equals("\n") ||
-							changedText.equals("\t")))*/{
+							changedText.equals("\t"))){
 		addNode(e);
 	    }
 	    else{

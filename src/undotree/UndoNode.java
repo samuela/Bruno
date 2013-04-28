@@ -88,23 +88,23 @@ public class UndoNode {
 	}
     }
 
-    /*    public static String changedText(UndoableEdit e)
+    public static String changedText(UndoableEdit e)
     {
 	AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) e;
 	String text = "";
 	try{
-	    text = event.getDocument().getText(event.getOffset(), event.getLength());
+	    String type = e.getPresentationName();
+	    if (type.equals("addition")){
+		text = event.getDocument().getText(event.getOffset(), event.getLength());
+	    }
 	}
 	catch(BadLocationException ex){
 	    System.out.println(e);
 	    ex.printStackTrace();
 	    //This should never happen
 	}
-	System.out.println(event.getOffset());
-	System.out.println(event.getLength());
-
 	return text;
-	}*/ //current implementation has a BadLocationException when you do a cut
+	} //current implementation has a BadLocationException when you do a cut
 
     public static int editSize(UndoableEdit e)
     {
