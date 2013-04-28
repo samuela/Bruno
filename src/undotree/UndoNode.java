@@ -104,7 +104,7 @@ public class UndoNode {
 	    //This should never happen
 	}
 	return text;
-	} //current implementation has a BadLocationException when you do a cut
+	}
 
     public static int editSize(UndoableEdit e)
     {
