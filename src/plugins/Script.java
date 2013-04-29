@@ -12,7 +12,7 @@ import java.util.Set;
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:21 PM To
  * change this template use File | Settings | File Templates.
  */
-public class Script implements Fooable{
+public class Script{
 
     private PluginManager pluginManager_;
 
@@ -30,33 +30,18 @@ public class Script implements Fooable{
 		return plugin_;
 	}
 
+    public String getPluginName(){
+        return plugin_.getName();
+    }
+
 	public String getPath() {
 		return path_;
 	}
 
-    @Override
 	public String getName() {
 		return name_;
 	}
 
-    @Override
-    public Set<String> getKeywords() {
-        Set<String> keyWords = new HashSet<>();
-        keyWords.add(name_);
-        keyWords.add(plugin_.getName());
-
-        return keyWords;
-    }
-
-    @Override
-    public void doAction() {
-        try {
-            pluginManager_.executeScript(this);
-        } catch (ScriptException e) {
-            System.err.println("Script " + this + " failed");
-            e.printStackTrace();
-        }
-    }
 
     public Script(String path, Plugin plugin, PluginManager pluginManager) throws IllegalArgumentException {
         pluginManager_ = pluginManager;
