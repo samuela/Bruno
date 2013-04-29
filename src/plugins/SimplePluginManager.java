@@ -74,7 +74,7 @@ public class SimplePluginManager implements PluginManager{
             String path = f.getAbsolutePath();
             Script s = null;
             try{
-               s = new Script(path, plugin);
+               s = new Script(path, plugin, this);
             } catch (IllegalArgumentException e){
                 //invalid path - ignore file
                 continue;

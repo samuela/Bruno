@@ -1,16 +1,26 @@
 package plugins;
 
+import foobar.Fooable;
+
+import javax.script.ScriptException;
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:21 PM To
  * change this template use File | Settings | File Templates.
  */
-public class Script {
-	private String extension_;
+public class Script implements Fooable{
+
+    private PluginManager pluginManager_;
+
+    private String extension_;
 	private Plugin plugin_;
 	private String path_;
 	private String name_;
+
 
 	public String getExtension() {
 		return extension_;
@@ -24,11 +34,32 @@ public class Script {
 		return path_;
 	}
 
+    @Override
 	public String getName() {
 		return name_;
 	}
 
-	public Script(String path, Plugin plugin) throws IllegalArgumentException {
+    @Override
+    public Set<String> getKeywords() {
+        Set<String> keyWords = new HashSet<>();
+        keyWords.add(name_);
+        keyWords.add(plugin_.getName());
+
+        return keyWords;
+    }
+
+    @Override
+    public void doAction() {
+        try {
+            pluginManager_.executeScript(this);
+        } catch (ScriptException e) {
+            System.err.println("Script " + this + " failed");
+            e.printStackTrace();
+        }
+    }
+
+    public Script(String path, Plugin plugin, PluginManager pluginManager) throws IllegalArgumentException {
+        pluginManager_ = pluginManager;
 		extension_ = path.substring(path.lastIndexOf('.') + 1);
 		plugin_ = plugin;
 		path_ = path;
@@ -42,8 +73,9 @@ public class Script {
 		}
 	}
 
+    @Override
 	public String toString() {
-		return "Script type=" + extension_ + " plugin=" + plugin_;
+		return "Script: type=" + extension_ + " plugin=" + plugin_;
 	}
 
 	@Override

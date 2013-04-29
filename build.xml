@@ -4,6 +4,7 @@
   <property name="app.src" location="src"/>
   <property name="project" value="bruno"/>
   <property name="app.derived" location="derived"/>
+  <property name="app.dist" location="dist"/>
   <property name="derived.classes" location="${app.derived}/classes"/>
   <property name="derived.jar" location="${app.derived}/${project}.jar"/>
   <property name="derived.javadoc" location="${app.derived}/javadoc"/>
@@ -124,6 +125,7 @@
 
   <target name="clean">
     <delete dir="${app.derived}"/>
+    <delete dir="${app.dist}"/>
   </target>
 
   <target name="system_test" depends="compile,jar">
@@ -141,16 +143,19 @@
              classpath="lib/appbundler-1.0.jar" />
 
     <target name="bundle" depends="compile">
+      <mkdir dir="${app.dist}"/>
         <bundleapp outputdirectory="dist"
             name="Bruno"
             displayname="Bruno"
             mainclassname="frontend.Bruno"
 	   identifier="frontend.Bruno"
-	   icon="resources/large_bruno-review-sacha-baron-cohen-borat-ali-g-larry-charles.icns">
+	   icon="resources/bruno_icon.icns">
 	  <classpath file="derived/*.jar"/>
             <classpath file="lib/*.jar" />
             <classpath file="lib/commons-io-2.4/*.jar" />
-            <classpath file="lib/cachedir/packages/*.pkc" />
+	    <classpath file="lib/*.xml" />
+	    <classpath file="lib/*.gz" />
+            <!--classpath file="lib/cachedir/packages/*.pkc" /-->
         </bundleapp>
     </target>
 
