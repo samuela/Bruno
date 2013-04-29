@@ -1,6 +1,7 @@
 package frontend;
 
 import java.awt.Event;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -8,22 +9,33 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import com.apple.eawt.Application;
-import java.awt.Image;
-
-import javax.swing.*;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.text.Document;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
+import javax.script.ScriptException;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import undotree.UndoController;
+import plugins.SimplePluginManager;
 import undotree.TreeView;
+import undotree.UndoController;
+
+import com.apple.eawt.Application;
+
+import foobar.FoobarTest;
 
 public class Bruno extends JFrame {
 
@@ -35,12 +47,17 @@ public class Bruno extends JFrame {
 	private final JTabbedPane tabPane;
 	private final JSplitPane splitPane;
 	private final RSyntaxTextArea textArea;
+	private FoobarTest foobarTest;
+	private SimplePluginManager pluginManager = new SimplePluginManager();
 
 	public Bruno() {
 		setTitle("Bruno");
-        setBar();
-        setSize(1024, 768);
+		setBar();
+		setSize(1024, 768);
+
+		// Center on screen
 		setLocationRelativeTo(null);
+
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		// Key bindings
@@ -61,6 +78,46 @@ public class Bruno extends JFrame {
 			}
 
 		});
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit
+						.getDefaultToolkit().getMenuShortcutKeyMask()),
+				"foobar");
+		getRootPane().getActionMap().put("foobar", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 4189934329254672244L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				toggleFoobar();
+			}
+
+		});
+
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit
+						.getDefaultToolkit().getMenuShortcutKeyMask()),
+				"demoscript");
+		getRootPane().getActionMap().put("demoscript", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 4189934329254672244L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					pluginManager.executeScript("helloworld.js");
+				} catch (ScriptException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+		});
 
 		// Text area
 		textArea = new RSyntaxTextArea();
@@ -74,52 +131,65 @@ public class Bruno extends JFrame {
 		// Setup undo tree
 		UndoController undoController = new UndoController();
 		textArea.getDocument().addUndoableEditListener(undoController);
-		
+
 		textArea.getInputMap().put(
-					   KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
-								  .getDefaultToolkit().getMenuShortcutKeyMask()),
-					   undoController.getUndoAction());
+				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
+						.getDefaultToolkit().getMenuShortcutKeyMask()),
+				undoController.getUndoAction());
 		textArea.getInputMap().put(
-					   KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
-								  .getDefaultToolkit().getMenuShortcutKeyMask()
-								  + Event.SHIFT_MASK), undoController.getRedoAction());
-		
+				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
+						.getDefaultToolkit().getMenuShortcutKeyMask()
+						+ Event.SHIFT_MASK), undoController.getRedoAction());
+
 		// Side pane
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Projects", new ProjectExplorer(this));
 		tabPane.addTab("Edit History", TreeView.demo());
-		
+
 		// Split Pane
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, tabPane);
 		splitPane.setOneTouchExpandable(true);
-		
+
 		setContentPane(splitPane);
+
+		// Plugins
+		pluginManager.loadPlugin(new File("plugins/"));
 	}
-    
-    private void setBar() {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu file = new JMenu("File");
-        JMenuItem item = new JMenuItem("Woah");
-        file.add(item);
-        menuBar.add(file);
-        setJMenuBar(menuBar);
-    }
 
-    private static void setMacStuff(){
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-    }
+	/**
+	 * Sets up demo menu bar
+	 */
+	private void setBar() {
+		JMenuBar menuBar = new JMenuBar();
+		JMenu file = new JMenu("File");
+		JMenuItem item = new JMenuItem("Woah");
+		file.add(item);
+		menuBar.add(file);
+		setJMenuBar(menuBar);
+	}
 
-    private static void setNiceties() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        if(System.getProperty("os.name").equals("Mac OS X")){
-            setMacStuff();
-        }
-        Application application = Application.getApplication();
-        Image image = Toolkit.getDefaultToolkit().getImage("resources/*.jpg");
-        application.setDockIconImage(image);
-    }
+	private static void setMacStuff() {
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+	}
 
-    public void openFile(File file) {
+	private static void setNiceties() throws ClassNotFoundException,
+			UnsupportedLookAndFeelException, InstantiationException,
+			IllegalAccessException {
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		if (System.getProperty("os.name").equals("Mac OS X")) {
+			setMacStuff();
+		}
+		Application application = Application.getApplication();
+		Image image = Toolkit.getDefaultToolkit().getImage("resources/*.jpg");
+		application.setDockIconImage(image);
+	}
+
+	/**
+	 * Open the specified file in the editing area
+	 * 
+	 * @param file
+	 */
+	public void openFile(File file) {
 		StringBuilder contents = new StringBuilder();
 		Scanner scanner = null;
 		try {
@@ -138,29 +208,39 @@ public class Bruno extends JFrame {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public void close() {
 		setVisible(false);
 		dispose();
 		System.exit(0);
 	}
 
+	public void toggleFoobar() {
+		if (foobarTest == null) {
+			foobarTest = new FoobarTest();
+		}
+		foobarTest.setVisible(!foobarTest.isVisible());
+	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-        try {
-            setNiceties();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InstantiationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        SwingUtilities.invokeLater(new Runnable() {
+		try {
+			setNiceties();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
+		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
