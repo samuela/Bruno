@@ -12,7 +12,11 @@ public interface PluginManager {
 
 	void executeScript(Script userScript) throws ScriptException;
 
-	Plugin loadPlugin(File directoryPath);
+    void exposeVariable(String key, Object val);
+
+    void revokeVariable(String key);
+
+    Plugin loadPlugin(File directoryPath);
 
 	LanguageBundle loadLanguageBundle(File bundle);
 }

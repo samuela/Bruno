@@ -32,6 +32,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import plugins.SimplePluginManager;
 import undotree.TreeView;
 import undotree.UndoController;
+import undotree.EditHistoryView;
 
 import com.apple.eawt.Application;
 
@@ -127,7 +128,7 @@ public class Bruno extends JFrame {
 		sp.setLineNumbersEnabled(true);
 
 		// Setup undo tree
-		UndoController undoController = new UndoController();
+		UndoController undoController = new UndoController(textArea.getDocument());
 		textArea.getDocument().addUndoableEditListener(undoController);
 
 		textArea.getInputMap().put(
@@ -142,10 +143,7 @@ public class Bruno extends JFrame {
 		// Side pane
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Projects", new ProjectExplorer(this));
-        /***************KEEP COMMENTED WHEN DEMOING APP BUNDLE***************/
-	//	tabPane.addTab("Edit History", TreeView.demo());
-        //TODO: read tree from memory, not xml - will fix hard-coded path problem (obviously)
-        /*************UNCOMMENT ABOVE LINE WHEN THAT IS IMPLEMENTED. SHOULD ALLOW TREE DISPLAY FROM .app****/
+		tabPane.addTab("Edit History", undoController.getEditHistoryView());
 		
 		// Split Pane
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, tabPane);
@@ -249,7 +247,7 @@ public class Bruno extends JFrame {
 				b.setVisible(true);
 
 				// Can't set divider location until after frame has been packed
-				// or set visible. Fuck swing.
+				// or set visible.
 				b.splitPane.setDividerLocation(0.7);
 			}
 

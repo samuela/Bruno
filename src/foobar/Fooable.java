@@ -2,18 +2,34 @@ package foobar;
 
 import java.util.Set;
 
-
 /**
- * Created with IntelliJ IDEA.
- * User: jonathan
- * Date: 4/29/13
- * Time: 12:29 AM
- * To change this template use File | Settings | File Templates.
+ * Objects implementing Fooable may be contained in Foobar and executed when
+ * specified by the user.
+ * 
+ * @author Frank Goodman
+ * 
  */
 public interface Fooable {
-        public String getName(); // the name of this Fooable
-        public Set<String> getKeywords(); // these are the word by which Foobar searches for this Fooable
-        public void doAction(); // this is called when a suggestion is selected
-        public String toString(); // should return whatever you want to appear in the suggestion menu, typically getName()
-}
+	/**
+	 * 
+	 * @return The name of the Fooable
+	 */
+	public String getName();
 
+	/**
+	 * 
+	 * @return A set of the keywords by which this Fooable can be searched
+	 */
+	public Set<String> getKeywords();
+
+	/**
+	 * Executed when this Fooable is selected
+	 */
+	public void doAction();
+
+	/**
+	 * 
+	 * @return The display value of the Fooable (typically getName())
+	 */
+	public String toString();
+}

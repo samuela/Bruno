@@ -8,19 +8,22 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import java.awt.event.ActionEvent;
 
-import prefuse.data.Tree;
 
 public class UndoController implements UndoableEditListener
 {
-    UndoTree undoTree;
-    UndoAction undoAction;
-    RedoAction redoAction;
+    private UndoTree undoTree;
+    private UndoAction undoAction;
+    private RedoAction redoAction;
+    private EditHistoryView view;
+    private Document document;
 
-    public UndoController()
+    public UndoController(Document document)
     {
-	undoTree = new UndoTree();
+	undoTree = new UndoTree(this);
 	undoAction = new UndoAction(this);
 	redoAction = new RedoAction(this);
+	view = new EditHistoryView(this);
+	this.document = document;
     }
 
     @Override
@@ -46,6 +49,11 @@ public class UndoController implements UndoableEditListener
 	return redoAction;
     }
 
+    public EditHistoryView getEditHistoryView()
+    {
+	return view;
+    }
+
     public void updateUndoState()
     {
 	undoAction.updateUndoState();
@@ -56,10 +64,19 @@ public class UndoController implements UndoableEditListener
 	redoAction.updateRedoState();
     }
 
-    public Tree makeTree()
+    public Document getDocument()
     {
-	//TODO
-	return null;
+	return document;
+    }
+
+    public void updateView(UndoNode undoNode)
+    {
+	view.addNode(undoNode);
+    }
+
+    public EditHistoryView getView()
+    {
+	return view;
     }
 
 }

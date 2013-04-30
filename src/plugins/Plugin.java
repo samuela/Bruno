@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import com.google.common.base.Objects;
 
 import foobar.Fooable;
 import foobar.ScriptFooable;
@@ -16,8 +16,8 @@ import foobar.ScriptFooable;
 public class Plugin {
 	private final PluginManager manager_;
 	private Map<String, Script> scriptsByName_;
-	private String name_;
-	private String path_;
+	private final String name_;
+	private final String path_;
 
 	public Plugin(PluginManager manager, String path) {
 		manager_ = manager;
@@ -42,25 +42,10 @@ public class Plugin {
 		}
 	}
 
-	public Set<Fooable> getScriptFooables() {
-		Set<Fooable> fooables = new HashSet<>();
-		for (Script script : getScriptsByName().values()) {
-			fooables.add(new ScriptFooable(manager_, script));
-		}
-		return fooables;
-	}
-
-	public String getName() {
-		return name_;
-	}
-
-	public String getPath() {
-		return path_;
-	}
-
-	public Map<String, Script> getScriptsByName() {
-		return new HashMap<String, Script>(scriptsByName_);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name_, path_, scriptsByName_);
+    }
 
 	@Override
 	public boolean equals(Object o) {
@@ -73,4 +58,9 @@ public class Plugin {
 					&& p.getScriptsByName().equals(getScriptsByName());
 		}
 	}
+
+    @Override
+    public String toString(){
+        return "Plugin '" + name_ + "': " + scriptsByName_.keySet();
+    }
 }

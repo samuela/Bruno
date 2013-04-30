@@ -7,11 +7,15 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public final class FoobarTest extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	public FoobarTest() {
+	/**
+	 * Create a new JFrame to test the Foobar component
+	 */
+	private FoobarTest() {
 		super("Foobar Test");
 
 		// this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -29,6 +33,11 @@ public final class FoobarTest extends JFrame {
 		this.pack();
 	}
 
+	/**
+	 * Create a new FoobarTest
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -38,6 +47,9 @@ public final class FoobarTest extends JFrame {
 		});
 	}
 
+	/**
+	 * Dummy data for Foobar
+	 */
 	private ArrayList<Fooable> fooables = Lists.newArrayList(new Fooable() {
 		@Override
 		public String getName() {
@@ -46,8 +58,7 @@ public final class FoobarTest extends JFrame {
 
 		@Override
 		public Set<String> getKeywords() {
-			// TODO Auto-generated method stub
-			return null;
+			return Sets.newHashSet("rest", "best", "crest");
 		}
 
 		@Override
@@ -67,8 +78,7 @@ public final class FoobarTest extends JFrame {
 
 		@Override
 		public Set<String> getKeywords() {
-			// TODO Auto-generated method stub
-			return null;
+			return Sets.newHashSet("test", "best", "treat");
 		}
 
 		@Override
@@ -88,8 +98,7 @@ public final class FoobarTest extends JFrame {
 
 		@Override
 		public Set<String> getKeywords() {
-			// TODO Auto-generated method stub
-			return null;
+			return Sets.newHashSet("try", "by", "tie");
 		}
 
 		@Override

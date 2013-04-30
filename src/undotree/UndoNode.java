@@ -2,6 +2,7 @@ package undotree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 
 import javax.swing.UIManager;
 import javax.swing.undo.CannotRedoException;
@@ -20,19 +21,27 @@ public class UndoNode {
     private UndoNode parent;
     private List<UndoNode> children;
     private int size;
+    //    private List<Date> timeStamps;
+    private String type;
 
     /* Constructors */
     public UndoNode() {
 	edits = new ArrayList<>();
+	type = "";
 	children = new ArrayList<>();
 	size = 0;
+	//	timeStamps = new ArrayList<>();
+	//	addTimeStamp();
     }
 
     public UndoNode(UndoableEdit edit, UndoNode parent) {
 	edits = new ArrayList<>();
+	type = edit.getPresentationName();
 	addEdit(edit);
 	this.parent = parent;
 	children = new ArrayList<>();
+	//	timeStamps = new ArrayList<>();
+	//	addTimeStamp();
     }
 
     /* Methods */
@@ -112,6 +121,48 @@ public class UndoNode {
 	return event.getLength();
     }
 
+    public List<UndoNode> pathToNode(UndoNode otherNode)
+    {
+	return pathToNodeHelper(otherNode, children);
+    }
+    
+    public List<UndoNode> pathToNodeHelper(UndoNode otherNode, List<UndoNode> childNodes)
+    {
+	List<UndoNode> answer = pathDownwardToNode(otherNode, childNodes);
+	if (answer != null)
+	    return answer;
+	else{
+	    List<UndoNode> newChildNodes = parent.getChildren();
+	    newChildNodes.remove(this);
+	    answer = parent.pathToNodeHelper(otherNode, newChildNodes);
+	    answer.add(this);
+	    return answer;
+	}
+    }
+    
+    public List<UndoNode> pathDownwardToNode(UndoNode otherNode, List<UndoNode> childNodes)
+    {
+	List<UndoNode> answer;
+	if (this == otherNode){
+	    answer = new ArrayList<>();
+	    answer.add(this);
+	    return answer;
+	}
+	else if (childNodes.isEmpty()){
+	    return null;
+	}
+	else{
+	    for (UndoNode child : childNodes){
+		answer = child.pathDownwardToNode(otherNode, child.getChildren());
+		if (answer != null){
+		    answer.add(this);
+		    return answer;
+		}
+	    }
+	}
+	return null;
+    }
+    
     /* Getters and Setters */
     public UndoNode getParent() {
 	return parent;
@@ -137,6 +188,21 @@ public class UndoNode {
 	return size;
     }
 
+    /*    public void addTimeStamp()
+    {
+	timeStamps.add(new Date());
+	}*/
+
+    /*    public List<Date> getTimeStamps()
+    {
+	return timeStamps;
+	}*/
+
+    public String getType()
+    {
+	return type;
+    }
+    
     public String getUndoPresentationName()
     {
 	if (!(edits.isEmpty())){
