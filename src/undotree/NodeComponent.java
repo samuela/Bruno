@@ -77,8 +77,7 @@ public class NodeComponent extends JPanel
     @Override
 	public Dimension getPreferredSize()
     {
-	return new Dimension(20, undoNode.getEditSize() + 1);
+	return new Dimension(20, 50);
     }
-
 
 }
