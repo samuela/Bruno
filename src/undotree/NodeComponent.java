@@ -46,30 +46,31 @@ public class NodeComponent extends JPanel
 
     public Document restore(Document document, List<UndoNode> pathToCurrent)
     {
-	for (UndoNode node : pathToCurrent){
-	    System.out.println(node.getType());
-	}
 	for (int i=0; i<pathToCurrent.size()-1; i++){
 	    UndoNode node = pathToCurrent.get(i);
-	    if (node.canUndo())
+	    if (node.getParent() == pathToCurrent.get(i+1)){
 		node.undo();
-	    else if (node.canRedo())
+	    }
+	    else{
 		node.redo();
+	    }
 	}
-	
 	RSyntaxDocument newDocument = new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_JAVA);
 	try{
 	    newDocument.insertString(0,document.getText(0,document.getLength()),null);
 	}
 	catch(BadLocationException e){}
-	
-	for (int i=pathToCurrent.size()-1; i>0; i--){
-	    UndoNode node = pathToCurrent.get(i);
-	    if (node.canUndo())
-		node.undo();
-	    else if (node.canRedo())
-		node.redo();
-	} 
+	if (pathToCurrent.size() > 1){
+	    for (int i=pathToCurrent.size()-2; i>=0; i--){
+		UndoNode node = pathToCurrent.get(i);
+		if(node.getParent() == pathToCurrent.get(i+1)){
+		    node.redo();
+		}
+		else{
+		    node.undo();
+		}
+	    } 
+	}
 	return newDocument;
     }
 
