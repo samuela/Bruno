@@ -39,6 +39,7 @@ public class EditHistoryView extends JPanel
 	//right side should have the text pane with a little box above it
 	//where you can write a tag/comment/name
 	add(splitPane);
+	splitPane.setDividerLocation(70);
     }
 
     public void addNode(UndoNode undoNode)

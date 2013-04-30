@@ -80,4 +80,5 @@ public class NodeComponent extends JPanel
 	return new Dimension(20, undoNode.getEditSize() + 1);
     }
 
+
 }
