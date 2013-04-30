@@ -11,30 +11,29 @@ import com.google.common.collect.Lists;
 public final class FoobarTest extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	private FoobarTest() {
+	public FoobarTest() {
 		super("Foobar Test");
 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+		// this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		// Prevent resizing
 		this.setResizable(false);
 
 		// Add a new Foobar to the frame
 		Foobar foobar = new Foobar();
 		this.add(foobar);
-		
+
 		// Populate the Foobar with dummy data
 		foobar.addFooables(this.fooables);
 
 		this.pack();
-		this.setVisible(true);
 	}
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				new FoobarTest();
+				new FoobarTest().setVisible(true);
 			}
 		});
 	}
