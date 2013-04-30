@@ -1,16 +1,26 @@
 package plugins;
 
+import foobar.Fooable;
+
+import javax.script.ScriptException;
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:21 PM To
  * change this template use File | Settings | File Templates.
  */
-public class Script {
-	private String extension_;
+public class Script{
+
+    private PluginManager pluginManager_;
+
+    private String extension_;
 	private Plugin plugin_;
 	private String path_;
 	private String name_;
+
 
 	public String getExtension() {
 		return extension_;
@@ -20,6 +30,10 @@ public class Script {
 		return plugin_;
 	}
 
+    public String getPluginName(){
+        return plugin_.getName();
+    }
+
 	public String getPath() {
 		return path_;
 	}
@@ -28,7 +42,9 @@ public class Script {
 		return name_;
 	}
 
-	public Script(String path, Plugin plugin) throws IllegalArgumentException {
+
+    public Script(String path, Plugin plugin, PluginManager pluginManager) throws IllegalArgumentException {
+        pluginManager_ = pluginManager;
 		extension_ = path.substring(path.lastIndexOf('.') + 1);
 		plugin_ = plugin;
 		path_ = path;
@@ -42,8 +58,9 @@ public class Script {
 		}
 	}
 
+    @Override
 	public String toString() {
-		return "Script type=" + extension_ + " plugin=" + plugin_;
+		return "Script: type=" + extension_ + " plugin=" + plugin_;
 	}
 
 	@Override

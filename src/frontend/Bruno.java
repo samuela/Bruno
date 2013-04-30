@@ -47,8 +47,6 @@ public class Bruno extends JFrame {
 	private final JTabbedPane tabPane;
 	private final JSplitPane splitPane;
 	private final RSyntaxTextArea textArea;
-	private FoobarTest foobarTest;
-	private SimplePluginManager pluginManager = new SimplePluginManager();
 
 	public Bruno() {
 		setTitle("Bruno");
@@ -144,8 +142,11 @@ public class Bruno extends JFrame {
 		// Side pane
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Projects", new ProjectExplorer(this));
-		tabPane.addTab("Edit History", TreeView.demo());
-
+        /***************KEEP COMMENTED WHEN DEMOING APP BUNDLE***************/
+	//	tabPane.addTab("Edit History", TreeView.demo());
+        //TODO: read tree from memory, not xml - will fix hard-coded path problem (obviously)
+        /*************UNCOMMENT ABOVE LINE WHEN THAT IS IMPLEMENTED. SHOULD ALLOW TREE DISPLAY FROM .app****/
+		
 		// Split Pane
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, tabPane);
 		splitPane.setOneTouchExpandable(true);
