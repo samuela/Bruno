@@ -50,9 +50,6 @@ public final class FoobarSuggestions extends JList<Fooable> {
 		// Allow a maximum of one option to be selected
 		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		// Select the first option
-		this.setSelectedIndex(0);
-
 		// Execute any Fooable that is double-clicked
 		this.addMouseListener(new MouseAdapter() {
 			@Override
@@ -67,6 +64,9 @@ public final class FoobarSuggestions extends JList<Fooable> {
 				: results.size())) {
 			this.model.addElement(result);
 		}
+
+		// Select the first option
+		this.setSelectedIndex(0);
 
 		// Adjust the size of the result list to fit all the Fooables
 		this.setPreferredSize(new Dimension(parent.getParent().getWidth(),

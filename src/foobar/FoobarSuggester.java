@@ -46,8 +46,6 @@ public abstract class FoobarSuggester {
 			distances.put(fooable, min);
 		}
 
-		System.out.println(distances);
-
 		return FoobarSuggester.sortFooables(distances);
 	}
 
@@ -129,8 +127,6 @@ public abstract class FoobarSuggester {
 			}
 		}
 
-		System.out.println(str1 + ", " + str2 + " = "
-				+ distances[str1.length()][str2.length()]);
 		return distances[str1.length()][str2.length()];
 	}
 }
