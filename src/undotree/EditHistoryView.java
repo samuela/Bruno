@@ -45,7 +45,7 @@ public class EditHistoryView extends JPanel
     public void addNode(UndoNode undoNode)
     {
 	nodesView.add(new NodeComponent(undoNode, undoController));
-	repaint();
+	revalidate();
     }
 
     public void setDocument(Document doc)
