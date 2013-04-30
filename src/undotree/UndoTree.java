@@ -13,10 +13,12 @@ import javax.swing.text.BadLocationException;
 import com.google.common.collect.Lists;
 
 public class UndoTree {
+    private UndoController undoController;
     private UndoNode currentNode;
     private UndoNode toRedo;
 
-    public UndoTree() {
+    public UndoTree(UndoController undoController) {
+	this.undoController = undoController;
 	currentNode = new UndoNode();
     }
     
@@ -24,12 +26,11 @@ public class UndoTree {
     {
 	UndoNode newNode = new UndoNode(e, currentNode);
 	currentNode.addChild(newNode);
-	currentNode = newNode;
+	setCurrentNode(newNode);
     }
 
     public boolean addEdit(UndoableEdit e)
     {
-	UndoNode.changedText(e);
 	if (currentNode.isEmpty() || !currentNode.getChildren().isEmpty()){
 	    addNode(e);
 	}
@@ -44,13 +45,27 @@ public class UndoTree {
 							changedText.equals("\t"))){
 		addNode(e);
 	    }
-	    else{
+	    else if (currentNode.getType().equals(e.getPresentationName())){
 		currentNode.addEdit(e);
+	    }
+	    else{
+		addNode(e);
 	    }
 	}
 	return true;
     }
+
+    public void setCurrentNode(UndoNode undoNode)
+    {
+	currentNode = undoNode;
+	undoController.updateView(undoNode);
+    }
 	
+    public UndoNode getCurrentNode()
+    {
+	return currentNode;
+    }
+
     public boolean canUndo()
     {
 	return currentNode.canUndo();
@@ -61,7 +76,8 @@ public class UndoTree {
 	    throw new CannotUndoException();
 	UndoNode parentNode = currentNode.getParent();
 	currentNode.undo();
-	currentNode = parentNode;
+	setCurrentNode(parentNode);
+	//currentNode.addTimeStamp();
     }
     
     public boolean canRedo() {
@@ -83,7 +99,8 @@ public class UndoTree {
 	if (!canRedo())
 	    throw new CannotRedoException();
 	toRedo.redo();
-	currentNode = toRedo;
+	setCurrentNode(toRedo);
+	//currentNode.addTimeStamp();
     }
 
     public String getUndoPresentationName() {
