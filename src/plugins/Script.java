@@ -14,12 +14,10 @@ import java.util.Set;
  */
 public class Script{
 
-    private PluginManager pluginManager_;
-
-    private String extension_;
-	private Plugin plugin_;
-	private String path_;
-	private String name_;
+    private final String extension_;
+	private final Plugin plugin_;
+	private final String path_;
+	private final String name_;
 
 
 	public String getExtension() {
@@ -43,8 +41,13 @@ public class Script{
 	}
 
 
-    public Script(String path, Plugin plugin, PluginManager pluginManager) throws IllegalArgumentException {
-        pluginManager_ = pluginManager;
+    /**
+     *
+     * @param path script file location
+     * @param plugin contains this script
+     * @throws IllegalArgumentException if path does not have an extension
+     */
+    public Script(String path, Plugin plugin) throws IllegalArgumentException {
 		extension_ = path.substring(path.lastIndexOf('.') + 1);
 		plugin_ = plugin;
 		path_ = path;
@@ -56,7 +59,10 @@ public class Script{
 		} else {
 			name_ = withExt.substring(0, withExt.lastIndexOf('.'));
 		}
-	}
+        if(name_.isEmpty()) {
+            throw new IllegalArgumentException("Invalid script name - hidden file");
+        }
+    }
 
     @Override
 	public String toString() {
@@ -65,8 +71,7 @@ public class Script{
 
 	@Override
 	public int hashCode() {
-		return com.google.common.base.Objects.hashCode(extension_, plugin_,
-				path_, name_);
+		return com.google.common.base.Objects.hashCode(extension_, path_, name_);
 	}
 
 	@Override

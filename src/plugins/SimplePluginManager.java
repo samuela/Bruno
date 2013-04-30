@@ -7,9 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import javax.script.*;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -21,18 +19,33 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 
 public class SimplePluginManager implements PluginManager{
 
-    private ScriptEngineManager factory_;
+    private final ScriptEngineManager factory_;
     private Map<String, ScriptEngine> enginesByExtension_;
     private Map<Script, FileReader> scriptFileReaders_;
     private Map<String, Plugin> pluginsByScriptName_;
+
+    private Bindings globals;
 
     public SimplePluginManager(){
         factory_ = new ScriptEngineManager();
         enginesByExtension_ = new HashMap<String, ScriptEngine>();
         scriptFileReaders_ = new HashMap<Script, FileReader>();
         pluginsByScriptName_ = new HashMap<String, Plugin>();
+        globals = new SimpleBindings();
     }
 
+    public boolean contains(Plugin p, String scriptName, String ext){
+        Plugin p2 = pluginsByScriptName_.get(scriptName);
+        if(p==null || p2==null ||!p.equals(p2)){
+            return false;
+        }
+        try{
+            Script s = p.getScriptByName(scriptName);
+            return s.getExtension().equals(ext);
+        } catch (IllegalArgumentException e){
+            return false;
+        }
+    }
 
 	public boolean hasEngine(String extension) {
 		return enginesByExtension_.containsKey(extension);
@@ -58,10 +71,20 @@ public class SimplePluginManager implements PluginManager{
     //    System.out.println("contains py:"  + enginesByExtension_.containsKey("py"));
         try {
      //       System.out.println("engine null: " + (engine == null));
-            engine.eval(scriptFileReaders_.get(userScript));
+            engine.eval(scriptFileReaders_.get(userScript), globals);
         } catch (ScriptException e) {
             throw new ScriptException("Error in Script: " + userScript);
         }
+    }
+
+    @Override
+    public void exposeVariable(String key, Object val) {
+        globals.put(key, val);
+    }
+
+    @Override
+    public void revokeVariable(String key){
+        globals.remove(key);
     }
 
     //if plugin contains any new scripting languages, create new engines for them
@@ -74,28 +97,35 @@ public class SimplePluginManager implements PluginManager{
             String path = f.getAbsolutePath();
             Script s = null;
             try{
-               s = new Script(path, plugin, this);
+               s = new Script(path, plugin);
             } catch (IllegalArgumentException e){
                 //invalid path - ignore file
+                //either
                 continue;
             }
             if(pluginsByScriptName_.containsKey(s.getName())){
-                System.err.println("A script with name: " + s.getName() + " already exists in plugin" + pluginsByScriptName_.get(s.getName()));
+                System.err.println("A script with name '" + s.getName() + "' already exists in plugin" + pluginsByScriptName_.get(s.getName()));
                 continue;
             }
             plugin.addScript(s.getName(), s);
             String extension = s.getExtension();
             if(!enginesByExtension_.containsKey(extension)) {
                 //      System.out.println("storing new engine for " + extension);
-         //       System.out.println("getting engine:" + factory_.getEngineByExtension(extension));
-                enginesByExtension_.put(extension, factory_.getEngineByExtension(extension));
+                //       System.out.println("getting engine:" + factory_.getEngineByExtension(extension));
+                ScriptEngine newScriptEngine = factory_.getEngineByExtension(extension);
+                if(newScriptEngine==null) {
+                    System.err.println("Invalid extension: " + s.getPath());
+                    continue;
+                } else {
+                    enginesByExtension_.put(extension, factory_.getEngineByExtension(extension));
+                }
             }
             try {
                 FileReader scriptReader = new FileReader(f);
                 scriptFileReaders_.put(s, scriptReader);
                 pluginsByScriptName_.put(s.getName(), plugin);
             } catch (FileNotFoundException e) {
-                System.err.println("file " + path + " has disappeared.");
+                System.err.println("file " + path + " cannot be loaded.");
             }
 
 

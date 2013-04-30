@@ -3,6 +3,7 @@ package plugins;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import com.google.common.base.Objects;
 
 /**
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:27 PM To
@@ -10,8 +11,8 @@ import java.util.Map;
  */
 public class Plugin {
 	private Map<String, Script> scriptsByName_;
-	private String name_;
-	private String path_;
+	private final String name_;
+	private final String path_;
 
 	public Map<String, Script> getScriptsByName() {
 		return new HashMap<String, Script>(scriptsByName_);
@@ -47,6 +48,11 @@ public class Plugin {
 		}
 	}
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name_, path_, scriptsByName_);
+    }
+
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Plugin)) {
@@ -58,4 +64,9 @@ public class Plugin {
 					&& p.getScriptsByName().equals(getScriptsByName());
 		}
 	}
+
+    @Override
+    public String toString(){
+        return "Plugin '" + name_ + "': " + scriptsByName_.keySet();
+    }
 }
