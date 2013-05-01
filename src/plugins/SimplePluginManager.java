@@ -64,26 +64,7 @@ public class SimplePluginManager implements PluginManager {
 		executeScript(pluginsByScriptName_.get(name).getScriptByName(name));
 	}
 
-	// a script cannot be executed unless its plugin has been loaded, so it is
-	// safe to assume:
-	// 1) engine for extension exists
-	// 2) file for script exists
-	@Override
-	public void executeScript(Script userScript) throws ScriptException {
-		// System.out.println("getting engine for " +
-		// userScript.getExtension());
-		ScriptEngine engine = enginesByExtension_
-				.get(userScript.getExtension());
-		// System.out.println("ext:" + userScript.getExtension());
-		// System.out.println("contains py:" +
-		// enginesByExtension_.containsKey("py"));
-		try {
-			// System.out.println("engine null: " + (engine == null));
-			engine.eval(scriptFileReaders_.get(userScript));
-		} catch (ScriptException e) {
-			throw new ScriptException("Error in Script: " + userScript);
-		}
-	}
+
 
     //a script cannot be executed unless its plugin has been loaded, so it is safe to assume:
     //1) engine for extension exists
@@ -169,5 +150,21 @@ public class SimplePluginManager implements PluginManager {
 	public LanguageBundle loadLanguageBundle(File bundle) {
 		return null;
 	}
+
+    @Override
+    public void loadPlugins(File pluginsDir) throws IllegalArgumentException{
+        if(!pluginsDir.exists() || !pluginsDir.isDirectory()){
+            throw new IllegalArgumentException("Invalid plugins directory.");
+        }
+        for (File f : pluginsDir.listFiles()) {
+            try{
+                if (f.isDirectory()) {
+                    loadPlugin(f.getAbsoluteFile());
+                }
+            } catch (SecurityException e){
+                System.err.println("Couldn't load plugin at " + f.getAbsolutePath());
+            }
+        }
+    }
 
 }

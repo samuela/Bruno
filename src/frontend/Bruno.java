@@ -29,8 +29,9 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import plugins.PluginManager;
 import plugins.SimplePluginManager;
-import undotree.TreeView;
+import undotree.EditHistoryView;
 import undotree.UndoController;
 import undotree.EditHistoryView;
 
@@ -48,8 +49,11 @@ public class Bruno extends JFrame {
 	private final JTabbedPane tabPane;
 	private final JSplitPane splitPane;
 	private final RSyntaxTextArea textArea;
+    private PluginManager pluginManager;
 
 	public Bruno() {
+
+        initializePluginManager();
 		setTitle("Bruno");
 		setBar();
 		setSize(1024, 768);
@@ -109,7 +113,7 @@ public class Bruno extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					pluginManager.executeScript("helloworld.js");
+                    pluginManager.executeScript("helloworld.js");
 				} catch (ScriptException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -152,10 +156,26 @@ public class Bruno extends JFrame {
 		setContentPane(splitPane);
 
 		// Plugins
-		pluginManager.loadPlugin(new File("plugins/"));
-	}
+        System.out.println("is null?" + (pluginManager==null));
 
-	/**
+        //when running from the native app, the current working directory is the home directory
+        //default plugin location: ~/bruno/plugins
+        try{
+            pluginManager.loadPlugins(new File("/Library/Application Support/bruno/plugins/"));
+        } catch (IllegalArgumentException e) {
+            System.err.println("Couldn't load plugins in bruno library directory.");
+        }
+        try{
+            pluginManager.loadPlugins(new File("plugins/"));
+        } catch (IllegalArgumentException e) {
+            System.err.println("Couldn't load plugins in project directory.");
+        }	}
+
+    private void initializePluginManager() {
+        pluginManager = new SimplePluginManager();
+    }
+
+    /**
 	 * Sets up demo menu bar
 	 */
 	private void setBar() {
@@ -217,10 +237,10 @@ public class Bruno extends JFrame {
 	}
 
 	public void toggleFoobar() {
-		if (foobarTest == null) {
+	/*	if (foobarTest == null) {
 			foobarTest = new FoobarTest();
 		}
-		foobarTest.setVisible(!foobarTest.isVisible());
+		foobarTest.setVisible(!foobarTest.isVisible()); */
 	}
 
 	/**
