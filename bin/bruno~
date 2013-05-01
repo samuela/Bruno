@@ -1,0 +1,4 @@
+#!/bin/sh
+BINDIR=`dirname $0`
+export CLASSPATH=$($BINDIR/jars lib):derived/bacon.jar
+$JAVA_HOME/bin/java edu.brown.cs32.jllessin.bacon.Main "$@"
