@@ -52,6 +52,7 @@ public class EditHistoryView extends JPanel
     public void setDocument(Document doc)
     {
 	textArea.setDocument(doc);
+	textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 
 }

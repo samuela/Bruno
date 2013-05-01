@@ -49,9 +49,9 @@ public class NodeComponent extends JPanel
     }
 
     @Override
-	public Dimension getPreferredSize()
+	public Dimension getMinimumSize()
     {
-	return new Dimension(20, Math.min(edit.getSize()/10 + 1, 50));
+	return new Dimension(1000, 1000);
     }
 
 }
