@@ -105,6 +105,8 @@ public class SimplePluginManager implements PluginManager {
 		try {
 			// System.out.println("engine null: " + (engine == null));
 			putAll(engine);
+			// System.out.println(engine);
+			// System.out.println(scriptFileReaders_.get(userScript));
 			engine.eval(scriptFileReaders_.get(userScript));
 			// System.out.println("executescript trying to get...");
 			// System.out.println("i="+engine.get("i"));
