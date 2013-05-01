@@ -1,6 +1,5 @@
 package frontend;
 
-import java.awt.Event;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -8,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.script.ScriptException;
@@ -22,8 +22,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
-import javax.swing.Popup;
-import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -33,9 +31,15 @@ import plugins.SimplePluginManager;
 
 import com.apple.eawt.Application;
 
-import foobar.Foobar;
-import edithistory.UndoController;
+import foobar.Fooable;
+import foobar.FoobarTest;
 
+/**
+ * The main Bruno application.
+ * 
+ * @author samuelainsworth
+ * 
+ */
 public class Bruno extends JFrame {
 
 	/**
@@ -51,9 +55,11 @@ public class Bruno extends JFrame {
 
 	private SimplePluginManager pluginManager = new SimplePluginManager();
 
-	private final Foobar foobar;
-	private final PopupFactory factory = PopupFactory.getSharedInstance();
-	private Popup foobarPopup;
+	private FoobarTest foobarTest;
+
+	// private final Foobar foobar;
+	// private final PopupFactory factory = PopupFactory.getSharedInstance();
+	// private Popup foobarPopup;
 
 	public Bruno() {
 		setTitle("Bruno");
@@ -83,6 +89,7 @@ public class Bruno extends JFrame {
 			}
 
 		});
+
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()),
@@ -138,12 +145,106 @@ public class Bruno extends JFrame {
 
 		setContentPane(splitPane);
 
-		foobar = new Foobar();
+		// foobar = new Foobar();
 
-        Set<Plugin> plugins = setPlugins();
+		// Set<Plugin> plugins = setPlugins();
 
 		// Open blank initial document
 		openDocument(new Document());
+
+		foobarTest = new FoobarTest();
+		setUpDemoFooables();
+
+		loadPlugins();
+	}
+
+	/**
+	 * Initialize simple Fooables
+	 */
+	private void setUpDemoFooables() {
+		foobarTest.getFoobar().addFooable(new Fooable() {
+
+			@Override
+			public String getName() {
+				return "open";
+			}
+
+			@Override
+			public Set<String> getKeywords() {
+				Set<String> r = new HashSet<>();
+				r.add("open");
+				r.add("file");
+				return r;
+			}
+
+			@Override
+			public void doAction() {
+				JFileChooser fc = new JFileChooser();
+				fc.showOpenDialog(getRootPane());
+			}
+
+			@Override
+			public String toString() {
+				return "open file";
+			}
+		});
+
+		foobarTest.getFoobar().addFooable(new Fooable() {
+
+			@Override
+			public String getName() {
+				return "close";
+			}
+
+			@Override
+			public Set<String> getKeywords() {
+				Set<String> r = new HashSet<>();
+				r.add("close");
+				r.add("exit");
+				return r;
+			}
+
+			@Override
+			public void doAction() {
+				close();
+			}
+
+			@Override
+			public String toString() {
+				return "close";
+			}
+		});
+
+		foobarTest.getFoobar().addFooable(new Fooable() {
+
+			@Override
+			public String getName() {
+				return "save";
+			}
+
+			@Override
+			public Set<String> getKeywords() {
+				Set<String> r = new HashSet<>();
+				r.add("save");
+				r.add("file");
+				return r;
+			}
+
+			@Override
+			public void doAction() {
+				try {
+					editingWindow.save();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public String toString() {
+				return "save";
+			}
+		});
+
 	}
 
 	private Set<Plugin> setPlugins() {
@@ -162,6 +263,13 @@ public class Bruno extends JFrame {
 		// at least one of the plugin locations should be correct and readable
 		assert plugins != null;
 		return plugins;
+	}
+
+	private void loadPlugins() {
+		Set<Plugin> plugins = pluginManager.loadPlugins(new File("plugins/"));
+		for (Plugin plugin : plugins) {
+			foobarTest.getFoobar().addFooables(plugin.getScriptFooables());
+		}
 	}
 
 	/**
@@ -193,14 +301,14 @@ public class Bruno extends JFrame {
 	}
 
 	public void openDocument(Document doc) {
-		// TODO
-
 		// Save current file
 		if (editingWindow != null) {
 			try {
 				editingWindow.save();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(this, "Failed to save file "
+						+ doc.getFile(), "File saving error",
+						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
 		}
@@ -238,16 +346,21 @@ public class Bruno extends JFrame {
 	}
 
 	public void toggleFoobar() {
-		if (foobarPopup != null) {
-			foobarPopup.hide();
-			foobarPopup = null;
-		}
-		else {
-			foobarPopup = factory.getPopup(this, foobar,
-				getLocationOnScreen().x + this.getWidth()/2 - foobar.getWidth()/2,
-				textArea.getLocationOnScreen().y);
-			foobarPopup.show();
-		}
+		// if (foobarPopup != null) {
+		// foobarPopup.hide();
+		// foobarPopup = null;
+		// } else {
+		// foobarPopup = factory.getPopup(
+		// this,
+		// foobar,
+		// getLocationOnScreen().x + this.getWidth() / 2
+		// - foobar.getWidth() / 2,
+		// editingWindowPlaceholder.getLocationOnScreen().y);
+		// foobarPopup.show();
+		// foobar.requestFocus();
+		// }
+
+		foobarTest.setVisible(!foobarTest.isVisible());
 	}
 
 	/**

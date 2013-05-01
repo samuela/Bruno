@@ -2,17 +2,22 @@ package plugins;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Objects;
+
+import foobar.Fooable;
+import foobar.ScriptFooable;
 
 /**
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:27 PM To
  * change this template use File | Settings | File Templates.
  */
 public class Plugin {
-    private final PluginManager manager_;
-    private Map<String, Script> scriptsByName_;
+	private final PluginManager manager_;
+	private Map<String, Script> scriptsByName_;
 	private final String name_;
 	private final String path_;
 
@@ -29,7 +34,7 @@ public class Plugin {
 	}
 
 	public Plugin(PluginManager pluginManager, String path) {
-        manager_ = pluginManager;
+		manager_ = pluginManager;
 		scriptsByName_ = new HashMap<String, Script>();
 		path_ = path;
 		name_ = findNameFromPath(path_);
@@ -49,6 +54,20 @@ public class Plugin {
 		} else {
 			throw new IllegalArgumentException("Script " + name + " not found.");
 		}
+	}
+
+	/**
+	 * Get a ScriptFooable for every Script in the plugin to be handed off to
+	 * the Foobar.
+	 * 
+	 * @return
+	 */
+	public Set<Fooable> getScriptFooables() {
+		Set<Fooable> fooables = new HashSet<>();
+		for (Script script : getScriptsByName().values()) {
+			fooables.add(new ScriptFooable(manager_, script));
+		}
+		return fooables;
 	}
 
 	@Override

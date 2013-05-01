@@ -12,6 +12,8 @@ import com.google.common.collect.Sets;
 public final class FoobarTest extends JFrame {
 	private static final long serialVersionUID = 1L;
 
+	private Foobar foobar;
+
 	/**
 	 * Create a new JFrame to test the Foobar component
 	 */
@@ -24,13 +26,17 @@ public final class FoobarTest extends JFrame {
 		this.setResizable(false);
 
 		// Add a new Foobar to the frame
-		Foobar foobar = new Foobar();
+		foobar = new Foobar();
 		this.add(foobar);
 
 		// Populate the Foobar with dummy data
 		foobar.addFooables(this.fooables);
 
 		this.pack();
+	}
+
+	public Foobar getFoobar() {
+		return foobar;
 	}
 
 	/**

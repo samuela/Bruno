@@ -4,6 +4,13 @@ import java.awt.BorderLayout;
 
 import javax.swing.JComponent;
 
+/**
+ * A placeholder component which you can swap other components into and out of
+ * easily. Used for the editing view and the undo history side view.
+ * 
+ * @author samuelainsworth
+ * 
+ */
 public class ComponentPlaceholder extends JComponent {
 	/**
 	 * 
@@ -13,7 +20,7 @@ public class ComponentPlaceholder extends JComponent {
 	private JComponent contents;
 
 	public ComponentPlaceholder() {
-	
+
 	}
 
 	public ComponentPlaceholder(JComponent contents) {

@@ -19,6 +19,13 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import edithistory.UndoController;
 
+/**
+ * An editing view controller. Accepts a document and manages its editing and
+ * undo views as well as saving and loading.
+ * 
+ * @author samuelainsworth
+ * 
+ */
 public class EditingWindow {
 
 	private final Document doc;
@@ -73,9 +80,14 @@ public class EditingWindow {
 
 	}
 
+	/**
+	 * Save the document.
+	 * 
+	 * @throws IOException
+	 */
 	public void save() throws IOException {
 		if (doc.getFile() == null) {
-			// TODO
+			// TODO check if the file is non-empty and ask to save
 		} else {
 			Writer writer = new OutputStreamWriter(new FileOutputStream(
 					doc.getFile()));

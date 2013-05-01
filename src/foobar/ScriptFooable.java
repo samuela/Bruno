@@ -1,5 +1,6 @@
 package foobar;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.script.ScriptException;
@@ -30,8 +31,9 @@ public class ScriptFooable implements Fooable {
 
 	@Override
 	public Set<String> getKeywords() {
-		// TODO Auto-generated method stub
-		return null;
+		Set<String> r = new HashSet<>();
+		r.add(script.getName());
+		return r;
 	}
 
 	@Override
@@ -41,6 +43,11 @@ public class ScriptFooable implements Fooable {
 		} catch (ScriptException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public String toString() {
+		return script.getName();
 	}
 
 }
