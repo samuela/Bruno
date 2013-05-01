@@ -99,4 +99,25 @@ public class TextEdit extends Edit
 	backInTime();
     }
 
+    @Override
+	public boolean addEdit(UndoableEdit e)
+    {
+	String changedText = Edit.changedText(e);
+	int size = Edit.editSize(e);
+	if (size > 1)
+	    return false;
+	else if (getSize() >= 5 && (changedText.equals(" ") ||
+			       changedText.equals("\n") ||
+			       changedText.equals("\t"))){
+	    return false;
+	}
+	else if (!getType().equals(e.getPresentationName()))
+	    return false;
+	else{
+	    edits.add(e);
+	    setSize(getSize() + size);
+	    return true;
+	}
+    }
+
 }

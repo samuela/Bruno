@@ -5,6 +5,7 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
 import javax.swing.undo.UndoableEdit;
 import java.util.Date;
+import javax.swing.text.BadLocationException;
 
 public class Edit
 {
@@ -187,4 +188,23 @@ public class Edit
 	else
 	    return "";
     }
+
+    public static String changedText(UndoableEdit e)
+    {
+	AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) e;
+	String text = "";
+	try{
+	    String type = e.getPresentationName();
+	    if (type.equals("addition")){
+		text = event.getDocument().getText(event.getOffset(), event.getLength());
+	    }
+	}
+	catch(BadLocationException ex){
+	    System.out.println(e);
+	    ex.printStackTrace();
+	    //This should never happen
+	}
+	return text;
+    }
+    
 }
