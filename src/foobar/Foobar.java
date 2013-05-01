@@ -36,7 +36,7 @@ public final class Foobar extends JPanel {
 	/**
 	 * Create a new Foobar containing no Fooables.
 	 */
-	protected Foobar() {
+	public Foobar() {
 		super(new BorderLayout());
 
 		// Store all Fooables in a HashSet
