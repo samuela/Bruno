@@ -22,15 +22,8 @@ public class NodeComponent extends JPanel
 	this.edit = edit;
 	setBorder(BorderFactory.createLineBorder(Color.black));
 	setOpaque(true);
-	if (edit.getType().equals("addition")){
-	    setBackground(Color.green);
-	}
-	else if (edit.getType().equals("deletion")){
-	    setBackground(Color.red);
-	}
-	else{
-	    setBackground(Color.gray);//top node
-	}
+	setColor();
+	
 	addMouseListener(new MouseAdapter(){
 		@Override
 		    public void mouseEntered(MouseEvent e)
@@ -62,12 +55,27 @@ public class NodeComponent extends JPanel
 	return new Dimension(5000000, 50);
     }
 
+    public void setColor()
+    {
+	if (edit.getType().equals("addition")){
+	    setBackground(Color.green);
+	}
+	else if (edit.getType().equals("deletion")){
+	    setBackground(Color.red);
+	}
+	else{
+	    setBackground(Color.gray);//top node
+	}
+    }
+
     public void setComment(String comment)
     {
 	edit.setComment(comment);
 	if (!(comment.equals(""))){
 	    setBackground(Color.orange);
 	}
+	else
+	    setColor();
     }
 
     public String getComment()
