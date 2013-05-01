@@ -48,6 +48,7 @@ public class SimplePluginManager implements PluginManager {
 		pluginsByScriptName_ = new HashMap<String, Plugin>();
 		pluginsByName_ = new HashMap<>();
 		globals = new SimpleBindings();
+		
 		try {
 			errorLog = new PrintWriter(new BufferedWriter(new FileWriter(
 					System.getProperty("user.home") + "/bruno.log", true)),

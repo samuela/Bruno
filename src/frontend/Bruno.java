@@ -155,6 +155,7 @@ public class Bruno extends JFrame {
 		foobarTest = new FoobarTest();
 		setUpDemoFooables();
 
+		pluginManager.exposeVariable("bruno", this);
 		loadPlugins();
 	}
 
