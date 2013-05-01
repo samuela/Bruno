@@ -35,7 +35,7 @@ public class NodeComponent extends JPanel
 		@Override
 		    public void mouseEntered(MouseEvent e)
 		{
-		    undoController.getView().setClickedEdit(edit);
+		    undoController.getView().setClickedNode(NodeComponent.this);
 		    undoController.backInTime(edit);
 		    Document document = undoController.getDocument();
 		    RSyntaxDocument restoredDocument = new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_JAVA);
@@ -60,6 +60,19 @@ public class NodeComponent extends JPanel
 	public Dimension getMaximumSize()
     {
 	return new Dimension(5000000, 50);
+    }
+
+    public void setComment(String comment)
+    {
+	edit.setComment(comment);
+	if (!(comment.equals(""))){
+	    setBackground(Color.orange);
+	}
+    }
+
+    public String getComment()
+    {
+	return edit.getComment();
     }
 
 }

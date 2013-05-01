@@ -19,7 +19,7 @@ public class EditHistoryView extends JPanel
     private LayoutManager layout;
     private Box nodesView;
     private UndoController undoController;
-    private Edit clickedEdit;
+    private NodeComponent clickedNode;
     private JTextArea comment;
 
     public EditHistoryView(UndoController undoController)
@@ -63,8 +63,8 @@ public class EditHistoryView extends JPanel
 	    public void removeUpdate(DocumentEvent e){update();}
 	public void update()
 	{
-	    if (clickedEdit != null){
-		clickedEdit.setComment(comment.getText());
+	    if (clickedNode != null){
+		clickedNode.setComment(comment.getText());
 	    }
 	}
     }
@@ -81,16 +81,16 @@ public class EditHistoryView extends JPanel
 	textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 
-    public void setClickedEdit(Edit e)
+    public void setClickedNode(NodeComponent n)
     {
-	clickedEdit = e;
-	comment.setText(e.getComment());
+	clickedNode = n;
+	comment.setText(n.getComment());
 	comment.setEditable(true);
     }
 
-    public Edit getClickedEdit()
+    public NodeComponent getClickedNode()
     {
-	return clickedEdit;
+	return clickedNode;
     }
 
 }
