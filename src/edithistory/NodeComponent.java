@@ -35,6 +35,7 @@ public class NodeComponent extends JPanel
 		@Override
 		    public void mouseClicked(MouseEvent e)
 		{
+		    undoController.getView().setClickedEdit(edit);
 		    undoController.backInTime(edit);
 		    Document document = undoController.getDocument();
 		    RSyntaxDocument restoredDocument = new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_JAVA);
@@ -44,7 +45,6 @@ public class NodeComponent extends JPanel
 		    catch(BadLocationException e1){}
 		    undoController.forwardInTime(edit);
 		    undoController.getView().setDocument(restoredDocument);
-		    undoController.getView().setClickedEdit(edit);
 		}
 	    });
     }
