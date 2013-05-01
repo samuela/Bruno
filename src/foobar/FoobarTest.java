@@ -15,7 +15,7 @@ public final class FoobarTest extends JFrame {
 	/**
 	 * Create a new JFrame to test the Foobar component
 	 */
-	private FoobarTest() {
+	public FoobarTest() {
 		super("Foobar Test");
 
 		// this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

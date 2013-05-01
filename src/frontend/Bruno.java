@@ -30,9 +30,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import plugins.SimplePluginManager;
-import undotree.TreeView;
 import undotree.UndoController;
-import undotree.EditHistoryView;
 
 import com.apple.eawt.Application;
 
@@ -48,6 +46,8 @@ public class Bruno extends JFrame {
 	private final JTabbedPane tabPane;
 	private final JSplitPane splitPane;
 	private final RSyntaxTextArea textArea;
+	private SimplePluginManager pluginManager = new SimplePluginManager();
+	private FoobarTest foobarTest;
 
 	public Bruno() {
 		setTitle("Bruno");
@@ -128,7 +128,8 @@ public class Bruno extends JFrame {
 		sp.setLineNumbersEnabled(true);
 
 		// Setup undo tree
-		UndoController undoController = new UndoController(textArea.getDocument());
+		UndoController undoController = new UndoController(
+				textArea.getDocument());
 		textArea.getDocument().addUndoableEditListener(undoController);
 
 		textArea.getInputMap().put(
@@ -144,7 +145,7 @@ public class Bruno extends JFrame {
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Projects", new ProjectExplorer(this));
 		tabPane.addTab("Edit History", undoController.getEditHistoryView());
-		
+
 		// Split Pane
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, tabPane);
 		splitPane.setOneTouchExpandable(true);

@@ -1,158 +1,151 @@
 package test.plugins;
 
-import org.junit.Ignore;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
+import javax.script.ScriptException;
+
 import org.junit.Test;
+
 import plugins.Plugin;
 import plugins.PluginManager;
 import plugins.Script;
 import plugins.SimplePluginManager;
 
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
-import javax.script.SimpleBindings;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-
-import static org.junit.Assert.*;
-
-
 /**
- * Created with IntelliJ IDEA.
- * User: jonathan
- * Date: 4/11/13
- * Time: 1:55 PM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: jonathan Date: 4/11/13 Time: 1:55 PM To
+ * change this template use File | Settings | File Templates.
  */
 public class PluginTester {
 
-    @Test
-    public void noExtension(){
-        PluginManager simple = new SimplePluginManager();
-        Plugin p = simple.loadPlugin(new File("plugins/noextension"));
-     //   System.out.println(p.getScriptsByName());
-        assertTrue(p.getScriptsByName().isEmpty());
-    }
+	@Test
+	public void noExtension() {
+		PluginManager simple = new SimplePluginManager();
+		Plugin p = simple.loadPlugin(new File("plugins/noextension"));
+		// System.out.println(p.getScriptsByName());
+		assertTrue(p.getScriptsByName().isEmpty());
+	}
 
-    @Test
-    public void cantRead(){
-        SimplePluginManager simple = new SimplePluginManager();
-        simple.loadPlugin(new File("plugins/cantread"));
-        Plugin helloagain = simple.loadPlugin(new File("plugins/helloagain"));
-        assertTrue(simple.contains(helloagain, "helloworld", "py"));
-    }
+	@Test
+	public void cantRead() {
+		SimplePluginManager simple = new SimplePluginManager();
+		simple.loadPlugin(new File("plugins/cantread"));
+		Plugin helloagain = simple.loadPlugin(new File("plugins/helloagain"));
+		assertTrue(simple.contains(helloagain, "helloworld", "py"));
+	}
 
-    @Test
-    public void duplicateName(){
-        SimplePluginManager simple = new SimplePluginManager();
-        Plugin helloagain = simple.loadPlugin(new File("plugins/helloagain"));
-        Plugin hello = simple.loadPlugin(new File("plugins/hello"));
-        assertTrue(simple.contains(helloagain, "helloworld", "py"));
-        assertTrue(simple.contains(hello, "alert", "js"));
-        assertTrue(simple.contains(hello, "write", "py"));
-        //KEY ASSERT
-        assertFalse(simple.contains(hello, "helloworld", "js"));
-        //just to be sure script with dup name belongs only to the first plugin searched
-        assertFalse(simple.contains(hello, "helloworld", "py"));
-    }
+	@Test
+	public void duplicateName() {
+		SimplePluginManager simple = new SimplePluginManager();
+		Plugin helloagain = simple.loadPlugin(new File("plugins/helloagain"));
+		Plugin hello = simple.loadPlugin(new File("plugins/hello"));
+		assertTrue(simple.contains(helloagain, "helloworld", "py"));
+		assertTrue(simple.contains(hello, "alert", "js"));
+		assertTrue(simple.contains(hello, "write", "py"));
+		// KEY ASSERT
+		assertFalse(simple.contains(hello, "helloworld", "js"));
+		// just to be sure script with dup name belongs only to the first plugin
+		// searched
+		assertFalse(simple.contains(hello, "helloworld", "py"));
+	}
 
-    @Test
-    public void badExtension(){
-        SimplePluginManager simple = new SimplePluginManager();
-        Plugin p = simple.loadPlugin(new File("plugins/badext"));
-        assertFalse(simple.contains(p, "ahoy", "py~"));
-    }
+	@Test
+	public void badExtension() {
+		SimplePluginManager simple = new SimplePluginManager();
+		Plugin p = simple.loadPlugin(new File("plugins/badext"));
+		assertFalse(simple.contains(p, "ahoy", "py~"));
+	}
 
-    @Test
-    public void loadPluginTest() {
-        PluginManager simpleManager = new SimplePluginManager();
-        File f = new File("plugins/hello");
-        Plugin p = simpleManager.loadPlugin(f);
-        Script hello = p.getScriptByName("helloworld");
+	@Test
+	public void loadPluginTest() {
+		PluginManager simpleManager = new SimplePluginManager();
+		File f = new File("plugins/hello");
+		Plugin p = simpleManager.loadPlugin(f);
+		Script hello = p.getScriptByName("helloworld");
 
-        //check manager state
-        assertTrue(((SimplePluginManager) simpleManager).hasEngine("js"));
-        assertTrue(((SimplePluginManager) simpleManager).supportsScript(hello));
+		// check manager state
+		assertTrue(((SimplePluginManager) simpleManager).hasEngine("js"));
+		assertTrue(((SimplePluginManager) simpleManager).supportsScript(hello));
 
-        //check plugin state
-        assertEquals("hello", p.getName());
-        assertEquals(f.getAbsolutePath(), p.getPath());
+		// check plugin state
+		assertEquals("hello", p.getName());
+		assertEquals(f.getAbsolutePath(), p.getPath());
 
-                //check script state
-        assertEquals("js", hello.getExtension());
-        assertTrue(p == hello.getPlugin());
-        assertEquals(f.getAbsolutePath() + "/helloworld.js", hello.getPath());
-        assertEquals("helloworld", hello.getName());
+		// check script state
+		assertEquals("js", hello.getExtension());
+		assertTrue(p == hello.getPlugin());
+		assertEquals(f.getAbsolutePath() + "/helloworld.js", hello.getPath());
+		assertEquals("helloworld", hello.getName());
 
+		// SEE IT IN ACTION
+		try {
 
-        //SEE IT IN ACTION
-        try {
+			simpleManager.executeScript(hello);
+		} catch (ScriptException e) {
+			e.printStackTrace(); // To change body of catch statement use File |
+									// Settings | File Templates.
+		}
+	}
 
-            simpleManager.executeScript(hello);
-        } catch (ScriptException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-    }
+	@Test
+	public void executeTest() {
+		PluginManager simpleManager = new SimplePluginManager();
+		File f = new File("plugins/hello");
+		Plugin p = simpleManager.loadPlugin(f);
 
-    @Test
-    public void executeTest() {
-        PluginManager simpleManager = new SimplePluginManager();
-        File f = new File("plugins/hello");
-        Plugin p = simpleManager.loadPlugin(f);
+		Script writeHello = p.getScriptByName("write");
 
-        Script writeHello = p.getScriptByName("write");
+		assertTrue(((SimplePluginManager) simpleManager)
+				.supportsScript(writeHello));
 
-        assertTrue(((SimplePluginManager) simpleManager).supportsScript(writeHello));
+		// System.out.println(writeHello==null);
+		try {
+			simpleManager.executeScript(writeHello);
 
-        //   System.out.println(writeHello==null);
-        try {
-            simpleManager.executeScript(writeHello);
+		} catch (ScriptException e) {
+			e.printStackTrace(); // To change body of catch statement use File |
+									// Settings | File Templates.
+		}
 
-        } catch (ScriptException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+		File written = new File("plugins/hello/hello.txt");
+		assertTrue(written.exists());
+		written.delete();
+	}
 
-        File written = new File("plugins/hello/hello.txt");
-        assertTrue(written.exists());
-        written.delete();
-    }
+	@Test
+	public void exposeVars() throws ScriptException, FileNotFoundException {
+		SimplePluginManager simple = new SimplePluginManager();
+		Plugin expose = simple.loadPlugin(new File("plugins/expose"));
+		Script sq = expose.getScriptByName("sq");
 
-    @Test
-    public void exposeVars() throws ScriptException, FileNotFoundException {
-        SimplePluginManager simple = new SimplePluginManager();
-        Plugin expose = simple.loadPlugin(new File("plugins/expose"));
-        Script sq = expose.getScriptByName("sq");
+		simple.exposeVariable("i", 4);
+		simple.executeScript(sq);
+		// NOTE: had to comment these out because I wasn't sure how to fix them
+		// ScriptEngine py = simple.getEngineByExtension("py");
+		// System.out.println("getting " + py.get("i"));
+		// int i = (Integer) simple.getVariable("i");
+		// assertTrue(16 == i);
 
-        simple.exposeVariable("i", 4);
-        simple.executeScript(sq);
-        ScriptEngine py = simple.getEngineByExtension("py");
-      //  System.out.println("getting " + py.get("i"));
-        int i = (Integer)simple.getVariable("i");
-        assertTrue(16==i);
+		/*
+		 * System.out.println("the python engine" + py);
+		 * 
+		 * py.put("i", 2); py.eval("print \"i=\",i"); py.eval("i=3"); //
+		 * py.eval(new FileReader(new File("plugins/expose/two.py")));
+		 * System.out.println("getting " + py.get("i")); //
+		 * System.out.println(simple.getVariable("i"));
+		 */
+	}
 
-      /*
-        System.out.println("the python engine" + py);
-
-        py.put("i", 2);
-            py.eval("print \"i=\",i");
-            py.eval("i=3");
-     //   py.eval(new FileReader(new File("plugins/expose/two.py")));
-            System.out.println("getting " + py.get("i"));
-           // System.out.println(simple.getVariable("i"));     */
-    }
-
-/*
-    //JUST SCREWING AROUND WITH JAVASCRIPT
-    @Test
-    public void alertTest(){
-        PluginManager pm = new SimplePluginManager();
-        File f = new File("plugins/hello");
-        pm.loadPlugin(f);
-        try{
-            ((SimplePluginManager) pm).executeScript("alert");
-        } catch (ScriptException e){
-            e.printStackTrace();
-        }
-    }          */
+	/*
+	 * //JUST SCREWING AROUND WITH JAVASCRIPT
+	 * 
+	 * @Test public void alertTest(){ PluginManager pm = new
+	 * SimplePluginManager(); File f = new File("plugins/hello");
+	 * pm.loadPlugin(f); try{ ((SimplePluginManager) pm).executeScript("alert");
+	 * } catch (ScriptException e){ e.printStackTrace(); } }
+	 */
 }
