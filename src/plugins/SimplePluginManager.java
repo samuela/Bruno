@@ -1,13 +1,14 @@
 package plugins;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.sql.Timestamp;
+import java.util.*;
 
-import javax.script.*;
+import javax.script.Bindings;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -23,6 +24,8 @@ public class SimplePluginManager implements PluginManager {
     private Map<String, ScriptEngine> enginesByExtension_;
     private Map<Script, FileReader> scriptFileReaders_;
     private Map<String, Plugin> pluginsByScriptName_;
+    private Map<String, Plugin> pluginsByName_;
+    private PrintWriter errorLog;
 
     private Bindings globals;
     private ScriptEngine last_;
@@ -32,7 +35,15 @@ public class SimplePluginManager implements PluginManager {
         enginesByExtension_ = new HashMap<String, ScriptEngine>();
         scriptFileReaders_ = new HashMap<Script, FileReader>();
         pluginsByScriptName_ = new HashMap<String, Plugin>();
+        pluginsByName_ = new HashMap<>();
         globals = new SimpleBindings();
+        try {
+            errorLog = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.home") + "/bruno.log", true)), true);
+            errorLog.println(new Timestamp((new Date()).getTime()));
+        } catch (IOException e) {
+            errorLog = new PrintWriter(System.err, true);
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     public ScriptEngine getEngineByExtension(String ext){
@@ -52,6 +63,7 @@ public class SimplePluginManager implements PluginManager {
         }
     }
 
+
 	public boolean hasEngine(String extension) {
 		return enginesByExtension_.containsKey(extension);
 	}
@@ -63,6 +75,7 @@ public class SimplePluginManager implements PluginManager {
 	public void executeScript(String name) throws ScriptException {
 		executeScript(pluginsByScriptName_.get(name).getScriptByName(name));
 	}
+
 
 
 
@@ -100,37 +113,58 @@ public class SimplePluginManager implements PluginManager {
     }
 
 
-    //if plugin contains any new scripting languages, create new engines for them
-    //open new FileReader for each script in plugin recursively
+    // if plugin contains any new scripting languages, create new engines for
+    // them
+    // open new FileReader for each script in plugin recursively
     @Override
-    public Plugin loadPlugin(File directoryPath) {
-        Plugin plugin = new Plugin(directoryPath.getAbsolutePath());
-        Collection<File> files = FileUtils.listFiles(directoryPath, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
-        for(File f: files) {
+    public Plugin loadPlugin(File directoryPath) throws IllegalArgumentException {
+        assert directoryPath.isDirectory();
+        String dirPath = directoryPath.getAbsolutePath();
+        assert !dirPath.isEmpty();
+        int end = dirPath.length();
+        if(dirPath.charAt(end-1)=='/'){
+            end--;
+        }
+        String pluginName = dirPath.substring(1+dirPath.lastIndexOf('/'), end);
+        if(pluginsByName_.containsKey(pluginName)){
+            throw new IllegalArgumentException("Already loaded plugin with name " + pluginName);
+        }
+        Plugin plugin = new Plugin(this, dirPath);
+        pluginsByName_.put(pluginName, plugin);
+
+        Collection<File> files = FileUtils.listFiles(directoryPath,
+                TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+        for (File f : files) {
             String path = f.getAbsolutePath();
             Script s = null;
-            try{
-               s = new Script(path, plugin);
-            } catch (IllegalArgumentException e){
-                //invalid path - ignore file
-                //either
+            try {
+                s = new Script(path, plugin);
+            } catch (IllegalArgumentException e) {
+                // invalid path - ignore file
+                // either
+                errorLog.println("Couldn't load script " + path + " : " + e.getMessage());
                 continue;
             }
-            if(pluginsByScriptName_.containsKey(s.getName())){
-                System.err.println("A script with name '" + s.getName() + "' already exists in plugin" + pluginsByScriptName_.get(s.getName()));
+            if (pluginsByScriptName_.containsKey(s.getName())) {
+                errorLog.println("A script with name '" + s.getName()
+                        + "' already exists in plugin"
+                        + pluginsByScriptName_.get(s.getName()));
                 continue;
             }
             plugin.addScript(s.getName(), s);
             String extension = s.getExtension();
-            if(!enginesByExtension_.containsKey(extension)) {
-                //      System.out.println("storing new engine for " + extension);
-                //       System.out.println("getting engine:" + factory_.getEngineByExtension(extension));
-                ScriptEngine newScriptEngine = factory_.getEngineByExtension(extension);
-                if(newScriptEngine==null) {
-                    System.err.println("Invalid extension: " + s.getPath());
+            if (!enginesByExtension_.containsKey(extension)) {
+                // System.out.println("storing new engine for " + extension);
+                // System.out.println("getting engine:" +
+                // factory_.getEngineByExtension(extension));
+                ScriptEngine newScriptEngine = factory_
+                        .getEngineByExtension(extension);
+                if (newScriptEngine == null) {
+                    errorLog.println("Invalid extension: " + s.getPath());
                     continue;
                 } else {
-                    enginesByExtension_.put(extension, factory_.getEngineByExtension(extension));
+                    enginesByExtension_.put(extension,
+                            factory_.getEngineByExtension(extension));
                 }
             }
             try {
@@ -138,13 +172,19 @@ public class SimplePluginManager implements PluginManager {
                 scriptFileReaders_.put(s, scriptReader);
                 pluginsByScriptName_.put(s.getName(), plugin);
             } catch (FileNotFoundException e) {
-                System.err.println("file " + path + " cannot be loaded.");
+                errorLog.println("file " + path + " cannot be loaded.");
             }
 
+        }
+        return plugin;
+    }
 
-		}
-		return plugin;
+
+	@Override
+	public void revokeVariable(String key) {
+		globals.remove(key);
 	}
+
 
 	@Override
 	public LanguageBundle loadLanguageBundle(File bundle) {
@@ -152,19 +192,26 @@ public class SimplePluginManager implements PluginManager {
 	}
 
     @Override
-    public void loadPlugins(File pluginsDir) throws IllegalArgumentException{
-        if(!pluginsDir.exists() || !pluginsDir.isDirectory()){
-            throw new IllegalArgumentException("Invalid plugins directory.");
+    public Set<Plugin> loadPlugins(File pluginsDir) throws IllegalArgumentException {
+        Set<Plugin> plugins = new HashSet<>();
+        if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
+            errorLog.println("Invalid plugins directory.");
+            return null;
         }
         for (File f : pluginsDir.listFiles()) {
-            try{
+            try {
                 if (f.isDirectory()) {
-                    loadPlugin(f.getAbsoluteFile());
+                    try {
+                        plugins.add(loadPlugin(f.getAbsoluteFile()));
+                    } catch (IllegalArgumentException e) {
+                        errorLog.println("Failed to load plugin " + f + ": " + e.getMessage());
+                    }
                 }
-            } catch (SecurityException e){
-                System.err.println("Couldn't load plugin at " + f.getAbsolutePath());
+            } catch (SecurityException e) {
+                errorLog.println("Couldn't load plugin at " + f.getAbsolutePath());
             }
         }
+        return plugins;
     }
 
 }

@@ -1,24 +1,17 @@
 package plugins;
 
-import foobar.Fooable;
-
-import javax.script.ScriptException;
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
-
 
 /**
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:21 PM To
  * change this template use File | Settings | File Templates.
  */
-public class Script{
+public class Script {
 
-    private final String extension_;
+	private final String extension_;
 	private final Plugin plugin_;
 	private final String path_;
 	private final String name_;
-
 
 	public String getExtension() {
 		return extension_;
@@ -28,9 +21,9 @@ public class Script{
 		return plugin_;
 	}
 
-    public String getPluginName(){
-        return plugin_.getName();
-    }
+	public String getPluginName() {
+		return plugin_.getName();
+	}
 
 	public String getPath() {
 		return path_;
@@ -40,14 +33,16 @@ public class Script{
 		return name_;
 	}
 
-
-    /**
-     *
-     * @param path script file location
-     * @param plugin contains this script
-     * @throws IllegalArgumentException if path does not have an extension
-     */
-    public Script(String path, Plugin plugin) throws IllegalArgumentException {
+	/**
+	 * 
+	 * @param path
+	 *            script file location
+	 * @param plugin
+	 *            contains this script
+	 * @throws IllegalArgumentException
+	 *             if path does not have an extension
+	 */
+	public Script(String path, Plugin plugin) throws IllegalArgumentException {
 		extension_ = path.substring(path.lastIndexOf('.') + 1);
 		plugin_ = plugin;
 		path_ = path;
@@ -59,19 +54,21 @@ public class Script{
 		} else {
 			name_ = withExt.substring(0, withExt.lastIndexOf('.'));
 		}
-        if(name_.isEmpty()) {
-            throw new IllegalArgumentException("Invalid script name - hidden file");
-        }
-    }
+		if (name_.isEmpty()) {
+			throw new IllegalArgumentException(
+					"Invalid script name - hidden file");
+		}
+	}
 
-    @Override
+	@Override
 	public String toString() {
 		return "Script: name=" + name_ + " type=" + extension_ + " plugin=" + plugin_.getName();
 	}
 
 	@Override
 	public int hashCode() {
-		return com.google.common.base.Objects.hashCode(extension_, path_, name_);
+		return com.google.common.base.Objects
+				.hashCode(extension_, path_, name_);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <project name="Bruno" default = "compile" basedir=".">
+
   <property name="app.src" location="src"/>
   <property name="project" value="bruno"/>
   <property name="app.derived" location="derived"/>
@@ -10,15 +11,17 @@
   <property name="derived.javadoc" location="${app.derived}/javadoc"/>
   <property name="derived.student" location="${app.derived}/student/${project}"/>
 
+
   
   <target name="init">
-    <mkdir dir="${app.derived}"/>
+    <mkdir dir="${app.derived}" />
   </target>
 
   <path id="class.path">
+  	<pathelement location="bin"/>
     <fileset dir="lib">
-      <include name="**/*.jar"/>
-      <include name="**/*.zip"/>
+      <include name="**/*.jar" />
+      <include name="**/*.zip" />
     </fileset>
   </path>
 
@@ -114,16 +117,20 @@
       </java>
       </target>
   -->
+	
   <target name="run" depends="compile">
-    <input addproperty="args" message="args: "/>
-    <java classname="edu.brown.cs32.jllessin.bruno.Main">
-      <arg line="${args}"/>
+  	<!-- We don't need args for now -->
+    <!--<input addproperty="args" message="args: " />-->
+    <java classname="frontend.Bruno" failonerror="true" fork="yes">
+      <!--<arg line="${args}" />-->
       <classpath>
-	<path id="run.path">
-	  <fileset dir="${app.derived}" includes="*.jar"/>
-	</path>
-	<!--	<path location="${app.derived}"/>-->
+		<path id="run.path">
+		  <fileset dir="${app.derived}" includes="*.jar" />
+		</path>
+		<path location="${app.derived}" />
+      	
       </classpath>
+    	<classpath refid="class.path"/>
     </java>
   </target>
 
@@ -131,7 +138,7 @@
     <delete dir="${app.derived}"/>
   </target>
 
-  <target name="system_test" depends="compile,jar">
+  <!--<target name="system_test" depends="compile,jar">
     <exec executable="python">
       <arg value="/course/cs032/bin/tester.py"/>
       <arg value="-t5.0"/>
@@ -139,7 +146,7 @@
       <arg value="./test-suite.xml"/>
       <arg value="bin/bruno"/>
     </exec>
-  </target>
+  </target>-->
 
 <taskdef name="bundleapp"
              classname="com.oracle.appbundler.AppBundlerTask"   

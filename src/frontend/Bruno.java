@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.script.ScriptException;
 import javax.swing.AbstractAction;
@@ -29,11 +30,9 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import plugins.PluginManager;
+import plugins.Plugin;
 import plugins.SimplePluginManager;
-import undotree.EditHistoryView;
 import undotree.UndoController;
-import undotree.EditHistoryView;
 
 import com.apple.eawt.Application;
 
@@ -49,11 +48,10 @@ public class Bruno extends JFrame {
 	private final JTabbedPane tabPane;
 	private final JSplitPane splitPane;
 	private final RSyntaxTextArea textArea;
-    private PluginManager pluginManager;
+	private SimplePluginManager pluginManager = new SimplePluginManager();
+	private FoobarTest foobarTest;
 
 	public Bruno() {
-
-        initializePluginManager();
 		setTitle("Bruno");
 		setBar();
 		setSize(1024, 768);
@@ -113,7 +111,7 @@ public class Bruno extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-                    pluginManager.executeScript("helloworld.js");
+					pluginManager.executeScript("helloworld.js");
 				} catch (ScriptException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -132,7 +130,8 @@ public class Bruno extends JFrame {
 		sp.setLineNumbersEnabled(true);
 
 		// Setup undo tree
-		UndoController undoController = new UndoController(textArea.getDocument());
+		UndoController undoController = new UndoController(
+				textArea.getDocument());
 		textArea.getDocument().addUndoableEditListener(undoController);
 
 		textArea.getInputMap().put(
@@ -148,31 +147,33 @@ public class Bruno extends JFrame {
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Projects", new ProjectExplorer(this));
 		tabPane.addTab("Edit History", undoController.getEditHistoryView());
-		
+
 		// Split Pane
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, tabPane);
 		splitPane.setOneTouchExpandable(true);
 
 		setContentPane(splitPane);
 
-		// Plugins
-        System.out.println("is null?" + (pluginManager==null));
+        Set<Plugin> plugins = setPlugins();
 
-        //when running from the native app, the current working directory is the home directory
-        //default plugin location: ~/bruno/plugins
-        try{
-            pluginManager.loadPlugins(new File("/Library/Application Support/bruno/plugins/"));
-        } catch (IllegalArgumentException e) {
-            System.err.println("Couldn't load plugins in bruno library directory.");
+
+	}
+
+    private Set<Plugin> setPlugins() {
+        // Plugins
+        Set<Plugin> s1, s2;
+        //first look in current working directory
+        s1 = pluginManager.loadPlugins(new File("plugins/"));
+        //then look in specified folder
+        s2 = pluginManager.loadPlugins(new File("/Library/Application Support/bruno/plugins/"));
+        //s1 or s2 may be null
+        Set<Plugin> plugins = s1;
+        if(plugins==null){
+            plugins = s2;
         }
-        try{
-            pluginManager.loadPlugins(new File("plugins/"));
-        } catch (IllegalArgumentException e) {
-            System.err.println("Couldn't load plugins in project directory.");
-        }	}
-
-    private void initializePluginManager() {
-        pluginManager = new SimplePluginManager();
+        //at least one of the plugin locations should be correct and readable
+        assert plugins!=null;
+        return plugins;
     }
 
     /**
@@ -237,10 +238,10 @@ public class Bruno extends JFrame {
 	}
 
 	public void toggleFoobar() {
-	/*	if (foobarTest == null) {
+		if (foobarTest == null) {
 			foobarTest = new FoobarTest();
 		}
-		foobarTest.setVisible(!foobarTest.isVisible()); */
+		foobarTest.setVisible(!foobarTest.isVisible());
 	}
 
 	/**

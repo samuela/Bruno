@@ -12,6 +12,8 @@
 # Ignore IntelliJ .iml project files
 *.iml
 
-# Ingore lib
 lib/
 bin/
+dist/
+
+.DS_Store
