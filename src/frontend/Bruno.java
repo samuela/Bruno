@@ -22,6 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -36,7 +38,7 @@ import edithistory.UndoController;
 
 import com.apple.eawt.Application;
 
-import foobar.FoobarTest;
+import foobar.Foobar;
 import edithistory.UndoController;
 
 public class Bruno extends JFrame {
@@ -50,7 +52,10 @@ public class Bruno extends JFrame {
 	private final JSplitPane splitPane;
 	private final RSyntaxTextArea textArea;
 	private SimplePluginManager pluginManager = new SimplePluginManager();
-	private FoobarTest foobarTest;
+
+	private final Foobar foobar;
+	private final PopupFactory factory = PopupFactory.getSharedInstance();
+	private Popup foobarPopup;
 
 	public Bruno() {
 		setTitle("Bruno");
@@ -155,6 +160,8 @@ public class Bruno extends JFrame {
 
 		setContentPane(splitPane);
 
+		foobar = new Foobar();
+
         Set<Plugin> plugins = setPlugins();
 
 
@@ -239,10 +246,16 @@ public class Bruno extends JFrame {
 	}
 
 	public void toggleFoobar() {
-		if (foobarTest == null) {
-			foobarTest = new FoobarTest();
+		if (foobarPopup != null) {
+			foobarPopup.hide();
+			foobarPopup = null;
 		}
-		foobarTest.setVisible(!foobarTest.isVisible());
+		else {
+			foobarPopup = factory.getPopup(this, foobar,
+				getLocationOnScreen().x + this.getWidth()/2 - foobar.getWidth()/2,
+				textArea.getLocationOnScreen().y);
+			foobarPopup.show();
+		}
 	}
 
 	/**
