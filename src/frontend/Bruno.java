@@ -35,6 +35,7 @@ import undotree.UndoController;
 import com.apple.eawt.Application;
 
 import foobar.FoobarTest;
+import edithistory.UndoController;
 
 public class Bruno extends JFrame {
 

@@ -1,4 +1,4 @@
-package undotree;
+package edithistory;
 
 import javax.swing.*;
 import javax.swing.text.Document;
@@ -28,6 +28,7 @@ public class EditHistoryView extends JPanel
 	textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
 	textArea.setCodeFoldingEnabled(true);
 	textArea.setAntiAliasingEnabled(true);
+	textArea.setEditable(false);
 	RTextScrollPane sp = new RTextScrollPane(textArea);
 	sp.setFoldIndicatorEnabled(true);
 	sp.setLineNumbersEnabled(true);
@@ -42,9 +43,9 @@ public class EditHistoryView extends JPanel
 	splitPane.setDividerLocation(70);
     }
 
-    public void addNode(UndoNode undoNode)
+    public void addNode(Edit edit)
     {
-	nodesView.add(new NodeComponent(undoNode, undoController));
+	nodesView.add(new NodeComponent(edit, undoController));
 	revalidate();
     }
 
