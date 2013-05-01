@@ -153,99 +153,10 @@ public class Bruno extends JFrame {
 		openDocument(new DocumentModel());
 
 		foobarTest = new FoobarTest();
-		setUpDemoFooables();
 
 		pluginManager.exposeVariable("bruno", this);
+		pluginManager.exposeVariable("editingWindow", editingWindow);
 		loadPlugins();
-	}
-
-	/**
-	 * Initialize simple Fooables
-	 */
-	private void setUpDemoFooables() {
-		foobarTest.getFoobar().addFooable(new Fooable() {
-
-			@Override
-			public String getName() {
-				return "open";
-			}
-
-			@Override
-			public Set<String> getKeywords() {
-				Set<String> r = new HashSet<>();
-				r.add("open");
-				r.add("file");
-				return r;
-			}
-
-			@Override
-			public void doAction() {
-				JFileChooser fc = new JFileChooser();
-				fc.showOpenDialog(getRootPane());
-			}
-
-			@Override
-			public String toString() {
-				return "open file";
-			}
-		});
-
-		foobarTest.getFoobar().addFooable(new Fooable() {
-
-			@Override
-			public String getName() {
-				return "close";
-			}
-
-			@Override
-			public Set<String> getKeywords() {
-				Set<String> r = new HashSet<>();
-				r.add("close");
-				r.add("exit");
-				return r;
-			}
-
-			@Override
-			public void doAction() {
-				close();
-			}
-
-			@Override
-			public String toString() {
-				return "close";
-			}
-		});
-
-		foobarTest.getFoobar().addFooable(new Fooable() {
-
-			@Override
-			public String getName() {
-				return "save";
-			}
-
-			@Override
-			public Set<String> getKeywords() {
-				Set<String> r = new HashSet<>();
-				r.add("save");
-				r.add("file");
-				return r;
-			}
-
-			@Override
-			public void doAction() {
-				try {
-					editingWindow.save();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-			@Override
-			public String toString() {
-				return "save";
-			}
-		});
-
 	}
 
 	private Set<Plugin> setPlugins() {
