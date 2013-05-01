@@ -66,7 +66,7 @@ public class Script{
 
     @Override
 	public String toString() {
-		return "Script: type=" + extension_ + " plugin=" + plugin_;
+		return "Script: name=" + name_ + " type=" + extension_ + " plugin=" + plugin_.getName();
 	}
 
 	@Override

@@ -16,8 +16,6 @@ public interface PluginManager {
 
     void exposeVariable(String key, Object val);
 
-    void revokeVariable(String key);
-
     Plugin loadPlugin(File directoryPath);
 
     LanguageBundle loadLanguageBundle(File bundle);

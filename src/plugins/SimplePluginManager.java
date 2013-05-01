@@ -25,6 +25,7 @@ public class SimplePluginManager implements PluginManager{
     private Map<String, Plugin> pluginsByScriptName_;
 
     private Bindings globals;
+    private ScriptEngine last_;
 
     public SimplePluginManager(){
         factory_ = new ScriptEngineManager();
@@ -32,6 +33,10 @@ public class SimplePluginManager implements PluginManager{
         scriptFileReaders_ = new HashMap<Script, FileReader>();
         pluginsByScriptName_ = new HashMap<String, Plugin>();
         globals = new SimpleBindings();
+    }
+
+    public ScriptEngine getEngineByExtension(String ext){
+        return enginesByExtension_.get(ext);
     }
 
     public boolean contains(Plugin p, String scriptName, String ext){
@@ -71,9 +76,20 @@ public class SimplePluginManager implements PluginManager{
     //    System.out.println("contains py:"  + enginesByExtension_.containsKey("py"));
         try {
      //       System.out.println("engine null: " + (engine == null));
-            engine.eval(scriptFileReaders_.get(userScript), globals);
+            putAll(engine);
+            engine.eval(scriptFileReaders_.get(userScript));
+       //     System.out.println("executescript trying to get...");
+       //     System.out.println("i="+engine.get("i"));
+        //    System.out.println(engine + "evaluating"  + userScript);
+            last_ = engine;
         } catch (ScriptException e) {
             throw new ScriptException("Error in Script: " + userScript);
+        }
+    }
+
+    private void putAll(ScriptEngine engine) {
+        for(String s: globals.keySet()) {
+            engine.put(s, globals.get(s));
         }
     }
 
@@ -82,10 +98,6 @@ public class SimplePluginManager implements PluginManager{
         globals.put(key, val);
     }
 
-    @Override
-    public void revokeVariable(String key){
-        globals.remove(key);
-    }
 
     //if plugin contains any new scripting languages, create new engines for them
     //open new FileReader for each script in plugin recursively

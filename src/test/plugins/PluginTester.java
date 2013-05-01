@@ -11,9 +11,12 @@ import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.net.Socket;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.*;
 
@@ -119,27 +122,42 @@ public class PluginTester {
     }
 
     @Test
-    public void exposeVars() throws ScriptException, FileNotFoundException {
+    public void exposeMultipleScripts() throws ScriptException {
         SimplePluginManager simple = new SimplePluginManager();
         Plugin expose = simple.loadPlugin(new File("plugins/expose"));
+
+       //expose i to javascript
+        Script inc = expose.getScriptByName("inc");
+
+        int[] ar = {3};
+        simple.exposeVariable("ar", ar);
+        simple.executeScript(inc);
+        assertTrue(4==ar[0]);
+
+        //expose i to python
         Script sq = expose.getScriptByName("sq");
-
-        simple.exposeVariable("i", 4);
+        simple.exposeVariable("ar", ar);
         simple.executeScript(sq);
-        ScriptEngine py = simple.getEngineByExtension("py");
-      //  System.out.println("getting " + py.get("i"));
-        int i = (Integer)simple.getVariable("i");
-        assertTrue(16==i);
+        assertTrue(16 == ar[0]);
+    }
 
-      /*
-        System.out.println("the python engine" + py);
 
-        py.put("i", 2);
-            py.eval("print \"i=\",i");
-            py.eval("i=3");
-     //   py.eval(new FileReader(new File("plugins/expose/two.py")));
-            System.out.println("getting " + py.get("i"));
-           // System.out.println(simple.getVariable("i"));     */
+    @Test
+    public void exposeObject() throws ScriptException {
+        SimplePluginManager simple = new SimplePluginManager();
+        Plugin expose = simple.loadPlugin(new File("plugins/expose"));
+        Script array = expose.getScriptByName("array");
+        int[] ar = {0};
+        simple.exposeVariable("ar", ar);
+        simple.executeScript(array);
+     //   int[] ar2 = (int[])simple.getVariable("ar");
+        assertTrue(1 == ar[0]);
+
+        Socket s = new Socket();
+        assertFalse(s.isClosed());
+        simple.exposeVariable("s", s);
+        simple.executeScript(expose.getScriptByName("close"));
+        assertTrue(s.isClosed());
     }
 
 /*
