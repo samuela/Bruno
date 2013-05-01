@@ -33,7 +33,7 @@ public class NodeComponent extends JPanel
 	}
 	addMouseListener(new MouseAdapter(){
 		@Override
-		    public void mouseClicked(MouseEvent e)
+		    public void mouseEntered(MouseEvent e)
 		{
 		    undoController.getView().setClickedEdit(edit);
 		    undoController.backInTime(edit);
@@ -50,9 +50,16 @@ public class NodeComponent extends JPanel
     }
 
     @Override
-	public Dimension getMinimumSize()
+	public Dimension getPreferredSize()
     {
-	return new Dimension(1000, 1000);
+	Dimension d = super.getPreferredSize();
+	return new Dimension((int) d.getWidth(), 50);
+    }
+
+    @Override
+	public Dimension getMaximumSize()
+    {
+	return new Dimension(5000000, 50);
     }
 
 }
