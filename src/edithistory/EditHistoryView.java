@@ -17,6 +17,8 @@ public class EditHistoryView extends JPanel
     private LayoutManager layout;
     private Box nodesView;
     private UndoController undoController;
+    private Edit clickedEdit;
+    private JTextArea comment;
 
     public EditHistoryView(UndoController undoController)
     {
@@ -34,13 +36,23 @@ public class EditHistoryView extends JPanel
 	sp.setLineNumbersEnabled(true);
 
 	nodesView = new Box(BoxLayout.Y_AXIS);
+	comment = new JTextArea(3, 15);
+	/*	comment.addKeyListener(new KeyAdapter(){
+		@Override
+		    public void keyTyped(KeyEvent e)
+		{
+		    
+		}
+		});*/
+	JSplitPane rightSide = new JSplitPane(JSplitPane.VERTICAL_SPLIT, comment, sp);
 
-	splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(nodesView), sp);
+	splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(nodesView), rightSide);
 	//left side should have the nodes
 	//right side should have the text pane with a little box above it
 	//where you can write a tag/comment/name
 	add(splitPane);
 	splitPane.setDividerLocation(70);
+	rightSide.setDividerLocation(20);
     }
 
     public void addNode(Edit edit)
@@ -53,6 +65,16 @@ public class EditHistoryView extends JPanel
     {
 	textArea.setDocument(doc);
 	textArea.setCaretPosition(textArea.getDocument().getLength());
+    }
+
+    public void setClickedEdit(Edit e)
+    {
+	clickedEdit = e;
+    }
+
+    public Edit getClickedEdit()
+    {
+	return clickedEdit;
     }
 
 }

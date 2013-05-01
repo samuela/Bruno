@@ -44,6 +44,7 @@ public class NodeComponent extends JPanel
 		    catch(BadLocationException e1){}
 		    undoController.forwardInTime(edit);
 		    undoController.getView().setDocument(restoredDocument);
+		    undoController.getView().setClickedEdit(edit);
 		}
 	    });
     }
