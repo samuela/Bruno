@@ -1,13 +1,12 @@
 package frontend;
 
-import java.awt.Event;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.io.IOException;
 import java.util.Set;
 
 import javax.script.ScriptException;
@@ -26,18 +25,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rtextarea.RTextScrollPane;
-
 import plugins.Plugin;
 import plugins.SimplePluginManager;
-import edithistory.UndoController;
 
 import com.apple.eawt.Application;
 
 import foobar.FoobarTest;
-import edithistory.UndoController;
 
 public class Bruno extends JFrame {
 
@@ -48,7 +41,10 @@ public class Bruno extends JFrame {
 
 	private final JTabbedPane tabPane;
 	private final JSplitPane splitPane;
-	private final RSyntaxTextArea textArea;
+	private final ComponentPlaceholder editingWindowPlaceholder;
+	private final ComponentPlaceholder undoViewPlaceholder;
+	private EditingWindow editingWindow;
+
 	private SimplePluginManager pluginManager = new SimplePluginManager();
 	private FoobarTest foobarTest;
 
@@ -114,70 +110,52 @@ public class Bruno extends JFrame {
 				try {
 					pluginManager.executeScript("helloworld.js");
 				} catch (ScriptException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 
 		});
 
-		// Text area
-		textArea = new RSyntaxTextArea();
-		textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
-		textArea.setCodeFoldingEnabled(true);
-		textArea.setAntiAliasingEnabled(true);
-		RTextScrollPane sp = new RTextScrollPane(textArea);
-		sp.setFoldIndicatorEnabled(true);
-		sp.setLineNumbersEnabled(true);
-
-		// Setup undo tree
-		UndoController undoController = new UndoController(
-				textArea.getDocument());
-		textArea.getDocument().addUndoableEditListener(undoController);
-
-		textArea.getInputMap().put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()),
-				undoController.getUndoAction());
-		textArea.getInputMap().put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()
-						+ Event.SHIFT_MASK), undoController.getRedoAction());
+		editingWindowPlaceholder = new ComponentPlaceholder();
+		undoViewPlaceholder = new ComponentPlaceholder();
 
 		// Side pane
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Projects", new ProjectExplorer(this));
-		tabPane.addTab("Edit History", undoController.getView());
+		tabPane.addTab("Edit History", undoViewPlaceholder);
 
 		// Split Pane
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, tabPane);
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				editingWindowPlaceholder, tabPane);
 		splitPane.setOneTouchExpandable(true);
 
 		setContentPane(splitPane);
 
-        Set<Plugin> plugins = setPlugins();
+		Set<Plugin> plugins = setPlugins();
 
-
+		// Open blank initial document
+		openDocument(new Document());
 	}
 
-    private Set<Plugin> setPlugins() {
-        // Plugins
-        Set<Plugin> s1, s2;
-        //first look in current working directory
-        s1 = pluginManager.loadPlugins(new File("plugins/"));
-        //then look in specified folder
-        s2 = pluginManager.loadPlugins(new File("/Library/Application Support/bruno/plugins/"));
-        //s1 or s2 may be null
-        Set<Plugin> plugins = s1;
-        if(plugins==null){
-            plugins = s2;
-        }
-        //at least one of the plugin locations should be correct and readable
-        assert plugins!=null;
-        return plugins;
-    }
+	private Set<Plugin> setPlugins() {
+		// Plugins
+		Set<Plugin> s1, s2;
+		// first look in current working directory
+		s1 = pluginManager.loadPlugins(new File("plugins/"));
+		// then look in specified folder
+		s2 = pluginManager.loadPlugins(new File(
+				"/Library/Application Support/bruno/plugins/"));
+		// s1 or s2 may be null
+		Set<Plugin> plugins = s1;
+		if (plugins == null) {
+			plugins = s2;
+		}
+		// at least one of the plugin locations should be correct and readable
+		assert plugins != null;
+		return plugins;
+	}
 
-    /**
+	/**
 	 * Sets up demo menu bar
 	 */
 	private void setBar() {
@@ -205,28 +183,40 @@ public class Bruno extends JFrame {
 		application.setDockIconImage(image);
 	}
 
+	public void openDocument(Document doc) {
+		// TODO
+
+		// Save current file
+		if (editingWindow != null) {
+			try {
+				editingWindow.save();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			editingWindow = new EditingWindow(doc);
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(this,
+					"Failed to open file " + doc.getFile(),
+					"File opening error", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+
+		editingWindowPlaceholder.setContents(editingWindow.getView());
+		undoViewPlaceholder.setContents(editingWindow.getUndoController()
+				.getView());
+	}
+
 	/**
 	 * Open the specified file in the editing area
 	 * 
 	 * @param file
 	 */
 	public void openFile(File file) {
-		StringBuilder contents = new StringBuilder();
-		Scanner scanner = null;
-		try {
-			scanner = new Scanner(file);
-			while (scanner.hasNextLine()) {
-				contents.append(scanner.nextLine()
-						+ System.getProperty("line.separator"));
-			}
-			textArea.setText(contents.toString());
-		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Failed to open file " + file,
-					"File opening error", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-		} finally {
-			scanner.close();
-		}
+		openDocument(new Document(file));
 	}
 
 	/**
