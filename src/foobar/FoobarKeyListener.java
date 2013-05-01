@@ -5,7 +5,24 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JTextField;
 
+/**
+ * The FoobarKeyListener listens for key release events on the FoobarField.
+ * 
+ * @author Frank Goodman
+ * 
+ */
 public final class FoobarKeyListener implements KeyListener {
+	/**
+	 * Listen for the release of keys on the Foobar's text field. The enter key
+	 * will execute the Fooable currently selected. The tab key will
+	 * autocomplete the current search query. The up key will select the
+	 * previously indexed Fooable. The down key will select the next indexed
+	 * Fooable. Other non-modifying keys events will trigger a search for
+	 * Fooables.
+	 * 
+	 * @param e
+	 *            A key event
+	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// Get the source text field
@@ -25,20 +42,20 @@ public final class FoobarKeyListener implements KeyListener {
 		} else if (e.getKeyCode() == KeyEvent.VK_TAB) {
 
 			// Autocomplete the input when 'tab' is released
-			String completed = foobar.getCompletion(value);
+			String completed = foobar.completeFooable(value);
 			field.setText(completed);
-			foobar.displaySuggestions(completed);
+			foobar.showSuggestions(completed);
 
 		} else if (e.getKeyCode() == KeyEvent.VK_UP) {
 
 			// Select the previous indexed Fooable when 'up' is released
-			foobar.selectUp();
+			foobar.getPopupManager().getSuggestions().setSelectedIndexPrevious();
 			field.setCaretPosition(value.length());
 
 		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 
 			// Select the next indexed Fooable when 'down' is released
-			foobar.selectDown();
+			foobar.getPopupManager().getSuggestions().setSelectedIndexNext();
 			field.setCaretPosition(value.length());
 
 		} else if (e.getKeyCode() != KeyEvent.VK_CONTROL
@@ -48,10 +65,10 @@ public final class FoobarKeyListener implements KeyListener {
 
 			if (value.equals("")) {
 				// If no input is present, hide the suggestions popup
-				foobar.hideSuggestions();
+				foobar.getPopupManager().destroyPopup();
 			} else {
 				// If input is present, display the suggestions popup
-				foobar.displaySuggestions(value);
+				foobar.showSuggestions(value);
 			}
 
 		}

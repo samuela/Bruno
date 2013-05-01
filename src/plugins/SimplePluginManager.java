@@ -17,7 +17,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
  * change this template use File | Settings | File Templates.
  */
 
-public class SimplePluginManager implements PluginManager{
+public class SimplePluginManager implements PluginManager {
 
     private final ScriptEngineManager factory_;
     private Map<String, ScriptEngine> enginesByExtension_;
@@ -60,10 +60,30 @@ public class SimplePluginManager implements PluginManager{
 		return scriptFileReaders_.containsKey(s) && hasEngine(s.getExtension());
 	}
 
+	public void executeScript(String name) throws ScriptException {
+		executeScript(pluginsByScriptName_.get(name).getScriptByName(name));
+	}
 
-    public void executeScript(String name) throws ScriptException {
-        executeScript(pluginsByScriptName_.get(name).getScriptByName(name));
-    }
+	// a script cannot be executed unless its plugin has been loaded, so it is
+	// safe to assume:
+	// 1) engine for extension exists
+	// 2) file for script exists
+	@Override
+	public void executeScript(Script userScript) throws ScriptException {
+		// System.out.println("getting engine for " +
+		// userScript.getExtension());
+		ScriptEngine engine = enginesByExtension_
+				.get(userScript.getExtension());
+		// System.out.println("ext:" + userScript.getExtension());
+		// System.out.println("contains py:" +
+		// enginesByExtension_.containsKey("py"));
+		try {
+			// System.out.println("engine null: " + (engine == null));
+			engine.eval(scriptFileReaders_.get(userScript));
+		} catch (ScriptException e) {
+			throw new ScriptException("Error in Script: " + userScript);
+		}
+	}
 
     //a script cannot be executed unless its plugin has been loaded, so it is safe to assume:
     //1) engine for extension exists

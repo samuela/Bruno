@@ -3,13 +3,18 @@ package foobar;
 import java.awt.BorderLayout;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.Popup;
-import javax.swing.PopupFactory;
 
+/**
+ * Foobar is a container class for FoobarField and FoobarSuggestions. The Foobar
+ * is a fuzzy-matching, suggestive command interface for the Bruno text editor.
+ * Fooables may be added to Foobar using the addFooable and addFooables methods.
+ * All other methods in this class are only used within the package.
+ * 
+ * @author Frank Goodman
+ * 
+ */
 public final class Foobar extends JPanel {
 	private static final long serialVersionUID = 1L;
 
@@ -19,20 +24,18 @@ public final class Foobar extends JPanel {
 	private final Collection<Fooable> fooables;
 
 	/**
-	 * Factory for creating new popups
+	 * The field for Fooable query entries
 	 */
-	private final PopupFactory factory = PopupFactory.getSharedInstance();
-	
-	/**
-	 * The active Popup
-	 */
-	private Popup popup;
-	
-	/**
-	 * The active FoobarResults popup
-	 */
-	private FoobarResults foobarResults;
+	private final FoobarField field;
 
+	/**
+	 * The manager for Popups displaying suggested Fooables
+	 */
+	private final FoobarPopupManager popupManager;
+
+	/**
+	 * Create a new Foobar containing no Fooables.
+	 */
 	protected Foobar() {
 		super(new BorderLayout());
 
@@ -40,82 +43,92 @@ public final class Foobar extends JPanel {
 		this.fooables = new HashSet<>();
 
 		// Add the FoobarField to the Foobar
-		this.add(new FoobarField());
+		this.field = new FoobarField();
+		this.add(this.field);
+
+		// Create a FoobarPopupFactory
+		this.popupManager = new FoobarPopupManager(this);
 
 		this.setVisible(true);
 	}
 
+	/**
+	 * Add a new Fooable to the Foobar's list of Fooables.
+	 * 
+	 * @param f
+	 *            A Fooable
+	 */
 	public void addFooable(Fooable f) {
 		this.fooables.add(f);
 	}
 
+	/**
+	 * Add a collection of Fooables to the Foobar's list of Fooables
+	 * 
+	 * @param f
+	 *            A collection of Fooables
+	 */
 	public void addFooables(Collection<Fooable> f) {
 		this.fooables.addAll(f);
 	}
 
+	/**
+	 * Execute the selected Fooable, hide the suggested Fooables, and clear the
+	 * text field.
+	 */
 	protected void executeFooable() {
-		this.foobarResults.getSelectedValue().doAction();
-		this.hideSuggestions();
-		((JTextField) this.getComponent(0)).setText("");
+		// Execute the Fooable
+		this.getPopupManager().getSuggestions().getSelectedValue().doAction();
+
+		// Hide the suggested Fooables
+		this.popupManager.destroyPopup();
+
+		// Clear the text field
+		this.field.setText("");
 	}
 
-	protected String getCompletion(String query) {
-		for (Fooable fooable : this.fooables) {
-			if (fooable.getName().startsWith(query)) {
-				return fooable.getName();
+	/**
+	 * Get the first suggested Fooable's name that starts with 'query' and
+	 * select it. If no Fooables are suggested, then the original value is
+	 * returned.
+	 * 
+	 * @param query
+	 *            The term to autocomplete
+	 * @return The autocompleted Fooable's name
+	 */
+	protected String completeFooable(String query) {
+		// Verify suggestions are present
+		if (this.getPopupManager().getSuggestions() != null) {
+			// Check each Fooable's starting character sequence
+			for (Fooable fooable : this.getPopupManager().getSuggestions()
+					.getFooables()) {
+				if (fooable.getName().startsWith(query))
+					return fooable.getName();
 			}
 		}
 
+		// Return the original query if no Fooables begin with 'query'
 		return query;
 	}
 
 	/**
-	 * Display the FoobarResults popup with corresponding suggestions for the
-	 * term 'query'
+	 * Display the FoobarSuggestions popup with corresponding suggestions for
+	 * the term 'query'
 	 * 
 	 * @param query
 	 *            The term by which to search for suggestions
 	 */
-	protected void displaySuggestions(String query) {
-		this.hideSuggestions();
-
-		// Create a list of suggestions based on the complete list of Fooables
-		List<Fooable> suggestions = FoobarSuggester.getSuggestions(query,
-				this.fooables);
-
-		this.foobarResults = new FoobarResults(this, suggestions);
-		this.popup = this.factory.getPopup(this, foobarResults, 0, 75);
-		this.foobarResults.setSelectedIndex(0);
-
-		this.popup.show();
+	protected void showSuggestions(String query) {
+		this.popupManager.createPopup(FoobarSuggester.getSuggestions(query,
+				this.fooables));
 	}
 
 	/**
-	 * Hide the FoobarResults popup.
+	 * Retrieve the FoobarPopupManager used by Foobar
+	 * 
+	 * @return The FoobarPopupManager used by Foobar
 	 */
-	protected void hideSuggestions() {
-		if (popup != null)
-			this.popup.hide();
-	}
-
-	/**
-	 * If possible, select the next index in the FoobarResults popup.
-	 */
-	protected void selectDown() {
-		if (this.foobarResults.getSelectedIndex() < this.foobarResults
-				.getLastVisibleIndex()) {
-			this.foobarResults.setSelectedIndex(this.foobarResults
-					.getSelectedIndex() + 1);
-		}
-	}
-
-	/**
-	 * If possible, select the previous index in the FoobarResults popup.
-	 */
-	protected void selectUp() {
-		if (this.foobarResults.getSelectedIndex() > 0) {
-			this.foobarResults.setSelectedIndex(this.foobarResults
-					.getSelectedIndex() - 1);
-		}
+	protected FoobarPopupManager getPopupManager() {
+		return this.popupManager;
 	}
 }

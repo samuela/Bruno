@@ -1,5 +1,0 @@
-#!/bin/sh
-BINDIR=`dirname $0`
-export CLASSPATH=$($BINDIR/myJars lib):$($BINDIR/myJars derived)
-`which java` TreeView ${1+"$@"}
-#JAVA_HOME/bin/java -Xmx384m edu.brown.cs32.mscheer.maps.Maps ${1+"$@"}

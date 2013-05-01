@@ -2,37 +2,31 @@ package plugins;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import com.google.common.base.Objects;
+
+import foobar.Fooable;
+import foobar.ScriptFooable;
 
 /**
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:27 PM To
  * change this template use File | Settings | File Templates.
  */
 public class Plugin {
+	private final PluginManager manager_;
 	private Map<String, Script> scriptsByName_;
 	private final String name_;
 	private final String path_;
 
-	public Map<String, Script> getScriptsByName() {
-		return new HashMap<String, Script>(scriptsByName_);
-	}
-
-	public String getName() {
-		return name_;
-	}
-
-	public String getPath() {
-		return path_;
-	}
-
-	public Plugin(String path) {
+	public Plugin(PluginManager manager, String path) {
+		manager_ = manager;
 		scriptsByName_ = new HashMap<String, Script>();
 		path_ = path;
 		name_ = findNameFromPath(path_);
 	}
 
-	private String findNameFromPath(String path) {
+	private static String findNameFromPath(String path) {
 		return (new File(path)).getName();
 	}
 
