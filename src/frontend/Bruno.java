@@ -32,11 +32,12 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import plugins.Plugin;
 import plugins.SimplePluginManager;
-import undotree.UndoController;
+import edithistory.UndoController;
 
 import com.apple.eawt.Application;
 
 import foobar.FoobarTest;
+import edithistory.UndoController;
 
 public class Bruno extends JFrame {
 
@@ -146,7 +147,7 @@ public class Bruno extends JFrame {
 		// Side pane
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Projects", new ProjectExplorer(this));
-		tabPane.addTab("Edit History", undoController.getEditHistoryView());
+		tabPane.addTab("Edit History", undoController.getView());
 
 		// Split Pane
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, tabPane);
