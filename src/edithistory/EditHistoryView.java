@@ -1,9 +1,11 @@
 package edithistory;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.text.Document;
 import java.awt.LayoutManager;
 import java.awt.CardLayout;
+import java.awt.event.*;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -37,13 +39,9 @@ public class EditHistoryView extends JPanel
 
 	nodesView = new Box(BoxLayout.Y_AXIS);
 	comment = new JTextArea(3, 15);
-	/*	comment.addKeyListener(new KeyAdapter(){
-		@Override
-		    public void keyTyped(KeyEvent e)
-		{
-		    
-		}
-		});*/
+	comment.setEditable(false);
+	comment.getDocument().addDocumentListener(new MyDocumentListener());
+
 	JSplitPane rightSide = new JSplitPane(JSplitPane.VERTICAL_SPLIT, comment, sp);
 
 	splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(nodesView), rightSide);
@@ -53,6 +51,22 @@ public class EditHistoryView extends JPanel
 	add(splitPane);
 	splitPane.setDividerLocation(70);
 	rightSide.setDividerLocation(20);
+    }
+
+    private class MyDocumentListener implements DocumentListener
+    {
+	@Override
+	    public void changedUpdate(DocumentEvent e){}
+	@Override
+	    public void insertUpdate(DocumentEvent e){update();}
+	@Override
+	    public void removeUpdate(DocumentEvent e){update();}
+	public void update()
+	{
+	    if (clickedEdit != null){
+		clickedEdit.setComment(comment.getText());
+	    }
+	}
     }
 
     public void addNode(Edit edit)
@@ -70,6 +84,8 @@ public class EditHistoryView extends JPanel
     public void setClickedEdit(Edit e)
     {
 	clickedEdit = e;
+	comment.setText(e.getComment());
+	comment.setEditable(true);
     }
 
     public Edit getClickedEdit()

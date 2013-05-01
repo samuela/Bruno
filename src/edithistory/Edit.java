@@ -16,6 +16,7 @@ public class Edit
     private int order;
     private Date date;
     private Edit affectedEdit;
+    private String comment;
 
     /* Constructors */
     public Edit()
@@ -25,6 +26,7 @@ public class Edit
 	setOrder(0);
 	setDate(new Date());
 	setAffectedEdit(this);
+	setComment("");
     }
 
     public Edit(Edit parent)
@@ -160,6 +162,16 @@ public class Edit
     public void setAffectedEdit(Edit edit)
     {
 	affectedEdit = edit;
+    }
+
+    public String getComment()
+    {
+	return comment;
+    }
+
+    public void setComment(String comment)
+    {
+	this.comment = comment;
     }
 
     public String getUndoPresentationName()
