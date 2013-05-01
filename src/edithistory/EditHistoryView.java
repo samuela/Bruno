@@ -65,7 +65,6 @@ public class EditHistoryView extends JPanel
 	{
 	    if (clickedEdit != null){
 		clickedEdit.setComment(comment.getText());
-		//System.out.println(comment.getText());
 	    }
 	}
     }
@@ -84,7 +83,6 @@ public class EditHistoryView extends JPanel
 
     public void setClickedEdit(Edit e)
     {
-	System.out.println(e.getComment());
 	clickedEdit = e;
 	comment.setText(e.getComment());
 	comment.setEditable(true);
