@@ -22,6 +22,7 @@ import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.tree.TreePath;
 
+import foobar.FileFooable;
 import frontend.FileSystemTreeModel.TreeFileObject;
 
 public class ProjectExplorer extends JPanel implements DropTargetListener {
@@ -80,6 +81,21 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 	public void showFolder(File folder) {
 		fileTree.setModel(new FileSystemTreeModel(folder));
 		layout.show(this, "tree");
+		addFooables(folder);
+	}
+
+	private void addFooables(File f) {
+		if (f.isHidden()) {
+			return;
+		}
+		if (f.isFile()) {
+			parentApp.getFoobarTest().getFoobar()
+					.addFooable(new FileFooable(parentApp, f));
+		} else {
+			for (File file : f.listFiles()) {
+				addFooables(file);
+			}
+		}
 	}
 
 	@Override

@@ -70,7 +70,7 @@ public final class FoobarSuggestions extends JList<Fooable> {
 
 		// Adjust the size of the result list to fit all the Fooables
 		this.setPreferredSize(new Dimension(parent.getParent().getWidth(),
-				results.size() * 17));
+				(results.size() > 5 ? 5 : results.size()) * 17));
 
 		this.setVisible(true);
 	}

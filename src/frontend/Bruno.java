@@ -150,7 +150,7 @@ public class Bruno extends JFrame {
 		// Set<Plugin> plugins = setPlugins();
 
 		// Open blank initial document
-		openDocument(new Document());
+		openDocument(new DocumentModel());
 
 		foobarTest = new FoobarTest();
 		setUpDemoFooables();
@@ -300,7 +300,7 @@ public class Bruno extends JFrame {
 		application.setDockIconImage(image);
 	}
 
-	public void openDocument(Document doc) {
+	public void openDocument(DocumentModel doc) {
 		// Save current file
 		if (editingWindow != null) {
 			try {
@@ -325,6 +325,10 @@ public class Bruno extends JFrame {
 		editingWindowPlaceholder.setContents(editingWindow.getView());
 		undoViewPlaceholder.setContents(editingWindow.getUndoController()
 				.getView());
+
+		// Because fuck Swing
+		editingWindowPlaceholder.setVisible(false);
+		editingWindowPlaceholder.setVisible(true);
 	}
 
 	/**
@@ -333,7 +337,7 @@ public class Bruno extends JFrame {
 	 * @param file
 	 */
 	public void openFile(File file) {
-		openDocument(new Document(file));
+		openDocument(new DocumentModel(file));
 	}
 
 	/**
@@ -361,6 +365,10 @@ public class Bruno extends JFrame {
 		// }
 
 		foobarTest.setVisible(!foobarTest.isVisible());
+	}
+
+	public FoobarTest getFoobarTest() {
+		return foobarTest;
 	}
 
 	/**

@@ -28,12 +28,12 @@ import edithistory.UndoController;
  */
 public class EditingWindow {
 
-	private final Document doc;
+	private final DocumentModel doc;
 	private RSyntaxTextArea textArea;
 	private RTextScrollPane scrollPane;
 	private UndoController undoController;
 
-	public EditingWindow(Document doc) throws FileNotFoundException {
+	public EditingWindow(DocumentModel doc) throws FileNotFoundException {
 		this.doc = doc;
 
 		// Read contents of file
