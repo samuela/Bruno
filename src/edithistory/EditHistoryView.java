@@ -81,7 +81,11 @@ public class EditHistoryView extends JPanel
 	c.gridy = 1;
 	rightSide.add(rightBottom, c);
 
-	splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(nodesView), rightSide);
+	// increase scroll speed!
+	JScrollPane nodesViewScrollPane = new JScrollPane(nodesView);
+	nodesViewScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+	
+	splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, nodesViewScrollPane, rightSide);
 	//left side should have the nodes
 	//right side should have the text pane with a little box above it
 	//where you can write a tag/comment/name
