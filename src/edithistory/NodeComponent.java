@@ -187,9 +187,9 @@ public class NodeComponent extends JPanel
 	return undoController;
     }
 
-    public NodeComponent makeOppositeComponent(EditHistoryView view)
+    /*    public NodeComponent makeOppositeComponent(EditHistoryView view)
     {
 	return edit.getOppositeEdit(undoController);
-    }
+	}*/
 
 }

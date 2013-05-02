@@ -62,9 +62,14 @@ public class EditHistoryView extends JPanel
 		@Override
 		    public void actionPerformed(ActionEvent e)
 		{
-		    if (clickedNode != null)
-			//			clickedNode.revert();
-			revert(clickedNode);
+		    if (clickedNode != null){
+			int numComponents = nodesView.getComponents().length;
+			clickedNode.revert();
+			Component[] components = nodesView.getComponents();
+			int newLength = components.length;
+			addCompoundNode((NodeComponent) components[newLength-1], (NodeComponent) components[numComponents], "Revert");
+			//			revert(clickedNode);
+		    }
 		}
 	    });
 
@@ -106,12 +111,11 @@ public class EditHistoryView extends JPanel
 	}
     }
 
-    public NodeComponent addNode(Edit edit)
+    public void addNode(Edit edit)
     {
 	NodeComponent newNode = new NodeComponent(edit, undoController);
 	nodesView.add(newNode);
 	revalidateNodeComponents();
-	return newNode;
     }
 
     public void setDocument(Document doc)
@@ -193,7 +197,7 @@ public class EditHistoryView extends JPanel
 	splitPane.setDividerLocation(splitPane.getLastDividerLocation());
     }
 
-    public void revert(NodeComponent node)
+    /*    public void revert(NodeComponent node)
     {
 	Component[] nodeComponents = nodesView.getComponents();
 	int difference = 0;
@@ -214,6 +218,7 @@ public class EditHistoryView extends JPanel
 	nodeComponents = nodesView.getComponents();
 	addCompoundNode((NodeComponent) nodeComponents[nodeComponents.length-difference], (NodeComponent) nodeComponents[nodeComponents.length-1], "Revert");
     }
+    */
 
     /*    public void addCompoundNode(CompoundEdit compound)
     {

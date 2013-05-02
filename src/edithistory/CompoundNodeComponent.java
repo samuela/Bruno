@@ -71,7 +71,7 @@ public class CompoundNodeComponent extends NodeComponent
 	return nodes.get(0).getLastEdit();
     }
 
-    @Override
+    /*    @Override
 	public NodeComponent makeOppositeComponent(EditHistoryView view)
     {
 	NodeComponent first = null;
@@ -86,6 +86,6 @@ public class CompoundNodeComponent extends NodeComponent
 		last = n.makeOppositeComponent(view);
 	}
 	return view.addCompoundNode(first, last, "");
-    }
+	}*/
     
 }

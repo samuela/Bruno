@@ -22,10 +22,10 @@ public class UndoEdit extends Edit
 	getAffectedEdit().backInTime();
     }
 
-    @Override
+    /*    @Override
 	public NodeComponent getOppositeEdit(UndoController undoController)
     {
 	return undoController.redo();
-    }
+	}*/
 
 }

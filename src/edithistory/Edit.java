@@ -197,10 +197,10 @@ public class Edit
 	return false;
 	}*/
 
-    public NodeComponent getOppositeEdit(UndoController undoController)
+    /*    public NodeComponent getOppositeEdit(UndoController undoController)
     {
 	return undoController.undo();
-    }
+	}*/
 
     /* Utility Methods */
     public static int editSize(UndoableEdit e)
