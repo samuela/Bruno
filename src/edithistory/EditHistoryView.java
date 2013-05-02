@@ -158,9 +158,10 @@ public class EditHistoryView extends JPanel
 	int lower = (index1 <= index2) ? index1 : index2;
 	int higher = (index1 <= index2) ? index2 : index1;
 	List<NodeComponent> nodes = new ArrayList<NodeComponent>();
-	for (int i=lower; i<=higher; i++){
+	for (int i=higher; i>=lower; i--){
 	    nodes.add((NodeComponent) nodeComponents[i]);
 	    nodesView.remove(lower);
+	    revalidate();
 	}
 	NodeComponent compound = new CompoundNodeComponent(undoController, nodes);
 	nodesView.add(compound, lower);
