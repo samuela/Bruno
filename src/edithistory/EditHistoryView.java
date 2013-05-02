@@ -132,4 +132,6 @@ public class EditHistoryView extends JPanel
 	return clickedNode;
     }
 
+    public void addCompoundNode(CompoundEdit compound){}//TODO
+
 }

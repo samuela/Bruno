@@ -192,6 +192,11 @@ public class Edit
 	return UIManager.getString("AbstractUndoableEdit.redoText");
     }
 
+    public boolean isCompound()
+    {
+	return false;
+    }
+
     /* Utility Methods */
     public static int editSize(UndoableEdit e)
     {

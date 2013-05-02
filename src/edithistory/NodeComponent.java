@@ -18,16 +18,19 @@ public class NodeComponent extends JPanel
     private static final long serialVersionUID = 1L;
     private UndoController undoController;
     private Edit edit;
-    private static final Border thinBorder = BorderFactory.createLineBorder(Color.black, 1, false);
-    private static final Border thickBorder = BorderFactory.createLineBorder(Color.black, 3, false);
+    private static final Border thinBlackBorder = BorderFactory.createLineBorder(Color.black, 1, false);
+    private static final Border thickBlackBorder = BorderFactory.createLineBorder(Color.black, 3, false);
+    private static final Border thickBlueBorder = BorderFactory.createLineBorder(Color.blue, 3, false);
+    private boolean selectedForCompound;
 
     public NodeComponent(final Edit edit, final UndoController undoController)
     {
 	this.edit = edit;
 	this.undoController = undoController;
-	setBorder(thinBorder);
+	setBorder(thinBlackBorder);
 	setOpaque(true);
 	setColor();
+	selectedForCompound = false;
 	
 	addMouseListener(new MouseAdapter(){
 		@Override
@@ -35,14 +38,26 @@ public class NodeComponent extends JPanel
 		{
 		    EditHistoryView view = undoController.getView();
 		    if (view.getClickedNode() != null)
-			view.getClickedNode().setBorder(thinBorder);
-		    setBorder(thickBorder);
+			if (!view.getClickedNode().isSelectedForCompound())
+			    view.getClickedNode().setBorder(thinBlackBorder);
+		    if (!selectedForCompound)
+			setBorder(thickBlackBorder);
 		    view.setClickedNode(NodeComponent.this);
 		    undoController.getView().setDocument(getDocument());
 		}
+
+		@Override
+		    public void mouseClicked(MouseEvent e)
+		{
+		    if ((SwingUtilities.isRightMouseButton(e) ||
+			 e.getModifiers() == 18) &&
+			!(edit.isCompound())){
+			changeSelectionForCompound();
+		    }
+		}
 	    });
     }
-
+    
     @Override
 	public Dimension getPreferredSize()
     {
@@ -67,6 +82,8 @@ public class NodeComponent extends JPanel
 	else{
 	    setBackground(Color.gray);//top node
 	}
+	if (edit.isCompound())
+	    setBackground(Color.blue);
     }
 
     public void setComment(String comment)
@@ -106,6 +123,43 @@ public class NodeComponent extends JPanel
 	    currentDocument.insertString(0, restoredDocument.getText(0, restoredDocument.getLength()), null);
 	}
 	catch(BadLocationException e){}
+    }
+    
+    public boolean isSelectedForCompound()
+    {
+	return selectedForCompound;
+    }
+
+    public void selectForCompound()
+    {
+	if (!isSelectedForCompound()){
+	    selectedForCompound = true;
+	    setBorder(thickBlueBorder);
+	    undoController.selectNodeForCompound(this);
+	}
+    }
+
+    public void deselectForCompound()
+    {
+	if (isSelectedForCompound()){
+	    selectedForCompound = false;
+	    undoController.deselectNodeForCompound(this);
+	    setBorder(thinBlackBorder);
+	}
+    }
+
+    public void changeSelectionForCompound()
+    {
+	if (isSelectedForCompound()){
+	    deselectForCompound();
+	}
+	else
+	    selectForCompound();
+    }
+
+    public Edit getEdit()
+    {
+	return edit;
     }
 
 }

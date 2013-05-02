@@ -16,6 +16,8 @@ public class UndoController implements UndoableEditListener
     private RedoAction redoAction;
     private EditHistoryView view;
     private Document document;
+    private NodeComponent toCompound1;
+    private NodeComponent toCompound2;
 
     public UndoController(Document document)
     {
@@ -99,6 +101,30 @@ public class UndoController implements UndoableEditListener
     {
 	return view;
     }
+
+    public void selectNodeForCompound(NodeComponent node)
+    {
+	if (toCompound1 == null)
+	    toCompound1 = node;
+	else if (toCompound2 == null){
+	    toCompound2 = node;
+	    //	    CompoundEdit compound = new CompoundEdit(toCompound1.getEdit(), toCompound2.getEdit());
+	    //	    view.addCompoundNode(compound);
+	    toCompound1.deselectForCompound();
+	    toCompound2.deselectForCompound();
+	    toCompound1 = null;
+	    toCompound2 = null;
+	}
+    }
+
+    public void deselectNodeForCompound(NodeComponent node)
+    {
+	if (toCompound1 == node){
+	    toCompound1 = null;
+	}
+    }
+
+    
 
     /* Utilities */
     public void updateUndoState()
