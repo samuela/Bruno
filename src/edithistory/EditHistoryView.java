@@ -152,12 +152,13 @@ public class EditHistoryView extends JPanel
 	NodeComponent newNode = new NodeComponent(compound, undoController);
 	nodesView.add(newNode, index);
 	nodes.add(index, newNode);
+	revalidate();
 	index++;
 	NodeComponent toRemove = topNode;
 	while (toRemove.getEdit() != bottom){
 	    nodesView.remove(index);
+	    revalidate();
 	    nodes.remove(index);
-	    index++;
 	    toRemove = nodes.get(index);
 	}
 	nodesView.remove(toRemove);

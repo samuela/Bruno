@@ -64,7 +64,7 @@ public class TextEdit extends Edit
     @Override
 	public void redo(Edit edit)
     {
-	if (undone() && (!(getParent() instanceof TextEdit) || !getParent().undone())){
+	if (undone() && (!(getParent() instanceof TextEdit) || !getParent().undone())){ //THIS INSTANCEOF IS A PROBLEM! THEY WERE RIGHT
 	    for (UndoableEdit e : edits){
 		e.redo();
 	    }
