@@ -112,7 +112,7 @@ public class EditHistoryView extends JPanel
 	NodeComponent newNode = new NodeComponent(edit, undoController);
 	nodesView.add(newNode);
 	nodes.add(newNode);
-	revalidate();
+	revalidateNodeComponents();
     }
 
     public void setDocument(Document doc)
@@ -161,11 +161,17 @@ public class EditHistoryView extends JPanel
 	for (int i=higher; i>=lower; i--){
 	    nodes.add((NodeComponent) nodeComponents[i]);
 	    nodesView.remove(lower);
-	    revalidate();
 	}
 	NodeComponent compound = new CompoundNodeComponent(undoController, nodes);
 	nodesView.add(compound, lower);
-	revalidate();
+	//nodesView.revalidate();
+	//	revalidate();
+	revalidateNodeComponents();
+    }
+
+    public void revalidateNodeComponents()
+    {
+	splitPane.setDividerLocation(70);
     }
 
     /*    public void addCompoundNode(CompoundEdit compound)
