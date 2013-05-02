@@ -21,6 +21,7 @@ public class NodeComponent extends JPanel
     public static final Border thinBlackBorder = BorderFactory.createLineBorder(Color.black, 1, false);
     public static final Border thickBlackBorder = BorderFactory.createLineBorder(Color.black, 3, false);
     public static final Border thickBlueBorder = BorderFactory.createLineBorder(Color.blue, 3, false);
+    public static final int brightNess = 235;
     private boolean selectedForCompound;
 
     public NodeComponent(UndoController uc)
@@ -88,10 +89,10 @@ public class NodeComponent extends JPanel
     public void setColor()
     {
 	if (edit.getType().equals("addition")){
-	    setBackground(Color.green);
+	    setBackground(new Color(0, brightNess, 0));
 	}
 	else if (edit.getType().equals("deletion")){
-	    setBackground(Color.red);
+	    setBackground(new Color(brightNess, 0, 0));
 	}
 	else{
 	    setBackground(Color.gray);//top node

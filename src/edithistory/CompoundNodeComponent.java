@@ -27,7 +27,7 @@ public class CompoundNodeComponent extends NodeComponent
     @Override
 	public void setColor()
     {
-	setBackground(new Color(0, 0, 170));
+	setBackground(new Color(0, 0, brightNess));
     }
 
     @Override
