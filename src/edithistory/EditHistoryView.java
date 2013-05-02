@@ -10,6 +10,7 @@ import java.awt.CardLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.*;
+import java.awt.Component;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -139,7 +140,34 @@ public class EditHistoryView extends JPanel
 	return clickedNode;
     }
 
-    public void addCompoundNode(CompoundEdit compound)
+    public void addCompoundNode(NodeComponent n1, NodeComponent n2)
+    {
+	Component[] nodeComponents = nodesView.getComponents();
+	int index1 = -1;
+	int index2 = -1;
+	for (int i=0; i<nodeComponents.length; i++){
+	    if (nodeComponents[i] == n1){
+		index1 = i;
+	    }
+	    if (nodeComponents[i] == n2){
+		index2 = i;
+	    }
+	    if (index1 >=0 && index2 >=0)
+		break;
+	}
+	int lower = (index1 <= index2) ? index1 : index2;
+	int higher = (index1 <= index2) ? index2 : index1;
+	List<NodeComponent> nodes = new ArrayList<NodeComponent>();
+	for (int i=lower; i<=higher; i++){
+	    nodes.add((NodeComponent) nodeComponents[i]);
+	    nodesView.remove(lower);
+	}
+	NodeComponent compound = new CompoundNodeComponent(undoController, nodes);
+	nodesView.add(compound, lower);
+	revalidate();
+    }
+
+    /*    public void addCompoundNode(CompoundEdit compound)
     {
 	Edit top = compound.getTop();
 	Edit bottom = compound.getBottom();
@@ -163,6 +191,6 @@ public class EditHistoryView extends JPanel
 	}
 	nodesView.remove(toRemove);
 	revalidate();
-    }
+	}*/
 
 }

@@ -18,18 +18,16 @@ public class NodeComponent extends JPanel
     private static final long serialVersionUID = 1L;
     private UndoController undoController;
     private Edit edit;
-    private static final Border thinBlackBorder = BorderFactory.createLineBorder(Color.black, 1, false);
-    private static final Border thickBlackBorder = BorderFactory.createLineBorder(Color.black, 3, false);
-    private static final Border thickBlueBorder = BorderFactory.createLineBorder(Color.blue, 3, false);
+    public static final Border thinBlackBorder = BorderFactory.createLineBorder(Color.black, 1, false);
+    public static final Border thickBlackBorder = BorderFactory.createLineBorder(Color.black, 3, false);
+    public static final Border thickBlueBorder = BorderFactory.createLineBorder(Color.blue, 3, false);
     private boolean selectedForCompound;
 
-    public NodeComponent(final Edit edit, final UndoController undoController)
+    public NodeComponent(UndoController uc)
     {
-	this.edit = edit;
-	this.undoController = undoController;
+	undoController = uc;
 	setBorder(thinBlackBorder);
 	setOpaque(true);
-	setColor();
 	selectedForCompound = false;
 	
 	addMouseListener(new MouseAdapter(){
@@ -45,17 +43,23 @@ public class NodeComponent extends JPanel
 		    view.setClickedNode(NodeComponent.this);
 		    undoController.getView().setDocument(getDocument());
 		}
-
+		
 		@Override
 		    public void mouseClicked(MouseEvent e)
 		{
 		    if ((SwingUtilities.isRightMouseButton(e) ||
-			 e.getModifiers() == 18) &&
-			!(edit.isCompound())){
+			 e.getModifiers() == 18)){
 			changeSelectionForCompound();
 		    }
 		}
 	    });
+    }
+    
+    public NodeComponent(Edit edit, UndoController undoController)
+    {
+	this(undoController);
+	this.edit = edit;
+	setColor();
     }
     
     @Override
@@ -82,8 +86,6 @@ public class NodeComponent extends JPanel
 	else{
 	    setBackground(Color.gray);//top node
 	}
-	if (edit.isCompound())
-	    setBackground(Color.blue);
     }
 
     public void setComment(String comment)
@@ -157,9 +159,19 @@ public class NodeComponent extends JPanel
 	    selectForCompound();
     }
 
-    public Edit getEdit()
+    /*    public Edit getEdit()
     {
 	return edit;
+	}*/
+    
+    /*    public void setUndoController(UndoController undoController)
+    {
+	this.undoController = undoController;
     }
+
+    public UndoController getUndoController()
+    {
+	return undoController;
+	}*/
 
 }

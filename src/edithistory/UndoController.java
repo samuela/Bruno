@@ -8,6 +8,10 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import java.awt.event.ActionEvent;
 import javax.swing.undo.UndoableEdit;
+import java.awt.Component;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class UndoController implements UndoableEditListener
 {
@@ -108,8 +112,7 @@ public class UndoController implements UndoableEditListener
 	    toCompound1 = node;
 	else if (toCompound2 == null){
 	    toCompound2 = node;
-	    CompoundEdit compound = new CompoundEdit(toCompound1.getEdit(), toCompound2.getEdit());
-	    view.addCompoundNode(compound);
+	    view.addCompoundNode(toCompound1, toCompound2);
 	    toCompound1.deselectForCompound();
 	    toCompound2.deselectForCompound();
 	    toCompound1 = null;
