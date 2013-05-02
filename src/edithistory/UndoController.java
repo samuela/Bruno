@@ -127,6 +127,10 @@ public class UndoController implements UndoableEditListener
 	}
     }
 
+    public void expandCompoundNode(CompoundNodeComponent node)
+    {
+	view.expandCompoundNode(node);
+    }
     
 
     /* Utilities */

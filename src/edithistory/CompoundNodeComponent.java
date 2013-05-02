@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.text.Document;
+import java.awt.event.*;
 
 public class CompoundNodeComponent extends NodeComponent
 {
@@ -26,7 +27,7 @@ public class CompoundNodeComponent extends NodeComponent
     @Override
 	public void setColor()
     {
-	setBackground(Color.blue);
+	setBackground(new Color(0, 0, 170));
     }
 
     @Override
@@ -47,6 +48,19 @@ public class CompoundNodeComponent extends NodeComponent
 	return nodes.get(0).getDocument();
     }
 
-    //Can't do different behavior on right click. Maybe on shift right click? Something like that?
+    @Override
+	public void mouseClicked(MouseEvent e)
+    {
+	super.mouseClicked(e);
+	int modifiers = e.getModifiers();
+	if (modifiers == 19 || modifiers == 5){
+	    getUndoController().expandCompoundNode(this);
+	}
+    }
+
+    public List<NodeComponent> getHiddenNodes()
+    {
+	return nodes;
+    }
 
 }

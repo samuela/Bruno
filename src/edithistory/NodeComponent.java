@@ -34,21 +34,18 @@ public class NodeComponent extends JPanel
 		@Override
 		    public void mouseEntered(MouseEvent e)
 		{
-		    mouseEntered();
+		    NodeComponent.this.mouseEntered(e);
 		}
 		
 		@Override
 		    public void mouseClicked(MouseEvent e)
 		{
-		    if ((SwingUtilities.isRightMouseButton(e) ||
-			 e.getModifiers() == 18)){
-			mouseRightClicked();
-		    }
+		    NodeComponent.this.mouseClicked(e);
 		}
 	    });
     }
     
-    public void mouseEntered()
+    public void mouseEntered(MouseEvent e)
     {
 	EditHistoryView view = undoController.getView();
 	if (view.getClickedNode() != null)
@@ -60,9 +57,12 @@ public class NodeComponent extends JPanel
 	undoController.getView().setDocument(getDocument());
     }
 
-    public void mouseRightClicked()
+    public void mouseClicked(MouseEvent e)
     {
-	changeSelectionForCompound();
+	int modifiers = e.getModifiers();
+	if (modifiers == 4 || modifiers == 18){
+	    changeSelectionForCompound();
+	}
     }
 
     public NodeComponent(Edit edit, UndoController undoController)
@@ -178,10 +178,10 @@ public class NodeComponent extends JPanel
     {
 	this.undoController = undoController;
     }
-
+    */
     public UndoController getUndoController()
     {
 	return undoController;
-	}*/
+    }
 
 }

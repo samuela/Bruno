@@ -164,14 +164,31 @@ public class EditHistoryView extends JPanel
 	}
 	NodeComponent compound = new CompoundNodeComponent(undoController, nodes);
 	nodesView.add(compound, lower);
-	//nodesView.revalidate();
-	//	revalidate();
+	revalidateNodeComponents();
+    }
+
+    public void expandCompoundNode(CompoundNodeComponent node)
+    {
+	List<NodeComponent> hiddenNodes = node.getHiddenNodes();
+	int index = -1;
+	Component[] nodeComponents = nodesView.getComponents();
+	for (int i=0; i<nodeComponents.length; i++){
+	    if (nodeComponents[i] == node){
+		index = i;
+		break;
+	    }
+	}
+	nodesView.remove(index);
+	for (NodeComponent n : hiddenNodes){
+	    nodesView.add(n, index);
+	}
 	revalidateNodeComponents();
     }
 
     public void revalidateNodeComponents()
     {
 	splitPane.setDividerLocation(70);
+	splitPane.setDividerLocation(splitPane.getLastDividerLocation());
     }
 
     /*    public void addCompoundNode(CompoundEdit compound)
