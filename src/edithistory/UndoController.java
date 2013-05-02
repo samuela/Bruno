@@ -108,8 +108,8 @@ public class UndoController implements UndoableEditListener
 	    toCompound1 = node;
 	else if (toCompound2 == null){
 	    toCompound2 = node;
-	    //	    CompoundEdit compound = new CompoundEdit(toCompound1.getEdit(), toCompound2.getEdit());
-	    //	    view.addCompoundNode(compound);
+	    CompoundEdit compound = new CompoundEdit(toCompound1.getEdit(), toCompound2.getEdit());
+	    view.addCompoundNode(compound);
 	    toCompound1.deselectForCompound();
 	    toCompound2.deselectForCompound();
 	    toCompound1 = null;

@@ -1,5 +1,7 @@
 package edithistory;
 
+import java.util.List;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.Document;
@@ -20,6 +22,7 @@ public class EditHistoryView extends JPanel
     private RSyntaxTextArea textArea;
     private LayoutManager layout;
     private Box nodesView;
+    private List<NodeComponent> nodes;
     private UndoController undoController;
     private NodeComponent clickedNode;
     private JTextArea comment;
@@ -40,6 +43,8 @@ public class EditHistoryView extends JPanel
 	sp.setLineNumbersEnabled(true);
 
 	nodesView = new Box(BoxLayout.Y_AXIS);
+	nodes = new ArrayList<>();
+
 	comment = new JTextArea(3, 15);
 	comment.setEditable(false);
 	comment.getDocument().addDocumentListener(new MyDocumentListener());
@@ -103,7 +108,9 @@ public class EditHistoryView extends JPanel
 
     public void addNode(Edit edit)
     {
-	nodesView.add(new NodeComponent(edit, undoController));
+	NodeComponent newNode = new NodeComponent(edit, undoController);
+	nodesView.add(newNode);
+	nodes.add(newNode);
 	revalidate();
     }
 
@@ -132,6 +139,29 @@ public class EditHistoryView extends JPanel
 	return clickedNode;
     }
 
-    public void addCompoundNode(CompoundEdit compound){}//TODO
+    public void addCompoundNode(CompoundEdit compound)
+    {
+	Edit top = compound.getTop();
+	Edit bottom = compound.getBottom();
+	int index = 0;
+	NodeComponent topNode = nodes.get(index);
+	while (topNode.getEdit() != top){
+	    index++;
+	    topNode = nodes.get(index);
+	}
+	NodeComponent newNode = new NodeComponent(compound, undoController);
+	nodesView.add(newNode, index);
+	nodes.add(index, newNode);
+	index++;
+	NodeComponent toRemove = topNode;
+	while (toRemove.getEdit() != bottom){
+	    nodesView.remove(index);
+	    nodes.remove(index);
+	    index++;
+	    toRemove = nodes.get(index);
+	}
+	nodesView.remove(toRemove);
+	revalidate();
+    }
 
 }

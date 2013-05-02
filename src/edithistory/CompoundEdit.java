@@ -97,4 +97,14 @@ public class CompoundEdit extends Edit
 	return true;
     }
 
+    public Edit getTop()
+    {
+	return top;
+    }
+
+    public Edit getBottom()
+    {
+	return bottom;
+    }
+
 }
