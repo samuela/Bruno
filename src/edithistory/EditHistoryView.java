@@ -23,7 +23,6 @@ public class EditHistoryView extends JPanel
     private RSyntaxTextArea textArea;
     private LayoutManager layout;
     private Box nodesView;
-    private List<NodeComponent> nodes;
     private UndoController undoController;
     private NodeComponent clickedNode;
     private JTextArea comment;
@@ -44,7 +43,6 @@ public class EditHistoryView extends JPanel
 	sp.setLineNumbersEnabled(true);
 
 	nodesView = new Box(BoxLayout.Y_AXIS);
-	nodes = new ArrayList<>();
 
 	comment = new JTextArea(3, 15);
 	comment.setEditable(false);
@@ -65,7 +63,8 @@ public class EditHistoryView extends JPanel
 		    public void actionPerformed(ActionEvent e)
 		{
 		    if (clickedNode != null)
-			clickedNode.revert();
+			//			clickedNode.revert();
+			revert(clickedNode);
 		}
 	    });
 
@@ -107,12 +106,12 @@ public class EditHistoryView extends JPanel
 	}
     }
 
-    public void addNode(Edit edit)
+    public NodeComponent addNode(Edit edit)
     {
 	NodeComponent newNode = new NodeComponent(edit, undoController);
 	nodesView.add(newNode);
-	nodes.add(newNode);
 	revalidateNodeComponents();
+	return newNode;
     }
 
     public void setDocument(Document doc)
@@ -140,7 +139,7 @@ public class EditHistoryView extends JPanel
 	return clickedNode;
     }
 
-    public void addCompoundNode(NodeComponent n1, NodeComponent n2)
+    public NodeComponent addCompoundNode(NodeComponent n1, NodeComponent n2, String comment)
     {
 	Component[] nodeComponents = nodesView.getComponents();
 	int index1 = -1;
@@ -163,8 +162,11 @@ public class EditHistoryView extends JPanel
 	    nodesView.remove(lower);
 	}
 	NodeComponent compound = new CompoundNodeComponent(undoController, nodes);
+	if (!comment.equals(""))
+	    compound.setComment(comment);
 	nodesView.add(compound, lower);
 	revalidateNodeComponents();
+	return compound;
     }
 
     public void expandCompoundNode(CompoundNodeComponent node)
@@ -189,6 +191,28 @@ public class EditHistoryView extends JPanel
     {
 	splitPane.setDividerLocation(70);
 	splitPane.setDividerLocation(splitPane.getLastDividerLocation());
+    }
+
+    public void revert(NodeComponent node)
+    {
+	Component[] nodeComponents = nodesView.getComponents();
+	int difference = 0;
+	for (int i=nodeComponents.length-1; i>=0; i--){
+	    Component component = nodeComponents[i];
+	    if (component == node){
+		if (i==nodeComponents.length-1)
+		    return;
+		else{
+		    difference = nodeComponents.length-1-i;
+		    break;
+		}
+	    }
+	    else{
+		((NodeComponent) component).makeOppositeComponent(this);
+	    }
+	}
+	nodeComponents = nodesView.getComponents();
+	addCompoundNode((NodeComponent) nodeComponents[nodeComponents.length-difference], (NodeComponent) nodeComponents[nodeComponents.length-1], "Revert");
     }
 
     /*    public void addCompoundNode(CompoundEdit compound)

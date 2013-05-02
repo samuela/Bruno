@@ -33,16 +33,16 @@ public class UndoController implements UndoableEditListener
 	view.addNode(lastEdit);
     }
 
-    public void undo()
+    public NodeComponent undo()
     {
 	lastEdit = new UndoEdit(lastEdit);
-	view.addNode(lastEdit);
+	return view.addNode(lastEdit);
     }
 
-    public void redo()
+    public NodeComponent redo()
     {
 	lastEdit = new RedoEdit(lastEdit);
-	view.addNode(lastEdit);
+	return view.addNode(lastEdit);
     }
 
     public boolean canUndo()
@@ -112,7 +112,7 @@ public class UndoController implements UndoableEditListener
 	    toCompound1 = node;
 	else if (toCompound2 == null){
 	    toCompound2 = node;
-	    view.addCompoundNode(toCompound1, toCompound2);
+	    view.addCompoundNode(toCompound1, toCompound2, "");
 	    toCompound1.deselectForCompound();
 	    toCompound2.deselectForCompound();
 	    toCompound1 = null;

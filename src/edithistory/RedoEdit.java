@@ -22,4 +22,5 @@ public class RedoEdit extends Edit
 	getAffectedEdit().forwardInTime();
     }
 
+
 }

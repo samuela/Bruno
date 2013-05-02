@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import javax.swing.text.Document;
 import java.awt.event.*;
 
+//import com.google.common.collect.Lists;
+
 public class CompoundNodeComponent extends NodeComponent
 {
     private static final long serialVersionUID = 1L;
@@ -63,4 +65,27 @@ public class CompoundNodeComponent extends NodeComponent
 	return nodes;
     }
 
+    @Override
+	public Edit getLastEdit()
+    {
+	return nodes.get(0).getLastEdit();
+    }
+
+    @Override
+	public NodeComponent makeOppositeComponent(EditHistoryView view)
+    {
+	NodeComponent first = null;
+	NodeComponent last = null;
+	for (int i=0; i<nodes.size(); i++){
+	    NodeComponent n = nodes.get(i);
+	    if (i==0){
+		first = n.makeOppositeComponent(view);
+		last = first;
+	    }
+	    else
+		last = n.makeOppositeComponent(view);
+	}
+	return view.addCompoundNode(first, last, "");
+    }
+    
 }

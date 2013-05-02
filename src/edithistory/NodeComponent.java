@@ -45,6 +45,13 @@ public class NodeComponent extends JPanel
 		}
 	    });
     }
+
+    public NodeComponent(Edit edit, UndoController undoController)
+    {
+	this(undoController);
+	this.edit = edit;
+	setColor();
+    }
     
     public void mouseEntered(MouseEvent e)
     {
@@ -66,12 +73,6 @@ public class NodeComponent extends JPanel
 	}
     }
 
-    public NodeComponent(Edit edit, UndoController undoController)
-    {
-	this(undoController);
-	this.edit = edit;
-	setColor();
-    }
     
     @Override
 	public Dimension getPreferredSize()
@@ -129,6 +130,7 @@ public class NodeComponent extends JPanel
     
     public void revert()
     {
+	
 	Document restoredDocument = getDocument();
 	Document currentDocument = undoController.getDocument();
 	try{
@@ -170,10 +172,10 @@ public class NodeComponent extends JPanel
 	    selectForCompound();
     }
 
-    /*    public Edit getEdit()
+    public Edit getLastEdit()
     {
 	return edit;
-	}*/
+    }
     
     /*    public void setUndoController(UndoController undoController)
     {
@@ -183,6 +185,11 @@ public class NodeComponent extends JPanel
     public UndoController getUndoController()
     {
 	return undoController;
+    }
+
+    public NodeComponent makeOppositeComponent(EditHistoryView view)
+    {
+	return edit.getOppositeEdit(undoController);
     }
 
 }
