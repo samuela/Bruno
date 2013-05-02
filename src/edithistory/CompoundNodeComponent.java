@@ -47,4 +47,6 @@ public class CompoundNodeComponent extends NodeComponent
 	return nodes.get(0).getDocument();
     }
 
+    //Can't do different behavior on right click. Maybe on shift right click? Something like that?
+
 }

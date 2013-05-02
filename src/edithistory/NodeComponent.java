@@ -34,14 +34,7 @@ public class NodeComponent extends JPanel
 		@Override
 		    public void mouseEntered(MouseEvent e)
 		{
-		    EditHistoryView view = undoController.getView();
-		    if (view.getClickedNode() != null)
-			if (!view.getClickedNode().isSelectedForCompound())
-			    view.getClickedNode().setBorder(thinBlackBorder);
-		    if (!selectedForCompound)
-			setBorder(thickBlackBorder);
-		    view.setClickedNode(NodeComponent.this);
-		    undoController.getView().setDocument(getDocument());
+		    mouseEntered();
 		}
 		
 		@Override
@@ -49,12 +42,29 @@ public class NodeComponent extends JPanel
 		{
 		    if ((SwingUtilities.isRightMouseButton(e) ||
 			 e.getModifiers() == 18)){
-			changeSelectionForCompound();
+			mouseRightClicked();
 		    }
 		}
 	    });
     }
     
+    public void mouseEntered()
+    {
+	EditHistoryView view = undoController.getView();
+	if (view.getClickedNode() != null)
+	    if (!view.getClickedNode().isSelectedForCompound())
+		view.getClickedNode().setBorder(thinBlackBorder);
+	if (!selectedForCompound)
+	    setBorder(thickBlackBorder);
+	view.setClickedNode(NodeComponent.this);
+	undoController.getView().setDocument(getDocument());
+    }
+
+    public void mouseRightClicked()
+    {
+	changeSelectionForCompound();
+    }
+
     public NodeComponent(Edit edit, UndoController undoController)
     {
 	this(undoController);
