@@ -25,7 +25,7 @@ public class Edit
 	setType("empty");
 	setOrder(0);
 	setDate(new Date());
-	setAffectedEdit(this);
+	//	setAffectedEdit(this);
 	setComment("");
     }
 
@@ -172,6 +172,14 @@ public class Edit
     public void setComment(String comment)
     {
 	this.comment = comment;
+    }
+
+    public int getLocation()
+    {
+	if (getAffectedEdit() == null || getAffectedEdit() == this)
+	    return 0;
+	else
+	    return getAffectedEdit().getLocation();
     }
 
     public String getUndoPresentationName()

@@ -24,6 +24,7 @@ public class UndoController implements UndoableEditListener
 	redoAction = new RedoAction(this);
 	view = new EditHistoryView(this);
 	this.document = document;
+	view.addNode(lastEdit);
     }
 
     public void undo()

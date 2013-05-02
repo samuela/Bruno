@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.text.Document;
 import javax.swing.text.BadLocationException;
 
@@ -15,12 +16,16 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 public class NodeComponent extends JPanel
 {
     private static final long serialVersionUID = 1L;
+    private UndoController undoController;
     private Edit edit;
+    private static final Border thinBorder = BorderFactory.createLineBorder(Color.black, 1, false);
+    private static final Border thickBorder = BorderFactory.createLineBorder(Color.black, 3, false);
 
     public NodeComponent(final Edit edit, final UndoController undoController)
     {
 	this.edit = edit;
-	setBorder(BorderFactory.createLineBorder(Color.black));
+	this.undoController = undoController;
+	setBorder(thinBorder);
 	setOpaque(true);
 	setColor();
 	
@@ -28,16 +33,12 @@ public class NodeComponent extends JPanel
 		@Override
 		    public void mouseEntered(MouseEvent e)
 		{
-		    undoController.getView().setClickedNode(NodeComponent.this);
-		    undoController.backInTime(edit);
-		    Document document = undoController.getDocument();
-		    RSyntaxDocument restoredDocument = new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_JAVA);
-		    try{
-			restoredDocument.insertString(0,document.getText(0,document.getLength()),null);
-		    }
-		    catch(BadLocationException e1){}
-		    undoController.forwardInTime(edit);
-		    undoController.getView().setDocument(restoredDocument);
+		    EditHistoryView view = undoController.getView();
+		    if (view.getClickedNode() != null)
+			view.getClickedNode().setBorder(thinBorder);
+		    setBorder(thickBorder);
+		    view.setClickedNode(NodeComponent.this);
+		    undoController.getView().setDocument(getDocument());
 		}
 	    });
     }
@@ -81,6 +82,30 @@ public class NodeComponent extends JPanel
     public String getComment()
     {
 	return edit.getComment();
+    }
+    
+    public Document getDocument()
+    {
+	undoController.backInTime(edit);
+	Document document = undoController.getDocument();
+	RSyntaxDocument restoredDocument = new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_JAVA);
+	try{
+	    restoredDocument.insertString(0,document.getText(0,document.getLength()),null);
+	}
+	catch(BadLocationException e1){}
+	undoController.forwardInTime(edit);
+	return restoredDocument;
+    }
+    
+    public void revert()
+    {
+	Document restoredDocument = getDocument();
+	Document currentDocument = undoController.getDocument();
+	try{
+	    currentDocument.remove(0, currentDocument.getLength());
+	    currentDocument.insertString(0, restoredDocument.getText(0, restoredDocument.getLength()), null);
+	}
+	catch(BadLocationException e){}
     }
 
 }

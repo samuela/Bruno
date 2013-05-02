@@ -5,6 +5,8 @@ import javax.swing.event.*;
 import javax.swing.text.Document;
 import java.awt.LayoutManager;
 import java.awt.CardLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 import java.awt.event.*;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -42,7 +44,37 @@ public class EditHistoryView extends JPanel
 	comment.setEditable(false);
 	comment.getDocument().addDocumentListener(new MyDocumentListener());
 
-	JSplitPane rightSide = new JSplitPane(JSplitPane.VERTICAL_SPLIT, comment, sp);
+	JSplitPane rightBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT, comment, sp);
+       
+	JPanel rightSide = new JPanel(new GridBagLayout());
+	GridBagConstraints c = new GridBagConstraints();
+	c.fill = GridBagConstraints.HORIZONTAL;
+	JButton revert = new JButton("Revert");
+	c.weightx = 0.5;
+	c.gridx = 0;
+	c.gridy = 0;
+	rightSide.add(revert, c);
+	revert.addActionListener(new ActionListener(){
+		@Override
+		    public void actionPerformed(ActionEvent e)
+		{
+		    if (clickedNode != null)
+			clickedNode.revert();
+		}
+	    });
+
+	JButton revertAll = new JButton("Revert all");
+	c.gridx = 1;
+	rightSide.add(revertAll,c );
+	
+	c.anchor = GridBagConstraints.PAGE_END;
+	c.fill = GridBagConstraints.BOTH;
+	c.weightx = 0.0;
+	c.weighty = 1.0;
+	c.gridwidth = 2;
+	c.gridx = 0;
+	c.gridy = 1;
+	rightSide.add(rightBottom, c);
 
 	splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(nodesView), rightSide);
 	//left side should have the nodes
@@ -50,7 +82,7 @@ public class EditHistoryView extends JPanel
 	//where you can write a tag/comment/name
 	add(splitPane);
 	splitPane.setDividerLocation(70);
-	rightSide.setDividerLocation(20);
+	rightBottom.setDividerLocation(20);
     }
 
     private class MyDocumentListener implements DocumentListener
@@ -78,7 +110,14 @@ public class EditHistoryView extends JPanel
     public void setDocument(Document doc)
     {
 	textArea.setDocument(doc);
-	textArea.setCaretPosition(textArea.getDocument().getLength());
+	//	textArea.setCaretPosition(textArea.getDocument().getLength());
+    }
+
+    public void setCaretPosition(int position)
+    {
+	int length = textArea.getDocument().getLength();
+	if (0 <= position && position < length)
+	    textArea.setCaretPosition(position);
     }
 
     public void setClickedNode(NodeComponent n)
