@@ -13,7 +13,9 @@ public class Script {
 	private final String path_;
 	private final String name_;
 
-	public String getExtension() {
+    private final String text_;
+
+    public String getExtension() {
 		return extension_;
 	}
 
@@ -42,8 +44,10 @@ public class Script {
 	 * @throws IllegalArgumentException
 	 *             if path does not have an extension
 	 */
-	public Script(String path, Plugin plugin) throws IllegalArgumentException {
-		extension_ = path.substring(path.lastIndexOf('.') + 1);
+	public Script(String path, Plugin plugin, String text) throws IllegalArgumentException {
+        text_ = text;
+
+        extension_ = path.substring(path.lastIndexOf('.') + 1);
 		plugin_ = plugin;
 		path_ = path;
 		String withExt = (new File(path)).getName();
@@ -83,4 +87,8 @@ public class Script {
 					&& s.getName().equals(getName());
 		}
 	}
+
+    public String getText() {
+        return text_;
+    }
 }

@@ -1,12 +1,6 @@
 package plugins;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
@@ -21,6 +15,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
+import foobar.ScriptFooable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
@@ -33,19 +28,18 @@ public class SimplePluginManager implements PluginManager {
 
 	private final ScriptEngineManager factory_;
 	private Map<String, ScriptEngine> enginesByExtension_;
-	private Map<Script, FileReader> scriptFileReaders_;
+//	private Map<Script, BufferedReader> scriptBufferedReaders_;
 	private Map<String, Plugin> pluginsByScriptName_;
 	private Map<String, Plugin> pluginsByName_;
 	private PrintWriter errorLog;
 
 	private Bindings globals;
-	private ScriptEngine last_;
 
 	public SimplePluginManager() {
 		factory_ = new ScriptEngineManager();
-		enginesByExtension_ = new HashMap<String, ScriptEngine>();
-		scriptFileReaders_ = new HashMap<Script, FileReader>();
-		pluginsByScriptName_ = new HashMap<String, Plugin>();
+		enginesByExtension_ = new HashMap<>();
+	//	scriptBufferedReaders_ = new HashMap<>();
+		pluginsByScriptName_ = new HashMap<>();
 		pluginsByName_ = new HashMap<>();
 		globals = new SimpleBindings();
 		try {
@@ -81,8 +75,17 @@ public class SimplePluginManager implements PluginManager {
 		return enginesByExtension_.containsKey(extension);
 	}
 
+
 	public boolean supportsScript(Script s) {
-		return scriptFileReaders_.containsKey(s) && hasEngine(s.getExtension());
+        //manager contains plugin with a script with matching name
+        boolean hasPlugin = pluginsByScriptName_.containsKey(s.getName());
+
+        Plugin p = pluginsByScriptName_.get(s.getName());
+        //just to be safe
+        //plugin contains script with matching name
+        Script found = p.getScriptByName(s.getName());
+
+        return hasPlugin && found!=null && hasEngine(s.getExtension());
 	}
 
 	public void executeScript(String name) throws ScriptException {
@@ -95,27 +98,27 @@ public class SimplePluginManager implements PluginManager {
 	// 2) file for script exists
 	@Override
 	public void executeScript(Script userScript) throws ScriptException {
-		// System.out.println("getting engine for " +
-		// userScript.getExtension());
-		ScriptEngine engine = enginesByExtension_
-				.get(userScript.getExtension());
-		// System.out.println("ext:" + userScript.getExtension());
-		// System.out.println("contains py:" +
-		// enginesByExtension_.containsKey("py"));
-		try {
-			// System.out.println("engine null: " + (engine == null));
-			putAll(engine);
-			// System.out.println(engine);
-			// System.out.println(scriptFileReaders_.get(userScript));
-			engine.eval(scriptFileReaders_.get(userScript));
-			// System.out.println("executescript trying to get...");
-			// System.out.println("i="+engine.get("i"));
-			// System.out.println(engine + "evaluating" + userScript);
-			last_ = engine;
-		} catch (ScriptException e) {
-			throw new ScriptException("Error in Script: " + userScript);
-		}
-	}
+      //  System.out.println("executing " + userScript);
+        // System.out.println("getting engine for " +
+        // userScript.getExtension());
+        ScriptEngine engine = enginesByExtension_
+                .get(userScript.getExtension());
+        // System.out.println("ext:" + userScript.getExtension());
+        // System.out.println("contains py:" +
+        // enginesByExtension_.containsKey("py"));
+        try {
+            // System.out.println("engine null: " + (engine == null));
+            putAll(engine);
+            // System.out.println(engine);
+            // System.out.println(scriptFileReaders_.get(userScript));
+     //       BufferedReader scriptReader = scriptBufferedReaders_.get(userScript);
+
+            engine.eval(userScript.getText());
+
+        } catch (ScriptException e) {
+            throw new ScriptException("Error in Script: " + userScript);
+        }
+    }
 
 	private void putAll(ScriptEngine engine) {
 		for (String s : globals.keySet()) {
@@ -131,9 +134,7 @@ public class SimplePluginManager implements PluginManager {
 	// if plugin contains any new scripting languages, create new engines for
 	// them
 	// open new FileReader for each script in plugin recursively
-	@Override
-	public Plugin loadPlugin(File directoryPath)
-			throws IllegalArgumentException {
+	public Plugin loadPlugin(File directoryPath) throws IllegalArgumentException {
 		assert directoryPath.isDirectory();
 		String dirPath = directoryPath.getAbsolutePath();
 		assert !dirPath.isEmpty();
@@ -155,22 +156,26 @@ public class SimplePluginManager implements PluginManager {
 		for (File f : files) {
 			String path = f.getAbsolutePath();
 			Script s = null;
+
+        //        BufferedReader scriptReader = new BufferedReader(new FileReader(f));
+              //  scriptBufferedReaders_.put(s, scriptReader);
+
+
 			try {
-				s = new Script(path, plugin);
-			} catch (IllegalArgumentException e) {
+				s = new Script(path, plugin, FileUtils.readFileToString(f));
+			} catch (IllegalArgumentException | IOException e) {
 				// invalid path - ignore file
 				// either
 				errorLog.println("Couldn't load script " + path + " : "
 						+ e.getMessage());
 				continue;
 			}
-			if (pluginsByScriptName_.containsKey(s.getName())) {
+            if (pluginsByScriptName_.containsKey(s.getName())) {
 				errorLog.println("A script with name '" + s.getName()
 						+ "' already exists in plugin"
 						+ pluginsByScriptName_.get(s.getName()));
 				continue;
 			}
-			plugin.addScript(s.getName(), s);
 			String extension = s.getExtension();
 			if (!enginesByExtension_.containsKey(extension)) {
 				// System.out.println("storing new engine for " + extension);
@@ -186,16 +191,16 @@ public class SimplePluginManager implements PluginManager {
 							factory_.getEngineByExtension(extension));
 				}
 			}
-			try {
-				FileReader scriptReader = new FileReader(f);
-				scriptFileReaders_.put(s, scriptReader);
-				pluginsByScriptName_.put(s.getName(), plugin);
-			} catch (FileNotFoundException e) {
-				errorLog.println("file " + path + " cannot be loaded.");
-			}
+            pluginsByScriptName_.put(s.getName(), plugin);
+            plugin.addScript(s.getName(), s);
 
-		}
-		return plugin;
+        }
+  //      System.out.println("simplepluginmanager 198 " + plugin + " " + plugin.getScriptsByName());
+        if(plugin.getScriptsByName().isEmpty()) {
+       //     System.out.println("mreh: " + plugin.getPath());
+            return null;
+        }
+        return plugin;
 	}
 
 	@Override
@@ -203,14 +208,16 @@ public class SimplePluginManager implements PluginManager {
 		globals.remove(key);
 	}
 
+    //not supported in this version
+    /**
 	@Override
 	public LanguageBundle loadLanguageBundle(File bundle) {
 		return null;
 	}
-
+       **/
 	@Override
-	public Set<Plugin> loadPlugins(File pluginsDir)
-			throws IllegalArgumentException {
+    @Deprecated
+	public Set<Plugin> loadPlugins(File pluginsDir) {
 		Set<Plugin> plugins = new HashSet<>();
 		if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
 			errorLog.println("Invalid plugins directory.");
@@ -220,7 +227,10 @@ public class SimplePluginManager implements PluginManager {
 			try {
 				if (f.isDirectory()) {
 					try {
-						plugins.add(loadPlugin(f.getAbsoluteFile()));
+                        Plugin p = loadPlugin(f.getAbsoluteFile());
+                        if(p!=null){
+						    plugins.add(p);
+                        }
 					} catch (IllegalArgumentException e) {
 						errorLog.println("Failed to load plugin " + f + ": "
 								+ e.getMessage());
@@ -234,4 +244,33 @@ public class SimplePluginManager implements PluginManager {
 		return plugins;
 	}
 
+    @Override
+    /**
+     * @throws IllegalStateException if topLevelPluginDir does not exist, is unreadable,
+     * or invalid in some way
+     */
+    public Set<ScriptFooable> getAllScriptFooables(File topLevelPluginDir) throws IllegalArgumentException{
+        Set<ScriptFooable> allScripts = new HashSet<>();
+      //  Plugin misc = new Plugin(this, topLevelPluginDir.getAbsolutePath());
+        if(!topLevelPluginDir.exists()){
+            throw new IllegalArgumentException("plugin directory does not exist.");
+        }
+        if(!topLevelPluginDir.isDirectory()) {
+            throw new IllegalArgumentException("argument is not a directory.");
+        }
+        for(File file: topLevelPluginDir.listFiles()){
+            if(file.isDirectory()){
+                Plugin p = loadPlugin(file);
+                if(p!=null){
+                    for(Script s: p.getScriptsByName().values()){
+                        allScripts.add(new ScriptFooable(this, s));
+                    }
+                } else {
+                    //p is null meaning it has no valid scripts
+                    //ignore silently
+                }
+            }
+        }
+        return allScripts;
+    }
 }

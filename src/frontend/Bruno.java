@@ -155,7 +155,7 @@ public class Bruno extends JFrame {
 		foobarTest = new FoobarTest();
 		setUpDemoFooables();
 
-		loadPlugins();
+	//	loadPlugins();
 	}
 
 	/**
@@ -247,6 +247,7 @@ public class Bruno extends JFrame {
 
 	}
 
+    /*
 	private Set<Plugin> setPlugins() {
 		// Plugins
 		Set<Plugin> s1, s2;
@@ -265,12 +266,14 @@ public class Bruno extends JFrame {
 		return plugins;
 	}
 
+    //N.B. THIS WILL NOT WORK IF RUN AS .APP
+    //path is coded relative to project directory, but bruno.app considers ~ to be the current working directory
 	private void loadPlugins() {
 		Set<Plugin> plugins = pluginManager.loadPlugins(new File("plugins/"));
 		for (Plugin plugin : plugins) {
 			foobarTest.getFoobar().addFooables(plugin.getScriptFooables());
 		}
-	}
+	}     */
 
 	/**
 	 * Sets up demo menu bar

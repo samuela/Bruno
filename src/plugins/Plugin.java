@@ -52,7 +52,7 @@ public class Plugin {
 		if (scriptsByName_.containsKey(name)) {
 			return scriptsByName_.get(name);
 		} else {
-			throw new IllegalArgumentException("Script " + name + " not found.");
+            return null;
 		}
 	}
 

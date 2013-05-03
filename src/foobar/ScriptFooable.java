@@ -38,16 +38,17 @@ public class ScriptFooable implements Fooable {
 
 	@Override
 	public void doAction() {
-		try {
-			manager.executeScript(script);
-		} catch (ScriptException e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            manager.executeScript(script);
+        } catch (ScriptException e) {
+            //e.printStackTrace();
+            System.err.println("Error in script " + script.getName());
+        }
+    }
 
 	@Override
 	public String toString() {
-		return script.getName();
+		return "ScriptFooable " + script.getName();
 	}
 
 }

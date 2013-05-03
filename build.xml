@@ -22,6 +22,7 @@
     <fileset dir="lib">
       <include name="**/*.jar" />
       <include name="**/*.zip" />
+      <!--include name="**/*.py" /-->
     </fileset>
   </path>
 
@@ -48,7 +49,7 @@
     <javac srcdir="${app.src}" debug="true"  destdir="${derived.classes}" includeantruntime="false">
       <classpath refid="class.path"/>
       <compilerarg value="-Xlint:all"/>
-      <compilerarg value="-Werror"/>
+      <!--compilerarg value="-Werror"/-->
     </javac>
     <jar destfile="${derived.jar}" basedir="${derived.classes}" includes="**/*.class"/>
   </target>

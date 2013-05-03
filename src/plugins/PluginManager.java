@@ -1,5 +1,7 @@
 package plugins;
 
+import foobar.ScriptFooable;
+
 import java.io.File;
 import java.util.Set;
 
@@ -11,17 +13,46 @@ import javax.script.ScriptException;
  */
 public interface PluginManager {
 
-	void executeScript(Script userScript) throws ScriptException;
+
+    @Deprecated
+    Set<Plugin> loadPlugins(File file) throws IllegalArgumentException;
+
+    /**
+     *
+     * @param topLevelPluginDir the system bruno plugin directory
+     * @return a set containing a fooable for each script successfully loaded
+     */
+    Set<ScriptFooable> getAllScriptFooables(File topLevelPluginDir);
+
+    /**
+     *
+     * @param key name by which scripts will know variabe
+     * @param val the object to be manipulated by the script
+     *
+     * allows all scripts access to val
+     */
+    void exposeVariable(String key, Object val);
+
+    /**
+     *
+     * @param key variable to remove from scripts' access
+     *
+     *any scripts executed after a call to revokevariable() will no longer have access
+     *to the variable revoked
+     */
+    void revokeVariable(String key);
+
+    void executeScript(Script userScript) throws ScriptException;
 
     void executeScript(String userScript) throws ScriptException;
 
-    void exposeVariable(String key, Object val);
+    /**
+     *
+     * @param bundle
+     * @return
+     *
+     * not supported in this version
+     */
+  //  LanguageBundle loadLanguageBundle(File bundle);
 
-    void revokeVariable(String key);
-
-    Plugin loadPlugin(File directoryPath) throws IllegalArgumentException;
-
-	LanguageBundle loadLanguageBundle(File bundle);
-
-    Set<Plugin> loadPlugins(File file) throws IllegalArgumentException;
 }

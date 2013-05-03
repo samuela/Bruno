@@ -1,5 +1,6 @@
 package test.plugins;
 
+import foobar.ScriptFooable;
 import org.junit.Ignore;
 import org.junit.Test;
 import plugins.Plugin;
@@ -7,15 +8,13 @@ import plugins.PluginManager;
 import plugins.Script;
 import plugins.SimplePluginManager;
 
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
-import javax.script.SimpleBindings;
+import javax.script.*;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.Socket;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.*;
@@ -31,11 +30,31 @@ import static org.junit.Assert.*;
 public class PluginTester {
 
     @Test
+    public void stringTest(){
+        int[] ar = {0};
+        ScriptEngineManager factory = new ScriptEngineManager();
+        ScriptEngine engine = factory.getEngineByExtension("js");
+        engine.put("ar", ar);
+        try {
+            engine.eval("ar[0] = 1;");
+        } catch (ScriptException e) {
+            System.err.println("stringTest failed");
+        }
+        assertTrue(1 == ar[0]);
+        try{
+            engine.eval("ar[0]=2;");
+        } catch (ScriptException e) {
+            System.err.println("stringTest failed");
+        }
+        assertTrue(2 == ar[0]);
+    }
+
+    @Test
     public void noExtension(){
-        PluginManager simple = new SimplePluginManager();
+        SimplePluginManager simple = new SimplePluginManager();
         Plugin p = simple.loadPlugin(new File("plugins/noextension"));
      //   System.out.println(p.getScriptsByName());
-        assertTrue(p.getScriptsByName().isEmpty());
+        assertTrue(p==null);
     }
 
     @Test
@@ -73,14 +92,14 @@ public class PluginTester {
 
     @Test
     public void loadPluginTest() {
-        PluginManager simpleManager = new SimplePluginManager();
+        SimplePluginManager simpleManager = new SimplePluginManager();
         File f = new File("plugins/hello");
         Plugin p = simpleManager.loadPlugin(f);
         Script hello = p.getScriptByName("helloworld");
 
         //check manager state
-        assertTrue(((SimplePluginManager) simpleManager).hasEngine("js"));
-        assertTrue(((SimplePluginManager) simpleManager).supportsScript(hello));
+        assertTrue((simpleManager).hasEngine("js"));
+        assertTrue((simpleManager).supportsScript(hello));
 
         //check plugin state
         assertEquals("hello", p.getName());
@@ -97,20 +116,36 @@ public class PluginTester {
         try {
 
             simpleManager.executeScript(hello);
+         //   simpleManager.executeScript(hello);
         } catch (ScriptException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
     @Test
+    public void multipleTimes(){
+        SimplePluginManager s = new SimplePluginManager();
+        s.loadPlugin(new File("plugins/write"));
+        for(int i = 0; i < 2; i++){
+
+
+        try {
+            s.executeScript("write");
+        } catch (ScriptException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        }
+    }
+
+    @Test
     public void executeTest() {
-        PluginManager simpleManager = new SimplePluginManager();
+        SimplePluginManager simpleManager = new SimplePluginManager();
         File f = new File("plugins/hello");
         Plugin p = simpleManager.loadPlugin(f);
 
         Script writeHello = p.getScriptByName("write");
 
-        assertTrue(((SimplePluginManager) simpleManager).supportsScript(writeHello));
+        assertTrue((simpleManager).supportsScript(writeHello));
 
         //   System.out.println(writeHello==null);
         try {
@@ -131,6 +166,7 @@ public class PluginTester {
         Plugin expose = simple.loadPlugin(new File("plugins/expose"));
 
        //expose i to javascript
+     //   System.out.println(expose);
         Script inc = expose.getScriptByName("inc");
 
         int[] ar = {3};
@@ -164,6 +200,23 @@ public class PluginTester {
         assertTrue(s.isClosed());
     }
 
+    @Test (expected=IllegalArgumentException.class)
+    public void pluginNameExists(){
+        SimplePluginManager simple = new SimplePluginManager();
+        Plugin p = simple.loadPlugin(new File("plugins/hello"));
+        Plugin p2 = simple.loadPlugin(new File("plugins/hello"));
+        assertTrue(p2==null);
+    }
+
+    @Test
+    public void getAllScriptFooablesTest(){
+        SimplePluginManager p = new SimplePluginManager();
+        Set<ScriptFooable> sfoos = p.getAllScriptFooables(new File("plugins"));
+       // System.out.println(sfoos);
+        //this particular plugins directory has 7 distinctly named, viable scripts
+        assertTrue(7 == sfoos.size());
+    }
+
 /*
     //JUST SCREWING AROUND WITH JAVASCRIPT
     @Test
@@ -177,4 +230,6 @@ public class PluginTester {
             e.printStackTrace();
         }
     }          */
+
+
 }
