@@ -22,6 +22,7 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
 /**
@@ -152,7 +153,7 @@ public class SimplePluginManager implements PluginManager {
 		pluginsByName_.put(pluginName, plugin);
 
 		Collection<File> files = FileUtils.listFiles(directoryPath,
-				TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+				HiddenFileFilter.VISIBLE, TrueFileFilter.INSTANCE);
 		for (File f : files) {
 			String path = f.getAbsolutePath();
 			Script s = null;

@@ -112,8 +112,8 @@ public class Bruno extends JFrame {
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"demoscript");
-		getRootPane().getActionMap().put("demoscript", new AbstractAction() {
+				"save");
+		getRootPane().getActionMap().put("save", new AbstractAction() {
 
 			/**
 			 * 
@@ -122,10 +122,13 @@ public class Bruno extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					pluginManager.executeScript("helloworld.js");
-				} catch (ScriptException e1) {
-					e1.printStackTrace();
+				// Save current file
+				if (editingWindow != null) {
+					try {
+						editingWindow.save();
+					} catch (IOException e0) {
+						e0.printStackTrace();
+					}
 				}
 			}
 
