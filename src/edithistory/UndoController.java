@@ -33,16 +33,45 @@ public class UndoController implements UndoableEditListener
 	view.addNode(lastEdit);
     }
 
+    //For deserialization purposes
+    public UndoController(Edit lastEdit)
+    {
+	this.lastEdit = lastEdit;
+	this.document = document;
+	view = new EditHistoryView(this);
+
+	//add edits
+	Edit edit = lastEdit;
+	while (edit.getParent() != null){
+	    edit = edit.getParent();
+	}
+	while (edit != null){
+	    view.addNode(edit);
+	    edit = edit.getChild();
+	}
+	
+	//add compressions
+
+	undoAction = new UndoAction(this);
+	redoAction = new RedoAction(this);
+	undoAction.updateUndoState();
+	redoAction.updateRedoState();
+    }
+
     public void undo()
     {
 	lastEdit = new UndoEdit(lastEdit);
 	view.addNode(lastEdit);
+	undoAction.updateUndoState();
+	redoAction.updateRedoState();
     }
 
     public void redo()
     {
 	lastEdit = new RedoEdit(lastEdit);
 	view.addNode(lastEdit);
+	undoAction.updateUndoState();
+	redoAction.updateRedoState();
     }
 
     public boolean canUndo()
@@ -105,7 +134,7 @@ public class UndoController implements UndoableEditListener
     {
 	return view;
     }
-
+    
     public void selectNodeForCompound(NodeComponent node)
     {
 	if (toCompound1 == null)
@@ -119,26 +148,26 @@ public class UndoController implements UndoableEditListener
 	    toCompound2 = null;
 	}
     }
-
+    
     public void deselectNodeForCompound(NodeComponent node)
     {
 	if (toCompound1 == node){
 	    toCompound1 = null;
 	}
     }
-
+    
     public void expandCompoundNode(CompoundNodeComponent node)
     {
 	view.expandCompoundNode(node);
     }
     
-
+    
     /* Utilities */
     public void updateUndoState()
     {
 	undoAction.updateUndoState();
     }
-
+    
     public void updateRedoState()
     {
 	redoAction.updateRedoState();
@@ -148,7 +177,7 @@ public class UndoController implements UndoableEditListener
     {
 	return lastEdit.getUndoPresentationName();
     }
-
+    
     public String getRedoPresentationName()
     {
 	return lastEdit.getRedoPresentationName();

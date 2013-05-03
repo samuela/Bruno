@@ -41,15 +41,15 @@ public class EditHistoryView extends JPanel
 	RTextScrollPane sp = new RTextScrollPane(textArea);
 	sp.setFoldIndicatorEnabled(true);
 	sp.setLineNumbersEnabled(true);
-
+	
 	nodesView = new Box(BoxLayout.Y_AXIS);
-
+	
 	comment = new JTextArea(3, 15);
 	comment.setEditable(false);
 	comment.getDocument().addDocumentListener(new MyDocumentListener());
 
 	JSplitPane rightBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT, comment, sp);
-       
+	
 	JPanel rightSide = new JPanel(new GridBagLayout());
 	GridBagConstraints c = new GridBagConstraints();
 	c.fill = GridBagConstraints.HORIZONTAL;
@@ -72,7 +72,7 @@ public class EditHistoryView extends JPanel
 		    }
 		}
 	    });
-
+	
 	JButton revertAll = new JButton("Revert all");
 	c.gridx = 1;
 	rightSide.add(revertAll,c );

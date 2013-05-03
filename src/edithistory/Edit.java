@@ -1,5 +1,6 @@
 package edithistory;
 
+import javax.swing.text.Document;
 import javax.swing.UIManager;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
@@ -190,6 +191,11 @@ public class Edit
     public String getRedoPresentationName()
     {
 	return UIManager.getString("AbstractUndoableEdit.redoText");
+    }
+
+    public Document getDocument()
+    {
+	return getParent().getDocument();
     }
 
     /*    public boolean isCompound()

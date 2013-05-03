@@ -1,5 +1,6 @@
 package edithistory;
 
+import javax.swing.text.Document;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.undo.UndoableEdit;
@@ -127,6 +128,13 @@ public class TextEdit extends Edit
     {
 	AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) edits.get(0);
 	return event.getOffset();
+    }
+
+    @Override
+	public Document getDocument()
+    {
+	AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) edits.get(0);
+	return event.getDocument();
     }
 	
 }

@@ -24,8 +24,6 @@ public class RedoAction extends AbstractAction
     {
 	if (undoController.canRedo()){
 	    undoController.redo();
-	    updateRedoState();
-	    undoController.updateUndoState();
 	}
     }
 
