@@ -137,6 +137,7 @@
 
   <target name="clean">
     <delete dir="${app.derived}"/>
+    <delete dir="${app.dist}"/>
   </target>
 
   <!--<target name="system_test" depends="compile,jar">
