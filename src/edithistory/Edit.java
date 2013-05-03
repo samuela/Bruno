@@ -1,5 +1,6 @@
 package edithistory;
 
+import javax.swing.text.Document;
 import javax.swing.UIManager;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
@@ -16,6 +17,7 @@ public class Edit
     private int order;
     private Date date;
     private Edit affectedEdit;
+    private String comment;
 
     /* Constructors */
     public Edit()
@@ -24,7 +26,8 @@ public class Edit
 	setType("empty");
 	setOrder(0);
 	setDate(new Date());
-	setAffectedEdit(this);
+	//	setAffectedEdit(this);
+	setComment("");
     }
 
     public Edit(Edit parent)
@@ -162,6 +165,24 @@ public class Edit
 	affectedEdit = edit;
     }
 
+    public String getComment()
+    {
+	return comment;
+    }
+
+    public void setComment(String comment)
+    {
+	this.comment = comment;
+    }
+
+    public int getLocation()
+    {
+	if (getAffectedEdit() == null || getAffectedEdit() == this)
+	    return 0;
+	else
+	    return getAffectedEdit().getLocation();
+    }
+
     public String getUndoPresentationName()
     {
 	return UIManager.getString("AbstractUndoaleEdit.undoText");
@@ -171,6 +192,21 @@ public class Edit
     {
 	return UIManager.getString("AbstractUndoableEdit.redoText");
     }
+
+    public Document getDocument()
+    {
+	return getParent().getDocument();
+    }
+
+    /*    public boolean isCompound()
+    {
+	return false;
+	}*/
+
+    /*    public NodeComponent getOppositeEdit(UndoController undoController)
+    {
+	return undoController.undo();
+	}*/
 
     /* Utility Methods */
     public static int editSize(UndoableEdit e)

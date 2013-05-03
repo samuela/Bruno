@@ -1,8 +1,11 @@
 package edithistory;
 
+import javax.swing.text.Document;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.undo.UndoableEdit;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
 
 import com.google.common.collect.Lists;
 
@@ -62,7 +65,7 @@ public class TextEdit extends Edit
     @Override
 	public void redo(Edit edit)
     {
-	if (undone() && (!(getParent() instanceof TextEdit) || !getParent().undone())){
+	if (undone() && (!(getParent() instanceof TextEdit) || !getParent().undone())){ //THIS INSTANCEOF IS A PROBLEM! THEY WERE RIGHT
 	    for (UndoableEdit e : edits){
 		e.redo();
 	    }
@@ -120,4 +123,18 @@ public class TextEdit extends Edit
 	}
     }
 
+    @Override
+	public int getLocation()
+    {
+	AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) edits.get(0);
+	return event.getOffset();
+    }
+
+    @Override
+	public Document getDocument()
+    {
+	AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) edits.get(0);
+	return event.getDocument();
+    }
+	
 }

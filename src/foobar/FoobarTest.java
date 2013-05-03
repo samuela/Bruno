@@ -1,13 +1,7 @@
 package foobar;
 
-import java.util.ArrayList;
-import java.util.Set;
-
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public final class FoobarTest extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -29,9 +23,6 @@ public final class FoobarTest extends JFrame {
 		foobar = new Foobar();
 		this.add(foobar);
 
-		// Populate the Foobar with dummy data
-		foobar.addFooables(this.fooables);
-
 		this.pack();
 	}
 
@@ -52,69 +43,4 @@ public final class FoobarTest extends JFrame {
 			}
 		});
 	}
-
-	/**
-	 * Dummy data for Foobar
-	 */
-	private ArrayList<Fooable> fooables = Lists.newArrayList(new Fooable() {
-		@Override
-		public String getName() {
-			return "rest";
-		}
-
-		@Override
-		public Set<String> getKeywords() {
-			return Sets.newHashSet("rest", "best", "crest");
-		}
-
-		@Override
-		public void doAction() {
-			System.out.println(this.getName() + " executed");
-		}
-
-		@Override
-		public String toString() {
-			return this.getName();
-		}
-	}, new Fooable() {
-		@Override
-		public String getName() {
-			return "test";
-		}
-
-		@Override
-		public Set<String> getKeywords() {
-			return Sets.newHashSet("test", "best", "treat");
-		}
-
-		@Override
-		public void doAction() {
-			System.out.println(this.getName() + " executed");
-		}
-
-		@Override
-		public String toString() {
-			return this.getName();
-		}
-	}, new Fooable() {
-		@Override
-		public String getName() {
-			return "try";
-		}
-
-		@Override
-		public Set<String> getKeywords() {
-			return Sets.newHashSet("try", "by", "tie");
-		}
-
-		@Override
-		public void doAction() {
-			System.out.println(this.getName() + " executed");
-		}
-
-		@Override
-		public String toString() {
-			return this.getName();
-		}
-	});
 }

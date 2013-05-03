@@ -1,0 +1,1 @@
+bruno.getRootPane().getActionMap().get("open").actionPerformed(null);

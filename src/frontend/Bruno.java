@@ -26,7 +26,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import foobar.ScriptFooable;
 import plugins.Plugin;
+import plugins.PluginManager;
 import plugins.SimplePluginManager;
 
 import com.apple.eawt.Application;
@@ -53,7 +55,7 @@ public class Bruno extends JFrame {
 	private final ComponentPlaceholder undoViewPlaceholder;
 	private EditingWindow editingWindow;
 
-	private SimplePluginManager pluginManager = new SimplePluginManager();
+	private PluginManager pluginManager = new SimplePluginManager();
 
 	private FoobarTest foobarTest;
 
@@ -86,6 +88,7 @@ public class Bruno extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
 				fc.showOpenDialog(getRootPane());
+				openFile(fc.getSelectedFile());
 			}
 
 		});
@@ -111,8 +114,8 @@ public class Bruno extends JFrame {
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"demoscript");
-		getRootPane().getActionMap().put("demoscript", new AbstractAction() {
+				"save");
+		getRootPane().getActionMap().put("save", new AbstractAction() {
 
 			/**
 			 * 
@@ -121,10 +124,13 @@ public class Bruno extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					pluginManager.executeScript("helloworld.js");
-				} catch (ScriptException e1) {
-					e1.printStackTrace();
+				// Save current file
+				if (editingWindow != null) {
+					try {
+						editingWindow.save();
+					} catch (IOException e0) {
+						e0.printStackTrace();
+					}
 				}
 			}
 
@@ -150,104 +156,19 @@ public class Bruno extends JFrame {
 		// Set<Plugin> plugins = setPlugins();
 
 		// Open blank initial document
-		openDocument(new Document());
+		openDocument(new DocumentModel());
 
 		foobarTest = new FoobarTest();
-		setUpDemoFooables();
 
-	//	loadPlugins();
-	}
+		pluginManager.exposeVariable("bruno", this);
+		pluginManager.exposeVariable("editingWindow", editingWindow);
+		//loadPlugins();
+        Set<ScriptFooable> workingDirScripts = pluginManager.getAllScriptFooables(new File("plugins/"));
+        Set<ScriptFooable> libraryScripts = pluginManager.getAllScriptFooables(new File("/Library/Application Support/bruno/plugins/"));
+	    //TODO do something with the scriptfooables.
+    }
 
-	/**
-	 * Initialize simple Fooables
-	 */
-	private void setUpDemoFooables() {
-		foobarTest.getFoobar().addFooable(new Fooable() {
-
-			@Override
-			public String getName() {
-				return "open";
-			}
-
-			@Override
-			public Set<String> getKeywords() {
-				Set<String> r = new HashSet<>();
-				r.add("open");
-				r.add("file");
-				return r;
-			}
-
-			@Override
-			public void doAction() {
-				JFileChooser fc = new JFileChooser();
-				fc.showOpenDialog(getRootPane());
-			}
-
-			@Override
-			public String toString() {
-				return "open file";
-			}
-		});
-
-		foobarTest.getFoobar().addFooable(new Fooable() {
-
-			@Override
-			public String getName() {
-				return "close";
-			}
-
-			@Override
-			public Set<String> getKeywords() {
-				Set<String> r = new HashSet<>();
-				r.add("close");
-				r.add("exit");
-				return r;
-			}
-
-			@Override
-			public void doAction() {
-				close();
-			}
-
-			@Override
-			public String toString() {
-				return "close";
-			}
-		});
-
-		foobarTest.getFoobar().addFooable(new Fooable() {
-
-			@Override
-			public String getName() {
-				return "save";
-			}
-
-			@Override
-			public Set<String> getKeywords() {
-				Set<String> r = new HashSet<>();
-				r.add("save");
-				r.add("file");
-				return r;
-			}
-
-			@Override
-			public void doAction() {
-				try {
-					editingWindow.save();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-			@Override
-			public String toString() {
-				return "save";
-			}
-		});
-
-	}
-
-    /*
+ /*
 	private Set<Plugin> setPlugins() {
 		// Plugins
 		Set<Plugin> s1, s2;
@@ -266,15 +187,13 @@ public class Bruno extends JFrame {
 		return plugins;
 	}
 
-    //N.B. THIS WILL NOT WORK IF RUN AS .APP
-    //path is coded relative to project directory, but bruno.app considers ~ to be the current working directory
 	private void loadPlugins() {
 		Set<Plugin> plugins = pluginManager.loadPlugins(new File("plugins/"));
 		for (Plugin plugin : plugins) {
 			foobarTest.getFoobar().addFooables(plugin.getScriptFooables());
 		}
-	}     */
-
+	}
+    */
 	/**
 	 * Sets up demo menu bar
 	 */
@@ -303,7 +222,7 @@ public class Bruno extends JFrame {
 		application.setDockIconImage(image);
 	}
 
-	public void openDocument(Document doc) {
+	public void openDocument(DocumentModel doc) {
 		// Save current file
 		if (editingWindow != null) {
 			try {
@@ -328,6 +247,10 @@ public class Bruno extends JFrame {
 		editingWindowPlaceholder.setContents(editingWindow.getView());
 		undoViewPlaceholder.setContents(editingWindow.getUndoController()
 				.getView());
+
+		// Because fuck Swing
+		editingWindowPlaceholder.setVisible(false);
+		editingWindowPlaceholder.setVisible(true);
 	}
 
 	/**
@@ -336,7 +259,7 @@ public class Bruno extends JFrame {
 	 * @param file
 	 */
 	public void openFile(File file) {
-		openDocument(new Document(file));
+		openDocument(new DocumentModel(file));
 	}
 
 	/**
@@ -364,6 +287,10 @@ public class Bruno extends JFrame {
 		// }
 
 		foobarTest.setVisible(!foobarTest.isVisible());
+	}
+
+	public FoobarTest getFoobarTest() {
+		return foobarTest;
 	}
 
 	/**

@@ -17,6 +17,7 @@ import javax.script.SimpleBindings;
 
 import foobar.ScriptFooable;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
 /**
@@ -42,6 +43,7 @@ public class SimplePluginManager implements PluginManager {
 		pluginsByScriptName_ = new HashMap<>();
 		pluginsByName_ = new HashMap<>();
 		globals = new SimpleBindings();
+		
 		try {
 			errorLog = new PrintWriter(new BufferedWriter(new FileWriter(
 					System.getProperty("user.home") + "/bruno.log", true)),
@@ -152,7 +154,7 @@ public class SimplePluginManager implements PluginManager {
 		pluginsByName_.put(pluginName, plugin);
 
 		Collection<File> files = FileUtils.listFiles(directoryPath,
-				TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+				HiddenFileFilter.VISIBLE, TrueFileFilter.INSTANCE);
 		for (File f : files) {
 			String path = f.getAbsolutePath();
 			Script s = null;
