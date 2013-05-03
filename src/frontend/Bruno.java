@@ -86,6 +86,7 @@ public class Bruno extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
 				fc.showOpenDialog(getRootPane());
+				openFile(fc.getSelectedFile());
 			}
 
 		});

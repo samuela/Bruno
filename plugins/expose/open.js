@@ -1,4 +1,1 @@
-importClass(javax.swing.JFileChooser);
-
-var jf = new JFileChooser();
-jf.showOpenDialog(bruno.getRootPane());
+bruno.getRootPane().getActionMap().get("open").actionPerformed(null);
