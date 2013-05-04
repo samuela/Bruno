@@ -1,7 +1,6 @@
 package frontend;
 
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -9,10 +8,8 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
-import javax.script.ScriptException;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -30,16 +27,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import foobar.ScriptFooable;
-import plugins.Plugin;
 import plugins.PluginManager;
 import plugins.SimplePluginManager;
 
 import com.apple.eawt.Application;
 
-import foobar.Fooable;
 import foobar.Foobar;
-import foobar.FoobarTest;
+import foobar.ScriptFooable;
 
 /**
  * The main Bruno application.
@@ -108,7 +102,7 @@ public class Bruno extends JFrame {
 			 * 
 			 */
 			private static final long serialVersionUID = 4189934329254672244L;
-			
+
 			private boolean hasFocus = false;
 
 			@Override
@@ -116,8 +110,7 @@ public class Bruno extends JFrame {
 				if (!hasFocus) {
 					foobar.requestFocusInWindow();
 					hasFocus = true;
-				}
-				else {
+				} else {
 					editingWindow.requestFocusInWindow();
 					hasFocus = false;
 				}
@@ -154,13 +147,14 @@ public class Bruno extends JFrame {
 
 		// Side pane
 		JPanel sidePane = new JPanel();
-		sidePane.setLayout(new BoxLayout(sidePane, BoxLayout.Y_AXIS));
+		sidePane.setLayout(new BoxLayout(sidePane, BoxLayout.PAGE_AXIS));
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Projects", new ProjectExplorer(this));
 		tabPane.addTab("Edit History", undoViewPlaceholder);
-		
+
 		foobar = new Foobar();
-		foobar.setMaximumSize(foobar.getPreferredSize());
+		foobar.setMaximumSize(new Dimension(999999, (int) foobar
+				.getPreferredSize().getHeight()));
 		sidePane.add(foobar);
 		sidePane.add(tabPane);
 
@@ -170,10 +164,6 @@ public class Bruno extends JFrame {
 		splitPane.setOneTouchExpandable(true);
 
 		setContentPane(splitPane);
-
-		// foobar = new Foobar();
-
-		// Set<Plugin> plugins = setPlugins();
 
 		// Open blank initial document
 		openDocument(new DocumentModel());
@@ -219,7 +209,7 @@ public class Bruno extends JFrame {
 		menuBar.add(file);
 		setJMenuBar(menuBar);
 	}
-	
+
 	public void toggleFoobar() {
 		getRootPane().getActionMap().get("foobar").actionPerformed(null);
 	}
