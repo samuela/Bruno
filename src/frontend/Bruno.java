@@ -113,8 +113,7 @@ public class Bruno extends JFrame {
 
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"save");
+						.getDefaultToolkit().getMenuShortcutKeyMask()), "save");
 		getRootPane().getActionMap().put("save", new AbstractAction() {
 
 			/**
@@ -162,38 +161,34 @@ public class Bruno extends JFrame {
 
 		pluginManager.exposeVariable("bruno", this);
 		pluginManager.exposeVariable("editingWindow", editingWindow);
-		//loadPlugins();
-        Set<ScriptFooable> workingDirScripts = pluginManager.getAllScriptFooables(new File("plugins/"));
-        Set<ScriptFooable> libraryScripts = pluginManager.getAllScriptFooables(new File("/Library/Application Support/bruno/plugins/"));
-	    //TODO do something with the scriptfooables.
-    }
+		// loadPlugins();
+		Set<ScriptFooable> workingDirScripts = pluginManager
+				.getAllScriptFooables(new File("plugins/"));
+		Set<ScriptFooable> libraryScripts = pluginManager
+				.getAllScriptFooables(new File(
+						"/Library/Application Support/bruno/plugins/"));
 
- /*
-	private Set<Plugin> setPlugins() {
-		// Plugins
-		Set<Plugin> s1, s2;
-		// first look in current working directory
-		s1 = pluginManager.loadPlugins(new File("plugins/"));
-		// then look in specified folder
-		s2 = pluginManager.loadPlugins(new File(
-				"/Library/Application Support/bruno/plugins/"));
-		// s1 or s2 may be null
-		Set<Plugin> plugins = s1;
-		if (plugins == null) {
-			plugins = s2;
-		}
-		// at least one of the plugin locations should be correct and readable
-		assert plugins != null;
-		return plugins;
+		if (workingDirScripts != null)
+			foobarTest.getFoobar().addFooables(workingDirScripts);
+		if (libraryScripts != null)
+			foobarTest.getFoobar().addFooables(libraryScripts);
 	}
 
-	private void loadPlugins() {
-		Set<Plugin> plugins = pluginManager.loadPlugins(new File("plugins/"));
-		for (Plugin plugin : plugins) {
-			foobarTest.getFoobar().addFooables(plugin.getScriptFooables());
-		}
-	}
-    */
+	/*
+	 * private Set<Plugin> setPlugins() { // Plugins Set<Plugin> s1, s2; //
+	 * first look in current working directory s1 =
+	 * pluginManager.loadPlugins(new File("plugins/")); // then look in
+	 * specified folder s2 = pluginManager.loadPlugins(new File(
+	 * "/Library/Application Support/bruno/plugins/")); // s1 or s2 may be null
+	 * Set<Plugin> plugins = s1; if (plugins == null) { plugins = s2; } // at
+	 * least one of the plugin locations should be correct and readable assert
+	 * plugins != null; return plugins; }
+	 * 
+	 * private void loadPlugins() { Set<Plugin> plugins =
+	 * pluginManager.loadPlugins(new File("plugins/")); for (Plugin plugin :
+	 * plugins) {
+	 * foobarTest.getFoobar().addFooables(plugin.getScriptFooables()); } }
+	 */
 	/**
 	 * Sets up demo menu bar
 	 */

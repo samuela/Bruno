@@ -68,7 +68,7 @@ public final class Foobar extends JPanel {
 	 * @param f
 	 *            A collection of Fooables
 	 */
-	public void addFooables(Collection<Fooable> f) {
+	public void addFooables(Collection<? extends Fooable> f) {
 		this.fooables.addAll(f);
 	}
 

@@ -48,7 +48,7 @@ public class ScriptFooable implements Fooable {
 
 	@Override
 	public String toString() {
-		return "ScriptFooable " + script.getName();
+		return script.getName();
 	}
 
 }
