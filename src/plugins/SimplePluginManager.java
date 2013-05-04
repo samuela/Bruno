@@ -217,9 +217,7 @@ public class SimplePluginManager implements PluginManager {
 		return null;
 	}
        **/
-	@Override
-    @Deprecated
-	public Set<Plugin> loadPlugins(File pluginsDir) {
+	Set<Plugin> loadPlugins(File pluginsDir) {
 		Set<Plugin> plugins = new HashSet<>();
 		if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
 			errorLog.println("Invalid plugins directory.");
@@ -251,15 +249,21 @@ public class SimplePluginManager implements PluginManager {
      * @throws IllegalStateException if topLevelPluginDir does not exist, is unreadable,
      * or invalid in some way
      */
-    public Set<ScriptFooable> getAllScriptFooables(File topLevelPluginDir) throws IllegalArgumentException{
+    public Set<ScriptFooable> getAllScriptFooables(File topLevelPluginDir){
         Set<ScriptFooable> allScripts = new HashSet<>();
       //  Plugin misc = new Plugin(this, topLevelPluginDir.getAbsolutePath());
         if(!topLevelPluginDir.exists()){
-            throw new IllegalArgumentException("plugin directory does not exist.");
+            return null;
         }
         if(!topLevelPluginDir.isDirectory()) {
-            throw new IllegalArgumentException("argument is not a directory.");
+            return null;
         }
+        for(Plugin p: loadPlugins(topLevelPluginDir)){
+            for(Script s: p.getScriptsByName().values()){
+                allScripts.add(new ScriptFooable(this, s));
+            }
+        }
+        /*
         for(File file: topLevelPluginDir.listFiles()){
             if(file.isDirectory()){
                 Plugin p = loadPlugin(file);
@@ -272,6 +276,9 @@ public class SimplePluginManager implements PluginManager {
                     //ignore silently
                 }
             }
+        }   */
+        if(allScripts.isEmpty()){
+            allScripts = null;
         }
         return allScripts;
     }

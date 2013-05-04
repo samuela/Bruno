@@ -29,6 +29,8 @@ import static org.junit.Assert.*;
  */
 public class PluginTester {
 
+    private final String TEST_PATH = "TEST_PLUGINS_DONT_TOUCH";
+
     @Test
     public void stringTest(){
         int[] ar = {0};
@@ -52,7 +54,7 @@ public class PluginTester {
     @Test
     public void noExtension(){
         SimplePluginManager simple = new SimplePluginManager();
-        Plugin p = simple.loadPlugin(new File("plugins/noextension"));
+        Plugin p = simple.loadPlugin(new File(TEST_PATH + "/noextension"));
      //   System.out.println(p.getScriptsByName());
         assertTrue(p==null);
     }
@@ -61,8 +63,8 @@ public class PluginTester {
     public void cantRead(){
         try{
             SimplePluginManager simple = new SimplePluginManager();
-            simple.loadPlugin(new File("plugins/cantread"));
-            Plugin helloagain = simple.loadPlugin(new File("plugins/helloagain"));
+            simple.loadPlugin(new File(TEST_PATH + "/cantread"));
+            Plugin helloagain = simple.loadPlugin(new File(TEST_PATH + "/helloagain"));
             assertTrue(simple.contains(helloagain, "helloworld", "py"));
         } catch (IllegalArgumentException e) {
             System.err.println("test cantRead failed because plugin is missing");
@@ -72,8 +74,8 @@ public class PluginTester {
     @Test
     public void duplicateName(){
         SimplePluginManager simple = new SimplePluginManager();
-        Plugin helloagain = simple.loadPlugin(new File("plugins/helloagain"));
-        Plugin hello = simple.loadPlugin(new File("plugins/hello"));
+        Plugin helloagain = simple.loadPlugin(new File(TEST_PATH + "/helloagain"));
+        Plugin hello = simple.loadPlugin(new File(TEST_PATH + "/hello"));
         assertTrue(simple.contains(helloagain, "helloworld", "py"));
         assertTrue(simple.contains(hello, "alert", "js"));
         assertTrue(simple.contains(hello, "write", "py"));
@@ -86,14 +88,14 @@ public class PluginTester {
     @Test
     public void badExtension(){
         SimplePluginManager simple = new SimplePluginManager();
-        Plugin p = simple.loadPlugin(new File("plugins/badext"));
+        Plugin p = simple.loadPlugin(new File(TEST_PATH + "/badext"));
         assertFalse(simple.contains(p, "ahoy", "py~"));
     }
 
     @Test
     public void loadPluginTest() {
         SimplePluginManager simpleManager = new SimplePluginManager();
-        File f = new File("plugins/hello");
+        File f = new File(TEST_PATH + "/hello");
         Plugin p = simpleManager.loadPlugin(f);
         Script hello = p.getScriptByName("helloworld");
 
@@ -125,7 +127,7 @@ public class PluginTester {
     @Test
     public void multipleTimes(){
         SimplePluginManager s = new SimplePluginManager();
-        s.loadPlugin(new File("plugins/write"));
+        s.loadPlugin(new File(TEST_PATH + "/write"));
         for(int i = 0; i < 2; i++){
 
 
@@ -140,10 +142,11 @@ public class PluginTester {
     @Test
     public void executeTest() {
         SimplePluginManager simpleManager = new SimplePluginManager();
-        File f = new File("plugins/hello");
+        File f = new File(TEST_PATH + "/hello");
         Plugin p = simpleManager.loadPlugin(f);
 
         Script writeHello = p.getScriptByName("write");
+        System.out.println(writeHello.getPath());
 
         assertTrue((simpleManager).supportsScript(writeHello));
 
@@ -155,7 +158,7 @@ public class PluginTester {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        File written = new File("plugins/hello/hello.txt");
+        File written = new File(TEST_PATH + "/hello/hello.txt");
         assertTrue(written.exists());
         written.delete();
     }
@@ -163,7 +166,7 @@ public class PluginTester {
     @Test
     public void exposeMultipleScripts() throws ScriptException {
         SimplePluginManager simple = new SimplePluginManager();
-        Plugin expose = simple.loadPlugin(new File("plugins/expose"));
+        Plugin expose = simple.loadPlugin(new File(TEST_PATH + "/expose"));
 
        //expose i to javascript
      //   System.out.println(expose);
@@ -185,7 +188,7 @@ public class PluginTester {
     @Test
     public void exposeObject() throws ScriptException {
         SimplePluginManager simple = new SimplePluginManager();
-        Plugin expose = simple.loadPlugin(new File("plugins/expose"));
+        Plugin expose = simple.loadPlugin(new File(TEST_PATH + "/expose"));
         Script array = expose.getScriptByName("array");
         int[] ar = {0};
         simple.exposeVariable("ar", ar);
@@ -203,16 +206,16 @@ public class PluginTester {
     @Test (expected=IllegalArgumentException.class)
     public void pluginNameExists(){
         SimplePluginManager simple = new SimplePluginManager();
-        Plugin p = simple.loadPlugin(new File("plugins/hello"));
-        Plugin p2 = simple.loadPlugin(new File("plugins/hello"));
+        Plugin p = simple.loadPlugin(new File(TEST_PATH + "/hello"));
+        Plugin p2 = simple.loadPlugin(new File(TEST_PATH + "/hello"));
         assertTrue(p2==null);
     }
 
     @Test
     public void getAllScriptFooablesTest(){
         SimplePluginManager p = new SimplePluginManager();
-        Set<ScriptFooable> sfoos = p.getAllScriptFooables(new File("plugins"));
-       // System.out.println(sfoos);
+        Set<ScriptFooable> sfoos = p.getAllScriptFooables(new File(TEST_PATH));
+      // System.out.println(sfoos);
         //this particular plugins directory has 7 distinctly named, viable scripts
         assertTrue(7 == sfoos.size());
     }

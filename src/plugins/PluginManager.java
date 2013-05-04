@@ -14,13 +14,16 @@ import javax.script.ScriptException;
 public interface PluginManager {
 
 
-    @Deprecated
-    Set<Plugin> loadPlugins(File file) throws IllegalArgumentException;
+    //@Deprecated
+    //public Plugin loadPlugin(File directoryPath) throws IllegalArgumentException;
+    // @Deprecated
+  //  Set<Plugin> loadPlugins(File file) throws IllegalArgumentException;
 
     /**
      *
      * @param topLevelPluginDir the system bruno plugin directory
-     * @return a set containing a fooable for each script successfully loaded
+     * @return a set containing a fooable for each script successfully loaded, or null
+     * if no scripts are successfully loaded
      */
     Set<ScriptFooable> getAllScriptFooables(File topLevelPluginDir);
 
