@@ -219,6 +219,10 @@ public class Bruno extends JFrame {
 		menuBar.add(file);
 		setJMenuBar(menuBar);
 	}
+	
+	public void toggleFoobar() {
+		getRootPane().getActionMap().get("foobar").actionPerformed(null);
+	}
 
 	private static void setMacStuff() {
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
