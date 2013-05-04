@@ -95,9 +95,17 @@ public class EditingWindow {
 			writer.close();
 		}
 	}
-	
+
 	public boolean requestFocusInWindow() {
 		return textArea.requestFocusInWindow();
+	}
+
+	public DocumentModel getDoc() {
+		return doc;
+	}
+
+	public RSyntaxTextArea getTextArea() {
+		return textArea;
 	}
 
 	public JComponent getView() {
