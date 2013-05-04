@@ -41,7 +41,7 @@ public final class Foobar extends JPanel {
 
 		// Store all Fooables in a HashSet
 		this.fooables = new HashSet<>();
-
+		
 		// Add the FoobarField to the Foobar
 		this.field = new FoobarField();
 		this.add(this.field);
@@ -121,6 +121,11 @@ public final class Foobar extends JPanel {
 	protected void showSuggestions(String query) {
 		this.popupManager.createPopup(FoobarSuggester.getSuggestions(query,
 				this.fooables));
+	}
+	
+	@Override
+	public boolean requestFocusInWindow() {
+		return this.field.requestFocusInWindow();
 	}
 
 	/**

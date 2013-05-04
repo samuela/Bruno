@@ -89,7 +89,7 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 			return;
 		}
 		if (f.isFile()) {
-			parentApp.getFoobarTest().getFoobar()
+			parentApp.getFoobar().getFoobar()
 					.addFooable(new FileFooable(parentApp, f));
 		} else {
 			for (File file : f.listFiles()) {

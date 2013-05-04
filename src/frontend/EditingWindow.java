@@ -95,6 +95,10 @@ public class EditingWindow {
 			writer.close();
 		}
 	}
+	
+	public boolean requestFocusInWindow() {
+		return textArea.requestFocusInWindow();
+	}
 
 	public JComponent getView() {
 		return scrollPane;

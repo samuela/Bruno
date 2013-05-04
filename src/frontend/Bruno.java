@@ -1,5 +1,7 @@
 package frontend;
 
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -12,6 +14,7 @@ import java.util.Set;
 
 import javax.script.ScriptException;
 import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -19,6 +22,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
@@ -34,6 +38,7 @@ import plugins.SimplePluginManager;
 import com.apple.eawt.Application;
 
 import foobar.Fooable;
+import foobar.Foobar;
 import foobar.FoobarTest;
 
 /**
@@ -57,7 +62,7 @@ public class Bruno extends JFrame {
 
 	private PluginManager pluginManager = new SimplePluginManager();
 
-	private FoobarTest foobarTest;
+	private Foobar foobar;
 
 	// private final Foobar foobar;
 	// private final PopupFactory factory = PopupFactory.getSharedInstance();
@@ -103,10 +108,19 @@ public class Bruno extends JFrame {
 			 * 
 			 */
 			private static final long serialVersionUID = 4189934329254672244L;
+			
+			private boolean hasFocus = false;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				toggleFoobar();
+				if (!hasFocus) {
+					foobar.requestFocusInWindow();
+					hasFocus = true;
+				}
+				else {
+					editingWindow.requestFocusInWindow();
+					hasFocus = false;
+				}
 			}
 
 		});
@@ -139,13 +153,20 @@ public class Bruno extends JFrame {
 		undoViewPlaceholder = new ComponentPlaceholder();
 
 		// Side pane
+		JPanel sidePane = new JPanel();
+		sidePane.setLayout(new BoxLayout(sidePane, BoxLayout.Y_AXIS));
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Projects", new ProjectExplorer(this));
 		tabPane.addTab("Edit History", undoViewPlaceholder);
+		
+		foobar = new Foobar();
+		foobar.setMaximumSize(foobar.getPreferredSize());
+		sidePane.add(foobar);
+		sidePane.add(tabPane);
 
 		// Split Pane
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				editingWindowPlaceholder, tabPane);
+				editingWindowPlaceholder, sidePane);
 		splitPane.setOneTouchExpandable(true);
 
 		setContentPane(splitPane);
@@ -157,8 +178,6 @@ public class Bruno extends JFrame {
 		// Open blank initial document
 		openDocument(new DocumentModel());
 
-		foobarTest = new FoobarTest();
-
 		pluginManager.exposeVariable("bruno", this);
 		pluginManager.exposeVariable("editingWindow", editingWindow);
 		// loadPlugins();
@@ -169,9 +188,9 @@ public class Bruno extends JFrame {
 						"/Library/Application Support/bruno/plugins/"));
 
 		if (workingDirScripts != null)
-			foobarTest.getFoobar().addFooables(workingDirScripts);
+			foobar.addFooables(workingDirScripts);
 		if (libraryScripts != null)
-			foobarTest.getFoobar().addFooables(libraryScripts);
+			foobar.addFooables(libraryScripts);
 	}
 
 	/*
@@ -266,26 +285,8 @@ public class Bruno extends JFrame {
 		System.exit(0);
 	}
 
-	public void toggleFoobar() {
-		// if (foobarPopup != null) {
-		// foobarPopup.hide();
-		// foobarPopup = null;
-		// } else {
-		// foobarPopup = factory.getPopup(
-		// this,
-		// foobar,
-		// getLocationOnScreen().x + this.getWidth() / 2
-		// - foobar.getWidth() / 2,
-		// editingWindowPlaceholder.getLocationOnScreen().y);
-		// foobarPopup.show();
-		// foobar.requestFocus();
-		// }
-
-		foobarTest.setVisible(!foobarTest.isVisible());
-	}
-
-	public FoobarTest getFoobarTest() {
-		return foobarTest;
+	public Foobar getFoobar() {
+		return foobar;
 	}
 
 	/**
