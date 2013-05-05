@@ -41,7 +41,7 @@ public final class Foobar extends JPanel {
 
 		// Store all Fooables in a HashSet
 		this.fooables = new HashSet<>();
-		
+
 		// Add the FoobarField to the Foobar
 		this.field = new FoobarField();
 		this.add(this.field);
@@ -70,6 +70,26 @@ public final class Foobar extends JPanel {
 	 */
 	public void addFooables(Collection<? extends Fooable> f) {
 		this.fooables.addAll(f);
+	}
+
+	/**
+	 * Remove a Fooable from the Foobar's list of Fooables.
+	 * 
+	 * @param f
+	 *            A Fooable
+	 */
+	public void removeFooable(Fooable f) {
+		this.fooables.remove(f);
+	}
+
+	/**
+	 * Remove a collection of Fooables from the Foobar's list of Fooables
+	 * 
+	 * @param f
+	 *            A collection of Fooables
+	 */
+	public void removeFooables(Collection<? extends Fooable> f) {
+		this.fooables.removeAll(f);
 	}
 
 	/**
@@ -122,7 +142,7 @@ public final class Foobar extends JPanel {
 		this.popupManager.createPopup(FoobarSuggester.getSuggestions(query,
 				this.fooables));
 	}
-	
+
 	@Override
 	public boolean requestFocusInWindow() {
 		return this.field.requestFocusInWindow();
