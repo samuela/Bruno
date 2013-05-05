@@ -15,9 +15,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -48,6 +45,8 @@ public class Bruno extends JFrame {
 	 */
 	private static final long serialVersionUID = 1987233037023049749L;
 
+	public static final String FILE_EXT = ".bruno~";
+
 	private final JTabbedPane tabPane;
 	private final JSplitPane splitPane;
 	private final ComponentPlaceholder editingWindowPlaceholder;
@@ -58,13 +57,8 @@ public class Bruno extends JFrame {
 
 	private Foobar foobar;
 
-	// private final Foobar foobar;
-	// private final PopupFactory factory = PopupFactory.getSharedInstance();
-	// private Popup foobarPopup;
-
 	public Bruno() {
 		setTitle("Bruno");
-		setBar();
 		setSize(1024, 768);
 
 		// Center on screen
@@ -72,7 +66,37 @@ public class Bruno extends JFrame {
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-		// Key bindings
+		editingWindowPlaceholder = new ComponentPlaceholder();
+		undoViewPlaceholder = new ComponentPlaceholder();
+
+		// Side pane
+		JPanel sidePane = new JPanel();
+		sidePane.setLayout(new BoxLayout(sidePane, BoxLayout.PAGE_AXIS));
+		tabPane = new JTabbedPane();
+		tabPane.addTab("Projects", new ProjectExplorer(this));
+		tabPane.addTab("Edit History", undoViewPlaceholder);
+
+		foobar = new Foobar();
+		foobar.setMaximumSize(new Dimension(999999, (int) foobar
+				.getPreferredSize().getHeight()));
+		sidePane.add(foobar);
+		sidePane.add(tabPane);
+
+		// Split Pane
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				editingWindowPlaceholder, sidePane);
+		splitPane.setOneTouchExpandable(true);
+
+		setContentPane(splitPane);
+
+		// Open blank initial document
+		openDocument(new DocumentModel());
+
+		setUpPlugins();
+		setUpKeybindings();
+	}
+
+	private void setUpKeybindings() {
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()), "open");
@@ -141,33 +165,9 @@ public class Bruno extends JFrame {
 			}
 
 		});
+	}
 
-		editingWindowPlaceholder = new ComponentPlaceholder();
-		undoViewPlaceholder = new ComponentPlaceholder();
-
-		// Side pane
-		JPanel sidePane = new JPanel();
-		sidePane.setLayout(new BoxLayout(sidePane, BoxLayout.PAGE_AXIS));
-		tabPane = new JTabbedPane();
-		tabPane.addTab("Projects", new ProjectExplorer(this));
-		tabPane.addTab("Edit History", undoViewPlaceholder);
-
-		foobar = new Foobar();
-		foobar.setMaximumSize(new Dimension(999999, (int) foobar
-				.getPreferredSize().getHeight()));
-		sidePane.add(foobar);
-		sidePane.add(tabPane);
-
-		// Split Pane
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				editingWindowPlaceholder, sidePane);
-		splitPane.setOneTouchExpandable(true);
-
-		setContentPane(splitPane);
-
-		// Open blank initial document
-		openDocument(new DocumentModel());
-
+	private void setUpPlugins() {
 		pluginManager.exposeVariable("bruno", this);
 		pluginManager.exposeVariable("editingWindow", editingWindow);
 		// loadPlugins();
@@ -183,62 +183,56 @@ public class Bruno extends JFrame {
 			foobar.addFooables(libraryScripts);
 	}
 
-	/*
-	 * private Set<Plugin> setPlugins() { // Plugins Set<Plugin> s1, s2; //
-	 * first look in current working directory s1 =
-	 * pluginManager.loadPlugins(new File("plugins/")); // then look in
-	 * specified folder s2 = pluginManager.loadPlugins(new File(
-	 * "/Library/Application Support/bruno/plugins/")); // s1 or s2 may be null
-	 * Set<Plugin> plugins = s1; if (plugins == null) { plugins = s2; } // at
-	 * least one of the plugin locations should be correct and readable assert
-	 * plugins != null; return plugins; }
-	 * 
-	 * private void loadPlugins() { Set<Plugin> plugins =
-	 * pluginManager.loadPlugins(new File("plugins/")); for (Plugin plugin :
-	 * plugins) {
-	 * foobarTest.getFoobar().addFooables(plugin.getScriptFooables()); } }
-	 */
-	/**
-	 * Sets up demo menu bar
-	 */
-	private void setBar() {
-		JMenuBar menuBar = new JMenuBar();
-		JMenu file = new JMenu("File");
-		JMenuItem item = new JMenuItem("Woah");
-		file.add(item);
-		menuBar.add(file);
-		setJMenuBar(menuBar);
-	}
+	// /**
+	// * Sets up demo menu bar
+	// */
+	// private void setDemoMenuBar() {
+	// JMenuBar menuBar = new JMenuBar();
+	// JMenu file = new JMenu("File");
+	// JMenuItem item = new JMenuItem("Woah");
+	// file.add(item);
+	// menuBar.add(file);
+	// setJMenuBar(menuBar);
+	// }
 
 	public void toggleFoobar() {
 		getRootPane().getActionMap().get("foobar").actionPerformed(null);
 	}
 
-	private static void setMacStuff() {
-		System.setProperty("apple.laf.useScreenMenuBar", "true");
-	}
-
+	/**
+	 * Sets up nice look and feel adjustments.
+	 * 
+	 * @throws ClassNotFoundException
+	 * @throws UnsupportedLookAndFeelException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
 	private static void setNiceties() throws ClassNotFoundException,
 			UnsupportedLookAndFeelException, InstantiationException,
 			IllegalAccessException {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		if (System.getProperty("os.name").equals("Mac OS X")) {
-			setMacStuff();
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
 		}
 		Application application = Application.getApplication();
 		Image image = Toolkit.getDefaultToolkit().getImage("resources/*.jpg");
 		application.setDockIconImage(image);
 	}
 
+	/**
+	 * Open a document in the editor, saving the current document and loading in
+	 * the new one.
+	 * 
+	 * @param doc
+	 */
 	public void openDocument(DocumentModel doc) {
 		// Save current file
 		if (editingWindow != null) {
 			try {
 				editingWindow.save();
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(this, "Failed to save file "
-						+ doc.getFile(), "File saving error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Failed to save file",
+						"File saving error", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
 		}
@@ -271,9 +265,10 @@ public class Bruno extends JFrame {
 	}
 
 	/**
-	 * 
+	 * Close the editor.
 	 */
 	public void close() {
+		// TODO save current file
 		setVisible(false);
 		dispose();
 		System.exit(0);
