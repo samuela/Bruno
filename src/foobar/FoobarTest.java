@@ -10,11 +10,8 @@ public final class FoobarTest extends JFrame {
 
 	/**
 	 * Create a new JFrame to test the Foobar component
-	 * 
-	 * NOTE: FoobarTest should not be instantiated outside of this class. If you
-	 * want to use Foobar, use the Foobar class instead of FoobarTest.
 	 */
-	private FoobarTest() {
+	public FoobarTest() {
 		super("Foobar Test");
 
 		// this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
