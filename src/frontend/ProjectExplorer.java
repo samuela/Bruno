@@ -108,15 +108,18 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 		addFooables(folder);
 	}
 
+	protected static boolean belongsInProjectExplorer(File file) {
+		return !file.isHidden() && !file.getName().endsWith(Bruno.FILE_EXT);
+	}
+
 	private void addFooables(File f) {
-		if (f.isHidden()) {
-			return;
-		}
-		if (f.isFile()) {
-			parentApp.getFoobar().addFooable(new FileFooable(parentApp, f));
-		} else {
-			for (File file : f.listFiles()) {
-				addFooables(file);
+		if (belongsInProjectExplorer(f)) {
+			if (f.isFile()) {
+				parentApp.getFoobar().addFooable(new FileFooable(parentApp, f));
+			} else {
+				for (File file : f.listFiles()) {
+					addFooables(file);
+				}
 			}
 		}
 	}
