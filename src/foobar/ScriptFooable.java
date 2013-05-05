@@ -38,13 +38,13 @@ public class ScriptFooable implements Fooable {
 
 	@Override
 	public void doAction() {
-        try {
-            manager.executeScript(script);
-        } catch (ScriptException e) {
-            //e.printStackTrace();
-            System.err.println("Error in script " + script.getName());
-        }
-    }
+		try {
+			manager.executeScript(script);
+		} catch (ScriptException e) {
+			// e.printStackTrace();
+			System.err.println("Error in script " + script.getName());
+		}
+	}
 
 	@Override
 	public String toString() {
