@@ -10,6 +10,8 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -59,15 +61,37 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 				int selectedRow = fileTree.getRowForLocation(e.getX(), e.getY());
 				TreePath selectedPath = fileTree.getPathForLocation(e.getX(),
 						e.getY());
-				if (selectedRow != -1) {
-					if (e.getClickCount() == 1) {
-						// System.out.println("single click");
-					} else if (e.getClickCount() == 2) {
-						File file = ((TreeFileObject) selectedPath
-								.getLastPathComponent()).getFile();
-						if (file.isFile()) {
-							parentApp.openFile(file);
-						}
+				if (selectedRow != -1 && e.getClickCount() == 2) {
+					File file = ((TreeFileObject) selectedPath
+							.getLastPathComponent()).getFile();
+					if (file.isFile()) {
+						parentApp.openFile(file);
+					}
+				}
+			}
+		});
+
+		fileTree.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				TreePath selectedPath = fileTree.getSelectionPath();
+				if (e.getKeyCode() == KeyEvent.VK_ENTER && selectedPath != null) {
+					TreeFileObject selected = (TreeFileObject) selectedPath
+							.getLastPathComponent();
+					File file = selected.getFile();
+					if (file.isFile()) {
+						parentApp.openFile(file);
 					}
 				}
 			}
@@ -89,8 +113,7 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 			return;
 		}
 		if (f.isFile()) {
-			parentApp.getFoobar()
-					.addFooable(new FileFooable(parentApp, f));
+			parentApp.getFoobar().addFooable(new FileFooable(parentApp, f));
 		} else {
 			for (File file : f.listFiles()) {
 				addFooables(file);
