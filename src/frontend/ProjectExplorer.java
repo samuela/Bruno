@@ -109,8 +109,7 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 	}
 
 	protected static boolean belongsInProjectExplorer(File file) {
-		return !file.isHidden() && !file.getName().endsWith(Bruno.FILE_EXT)
-				&& !file.getName().endsWith("~");
+		return !file.isHidden() && !file.getName().endsWith(Bruno.FILE_EXT);
 	}
 
 	private void addFooables(File f) {
