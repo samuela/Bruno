@@ -66,17 +66,17 @@ public class EditingWindow {
 		textArea.setCaretPosition(0);
 
 		// Setup undo tree
-		undoController = new UndoController(textArea);
+		undoController = new UndoController(textArea.getDocument());
 		textArea.getDocument().addUndoableEditListener(undoController);
 
 		textArea.getInputMap().put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()),
 				undoController.getUndoAction());
-		/*	textArea.getInputMap().put(
+		textArea.getInputMap().put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()
-						+ Event.SHIFT_MASK), undoController.getRedoAction());*/
+						+ Event.SHIFT_MASK), undoController.getRedoAction());
 
 	}
 
