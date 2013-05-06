@@ -136,11 +136,42 @@ public class EditHistoryView extends JPanel
     public void setSelectedNode(NodeComponent selectedNode)
     {
 	this.selectedNode = selectedNode;
+	comment.setText(selectedNode.getComment());
+	comment.setEditable(true);
     }
     
     public void setDocument(Document doc) {
 	textArea.setDocument(doc);
 	// textArea.setCaretPosition(textArea.getDocument().getLength());
+    }
+
+    public void compress(NodeComponent n1, NodeComponent n2)
+    {
+	Component[] nodeComponents = nodesView.getComponents();
+	int index1 = -1;
+	int index2 = -1;
+	for (int i = 0; i < nodeComponents.length; i++) {
+	    if (nodeComponents[i] == n1) {
+		index1 = i;
+	    }
+	    if (nodeComponents[i] == n2) {
+		index2 = i;
+	    }
+	    if (index1 >= 0 && index2 >= 0)
+		break;
+	}
+	int lower = (index1 <= index2) ? index1 : index2;
+	int higher = (index1 <= index2) ? index2 : index1;
+	NodeComponent lowerNode = ((NodeComponent) nodeComponents[lower]);
+	CompoundEdit edit = lowerNode.getEdit();
+	String comment = ((NodeComponent) nodeComponents[higher]).getComment();
+	lowerNode.setComment(comment);
+	for (int i = higher; i > lower; i--) {
+	    //  nodes.add((NodeComponent) nodeComponents[i]);
+	    edit.addEdit(((NodeComponent) nodeComponents[lower]).getEdit(), "display");
+	    nodesView.remove(lower);
+	}
+	revalidateNodeComponents();
     }
     
 }

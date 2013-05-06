@@ -35,15 +35,6 @@ public class CompoundEdit implements Edit, Serializable
 	setLength(e.getLength());
     }
 
-    /*    public CompoundEdit(CompoundEdit other)
-    {
-	setEdits(other.getEdits());
-	setParent(other.getParent());
-	setType(other.getType());
-	setLength(other.getLength());
-	setComment(other.getComment());
-	}*/
-
     @Override
 	public void undo(Document document)
     {

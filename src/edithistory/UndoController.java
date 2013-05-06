@@ -16,8 +16,10 @@ public class UndoController implements UndoableEditListener
     private CompoundEdit toUndo;
     private CompoundEdit lastDisplayEdit;
     private UndoAction undoAction;
-    private JTextArea textArea;
-    private EditHistoryView view;
+    private transient JTextArea textArea;
+    private transient EditHistoryView view;
+    private transient NodeComponent toCompound1;
+    private transient NodeComponent toCompound2;
 
     public UndoController(JTextArea textArea)
     {
@@ -85,6 +87,27 @@ public class UndoController implements UndoableEditListener
 	    textArea.replaceRange(restored.getText(0, restored.getLength()), 0, textArea.getDocument().getLength());
 	}
 	catch(BadLocationException ex){}
+    }
+
+    public void selectNodeForCompound(NodeComponent node)
+    {
+	if (toCompound1 == null)
+	    toCompound1 = node;
+	else if (toCompound2 == null){
+	    toCompound2 = node;
+	    view.compress(toCompound1, toCompound2);
+	    toCompound1.deselectForCompound();
+	    toCompound2.deselectForCompound();
+	    toCompound1 = null;
+	    toCompound2 = null;
+	}
+    }
+
+    public void deselectNodeForCompound(NodeComponent node)
+    {
+	if (toCompound1 == node){
+	    toCompound1 = null;
+	}
     }
 
     /* Getters and Setters */
