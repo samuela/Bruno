@@ -16,7 +16,6 @@ public class CompoundEdit implements Serializable
     private static final long serialVersionUID = 1L;
     private List<MyUndoableEdit> edits;
     private CompoundEdit parent;
-    private CompoundEdit child;
     private String type;//addition, deletion, or empty
     private int length;
     private String comment;
@@ -35,6 +34,15 @@ public class CompoundEdit implements Serializable
 	setType(e.getType());
 	setLength(e.getLength());
     }
+
+    /*    public CompoundEdit(CompoundEdit other)
+    {
+	setEdits(other.getEdits());
+	setParent(other.getParent());
+	setType(other.getType());
+	setLength(other.getLength());
+	setComment(other.getComment());
+	}*/
 
     public void undo(Document document)
     {
@@ -61,6 +69,16 @@ public class CompoundEdit implements Serializable
     }
 
     /* Getters and Setters */
+    public List<MyUndoableEdit> getEdits()
+    {
+	return edits;
+    }
+    
+    public void setEdits(List<MyUndoableEdit> edits)
+    {
+	this.edits = edits;
+    }
+
     public CompoundEdit getParent()
     {
 	return parent;

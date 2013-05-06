@@ -12,8 +12,9 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 public class UndoController implements UndoableEditListener
 {
-    private CompoundEdit lastEdit;
+    private CompoundEdit lastUndoEdit;
     private CompoundEdit toUndo;
+    private CompoundEdit lastDisplayEdit;
     private UndoAction undoAction;
     private JTextArea textArea;
     private EditHistoryView view;
@@ -22,10 +23,11 @@ public class UndoController implements UndoableEditListener
     {
 	this.textArea = textArea;
 	undoAction = new UndoAction(this);
-	lastEdit = new CompoundEdit();
-	toUndo = lastEdit;
+	lastUndoEdit = new CompoundEdit();
+	lastDisplayEdit = new CompoundEdit();
+	toUndo = lastUndoEdit;
 	view = new EditHistoryView(this);
-	view.addEdit(lastEdit);
+	view.addEdit(lastDisplayEdit);
     }
 
     @Override
@@ -37,15 +39,17 @@ public class UndoController implements UndoableEditListener
 
     public void addEdit(MyUndoableEdit e)
     {
-	if (!lastEdit.addEdit(e))
+	if (lastUndoEdit.addEdit(e))
+	    lastDisplayEdit.addEdit(e);
+	else
 	    createNewEdit(e);
-	toUndo = lastEdit;
+	toUndo = lastUndoEdit;
     }
 
     public void createNewEdit(MyUndoableEdit e)
     {
-	lastEdit = new CompoundEdit(e, lastEdit);
-	view.addEdit(lastEdit);
+	setLastEdits(e);
+	view.addEdit(lastDisplayEdit);
     }
 
     public boolean canUndo()
@@ -69,7 +73,7 @@ public class UndoController implements UndoableEditListener
 	} 
 	catch (BadLocationException e1) {
 	}
-	CompoundEdit e = lastEdit;
+	CompoundEdit e = lastDisplayEdit;
 	while (e != edit){
 	    e.undo(restoredDocument);
 	    e = e.getParent();
@@ -100,6 +104,12 @@ public class UndoController implements UndoableEditListener
     public EditHistoryView getView()
     {
 	return view;
+    }
+
+    public void setLastEdits(MyUndoableEdit e)
+    {
+	lastUndoEdit = new CompoundEdit(e, lastUndoEdit);
+	lastDisplayEdit = new CompoundEdit(e, lastDisplayEdit);
     }
 
 }
