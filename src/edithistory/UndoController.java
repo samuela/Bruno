@@ -5,6 +5,7 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
+import java.awt.Component;
 import javax.swing.text.Document;
 import javax.swing.text.BadLocationException;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
@@ -82,11 +83,18 @@ public class UndoController implements UndoableEditListener
 
     public void revert(CompoundEdit edit)
     {
+	int numComponents = view.getNodeComponents().length;
 	Document restored = restoreTo(edit);
 	try{
 	    textArea.replaceRange(restored.getText(0, restored.getLength()), 0, textArea.getDocument().getLength());
 	}
 	catch(BadLocationException ex){}
+	Component[] nodeComponents = view.getNodeComponents();
+	int numNewComponents = nodeComponents.length - numComponents;
+	if (numNewComponents > 1){
+	    view.compress((NodeComponent) nodeComponents[nodeComponents.length - 2],
+			  (NodeComponent) nodeComponents[nodeComponents.length - 1]);
+	}
     }
 
     public void selectNodeForCompound(NodeComponent node)

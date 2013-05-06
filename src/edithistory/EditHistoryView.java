@@ -200,6 +200,10 @@ public class EditHistoryView extends JPanel
 	textArea.setDocument(doc);
     }
 
+    public Component[] getNodeComponents()
+    {
+	return nodesView.getComponents();
+    }
     
 }
 
