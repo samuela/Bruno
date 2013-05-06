@@ -92,7 +92,7 @@ public class UndoController implements UndoableEditListener
 	Component[] nodeComponents = view.getNodeComponents();
 	int numNewComponents = nodeComponents.length - numComponents;
 	if (numNewComponents > 1){
-	    view.compress((NodeComponent) nodeComponents[nodeComponents.length - 2],
+	    view.compress((NodeComponent) nodeComponents[nodeComponents.length - numNewComponents],
 			  (NodeComponent) nodeComponents[nodeComponents.length - 1]);
 	}
     }
