@@ -1,5 +1,6 @@
 package edithistory;
 
+import java.io.Serializable;
 import javax.swing.UIManager;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.event.UndoableEditEvent;
@@ -11,8 +12,9 @@ import javax.swing.text.BadLocationException;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
-public class UndoController implements UndoableEditListener
+public class UndoController implements UndoableEditListener, Serializable
 {
+    private static final long serialVersionUID = 1L;
     private CompoundEdit lastUndoEdit;
     private CompoundEdit toUndo;
     private CompoundEdit lastDisplayEdit;
