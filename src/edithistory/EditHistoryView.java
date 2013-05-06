@@ -27,8 +27,8 @@ public class EditHistoryView extends JPanel
     private NodeComponent selectedNode;
     private JTextArea comment;
 
-    public EditHistoryView(UndoController undoController) {
-	this.undoController = undoController;
+    public EditHistoryView(UndoController uc) {
+	this.undoController = uc;
 	layout = new CardLayout();
 	setLayout(layout);
 
@@ -58,19 +58,19 @@ public class EditHistoryView extends JPanel
 	c.gridx = 0;
 	c.gridy = 0;
 	rightSide.add(revert, c);
-	/*	revert.addActionListener(new ActionListener() {
+	revert.addActionListener(new ActionListener() {
 		@Override
 		    public void actionPerformed(ActionEvent e) {
-		    if (clickedNode != null) {
-			int numComponents = nodesView.getComponents().length;
-			clickedNode.revert();
-			Component[] components = nodesView.getComponents();
+		    if (selectedNode != null) {
+			//			int numComponents = nodesView.getComponents().length;
+			undoController.revert(selectedNode.getEdit());
+			/*			Component[] components = nodesView.getComponents();
 			int newLength = components.length;
 			addCompoundNode((NodeComponent) components[newLength - 1],
-					(NodeComponent) components[numComponents], "Revert");
+			(NodeComponent) components[numComponents], "Revert");*/
 		    }
 		}
-		});*/
+	    });
 
 
 	c.anchor = GridBagConstraints.PAGE_END;

@@ -105,6 +105,15 @@ public class NodeComponent extends JPanel {
 	return undoController.restoreTo(edit);
     }
 
+    public UndoController getUndoController() {
+	return undoController;
+    }
+
+    public CompoundEdit getEdit()
+    {
+	return edit;
+    }
+
     /*    public void revert() {
 
 	Document restoredDocument = getDocument();
@@ -153,9 +162,7 @@ public class NodeComponent extends JPanel {
      * public void setUndoController(UndoController undoController) {
      * this.undoController = undoController; }
      */
-    public UndoController getUndoController() {
-	return undoController;
-    }
+
 
     /*
      * public NodeComponent makeOppositeComponent(EditHistoryView view) { return

@@ -77,6 +77,15 @@ public class UndoController implements UndoableEditListener
 	return restoredDocument;
     }
 
+    public void revert(CompoundEdit edit)
+    {
+	Document restored = restoreTo(edit);
+	try{
+	    textArea.replaceRange(restored.getText(0, restored.getLength()), 0, textArea.getDocument().getLength());
+	}
+	catch(BadLocationException ex){}
+    }
+
     /* Getters and Setters */
     public UndoAction getUndoAction()
     {

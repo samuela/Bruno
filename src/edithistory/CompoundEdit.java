@@ -20,7 +20,7 @@ public class CompoundEdit implements Serializable
     private String type;//addition, deletion, or empty
     private int length;
     private String comment;
-
+    
     public CompoundEdit()
     {
 	edits = new ArrayList<>();
