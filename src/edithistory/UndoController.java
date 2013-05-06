@@ -16,7 +16,7 @@ public class UndoController implements UndoableEditListener
     private CompoundEdit lastUndoEdit;
     private CompoundEdit toUndo;
     private CompoundEdit lastDisplayEdit;
-    private UndoAction undoAction;
+    private transient UndoAction undoAction;
     private transient JTextArea textArea;
     private transient EditHistoryView view;
     private transient NodeComponent toCompound1;
