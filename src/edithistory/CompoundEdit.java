@@ -11,10 +11,10 @@ import javax.swing.text.Document;
 /**
  * This class represents several edits put into one.
  */
-public class CompoundEdit implements Serializable
+public class CompoundEdit implements Edit, Serializable
 {
     private static final long serialVersionUID = 1L;
-    private List<MyUndoableEdit> edits;
+    private List<Edit> edits;
     private CompoundEdit parent;
     private String type;//addition, deletion, or empty
     private int length;
@@ -26,7 +26,7 @@ public class CompoundEdit implements Serializable
 	setType("empty");
     }
 
-    public CompoundEdit(MyUndoableEdit e, CompoundEdit parent)
+    public CompoundEdit(Edit e, CompoundEdit parent)
     {
 	this();
 	edits.add(e);
@@ -44,37 +44,46 @@ public class CompoundEdit implements Serializable
 	setComment(other.getComment());
 	}*/
 
-    public void undo(Document document)
+    @Override
+	public void undo(Document document)
     {
-	for (MyUndoableEdit e : Lists.reverse(edits)){
+	for (Edit e : Lists.reverse(edits)){
 	    e.undo(document);
 	}
     }
     
-    public boolean addEdit(MyUndoableEdit e)
+    public boolean addEdit(Edit e, String method)
     {
-	String changedText = e.getText();
-	if (e.getLength() > 1)
+	if (method.equals("undo"))
 	    return false;
-	else if (!getType().equals(e.getType()))
-	    return false;
-	else if (getLength() >= 5 && (changedText.equals(" ") || changedText.equals("\n") || changedText.equals("\t"))) {
+	if (e.isCompound()){
 	    return false;
 	}
 	else{
-	    edits.add(e);
-	    setLength(getLength() + e.getLength());
-	    return true;
+	    SingleEdit se = (SingleEdit) e;
+	    String changedText = se.getText();
+	    if (e.getLength() > 1)
+		return false;
+	    else if (!getType().equals(e.getType()))
+		return false;
+	    else if (getLength() >= 5 && (changedText.equals(" ") || changedText.equals("\n") || changedText.equals("\t"))) {
+		return false;
+	    }
+	    else{
+		edits.add(e);
+		setLength(getLength() + e.getLength());
+		return true;
+	    }
 	}
     }
 
     /* Getters and Setters */
-    public List<MyUndoableEdit> getEdits()
+    public List<Edit> getEdits()
     {
 	return edits;
     }
     
-    public void setEdits(List<MyUndoableEdit> edits)
+    public void setEdits(List<Edit> edits)
     {
 	this.edits = edits;
     }
@@ -89,7 +98,8 @@ public class CompoundEdit implements Serializable
 	this.parent = parent;
     }
     
-    public String getType()
+    @Override
+	public String getType()
     {
 	return type;
     }
@@ -99,7 +109,8 @@ public class CompoundEdit implements Serializable
 	this.type = type;
     }
 
-    public int getLength()
+    @Override
+	public int getLength()
     {
 	return length;
     }
@@ -117,5 +128,11 @@ public class CompoundEdit implements Serializable
     public void setComment(String comment)
     {
 	this.comment = comment;
+    }
+
+    @Override
+	public boolean isCompound()
+    {
+	return true;
     }
 }

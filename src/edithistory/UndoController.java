@@ -33,23 +33,20 @@ public class UndoController implements UndoableEditListener
     @Override
 	public void undoableEditHappened(UndoableEditEvent e)
     {
-	addEdit(new MyUndoableEdit(e.getEdit()));
+	addEdit(new SingleEdit(new MyUndoableEdit(e.getEdit())));
 	undoAction.updateUndoState();
     }
 
-    public void addEdit(MyUndoableEdit e)
+    public void addEdit(Edit e)
     {
-	if (lastUndoEdit.addEdit(e))
-	    lastDisplayEdit.addEdit(e);
-	else
-	    createNewEdit(e);
+	if (!lastUndoEdit.addEdit(e, "undo")){
+	    lastUndoEdit = new CompoundEdit(e, lastUndoEdit);
+	}
+	if (!lastDisplayEdit.addEdit(e, "display")){
+	    lastDisplayEdit = new CompoundEdit(e, lastDisplayEdit);
+	    view.addEdit(lastDisplayEdit);
+	}
 	toUndo = lastUndoEdit;
-    }
-
-    public void createNewEdit(MyUndoableEdit e)
-    {
-	setLastEdits(e);
-	view.addEdit(lastDisplayEdit);
     }
 
     public boolean canUndo()
@@ -104,12 +101,6 @@ public class UndoController implements UndoableEditListener
     public EditHistoryView getView()
     {
 	return view;
-    }
-
-    public void setLastEdits(MyUndoableEdit e)
-    {
-	lastUndoEdit = new CompoundEdit(e, lastUndoEdit);
-	lastDisplayEdit = new CompoundEdit(e, lastDisplayEdit);
     }
 
 }

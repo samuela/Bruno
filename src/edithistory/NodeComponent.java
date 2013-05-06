@@ -114,19 +114,6 @@ public class NodeComponent extends JPanel {
 	return edit;
     }
 
-    /*    public void revert() {
-
-	Document restoredDocument = getDocument();
-	Document currentDocument = undoController.getDocument();
-	try {
-	    currentDocument.remove(0, currentDocument.getLength());
-	    currentDocument.insertString(0,
-					 restoredDocument.getText(0, restoredDocument.getLength()),
-					 null);
-	} catch (BadLocationException e) {
-	}
-	}*/
-
     /*    public boolean isSelectedForCompound() {
 	return selectedForCompound;
 	}*/
