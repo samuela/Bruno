@@ -35,11 +35,11 @@ public class UndoController implements UndoableEditListener
     @Override
 	public void undoableEditHappened(UndoableEditEvent e)
     {
-	addEdit(new SingleEdit(new MyUndoableEdit(e.getEdit())));
+	addEdit(new MyUndoableEdit(e.getEdit()));
 	undoAction.updateUndoState();
     }
 
-    public void addEdit(Edit e)
+    public void addEdit(MyUndoableEdit e)
     {
 	if (!lastUndoEdit.addEdit(e, "undo")){
 	    lastUndoEdit = new CompoundEdit(e, lastUndoEdit);

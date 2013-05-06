@@ -11,22 +11,26 @@ import javax.swing.text.Document;
 /**
  * This class represents several edits put into one.
  */
-public class CompoundEdit implements Edit, Serializable
+public class CompoundEdit implements  Serializable
 {
     private static final long serialVersionUID = 1L;
-    private List<Edit> edits;
+    private List<MyUndoableEdit> edits;
     private CompoundEdit parent;
     private String type;//addition, deletion, or empty
     private int length;
     private String comment;
+    private boolean visible;
+    private CompoundEdit mask;
     
     public CompoundEdit()
     {
 	edits = new ArrayList<>();
 	setType("empty");
+	setVisible(false);
+	setMask(this);
     }
 
-    public CompoundEdit(Edit e, CompoundEdit parent)
+    public CompoundEdit(MyUndoableEdit e, CompoundEdit parent)
     {
 	this();
 	edits.add(e);
@@ -35,24 +39,20 @@ public class CompoundEdit implements Edit, Serializable
 	setLength(e.getLength());
     }
 
-    @Override
-	public void undo(Document document)
+    public void undo(Document document)
     {
-	for (Edit e : Lists.reverse(edits)){
+	for (MyUndoableEdit e : Lists.reverse(edits)){
 	    e.undo(document);
 	}
     }
     
-    public boolean addEdit(Edit e, String method)
+    public boolean addEdit(MyUndoableEdit e, String method)
     {
-	if (method.equals("undo"))
-	    return false;
-	if (e.isCompound()){
+	if (method.equals("undo")){
 	    return false;
 	}
 	else{
-	    SingleEdit se = (SingleEdit) e;
-	    String changedText = se.getText();
+	    String changedText = e.getText();
 	    if (e.getLength() > 1)
 		return false;
 	    else if (!getType().equals(e.getType()))
@@ -69,12 +69,12 @@ public class CompoundEdit implements Edit, Serializable
     }
 
     /* Getters and Setters */
-    public List<Edit> getEdits()
+    public List<MyUndoableEdit> getEdits()
     {
 	return edits;
     }
     
-    public void setEdits(List<Edit> edits)
+    public void setEdits(List<MyUndoableEdit> edits)
     {
 	this.edits = edits;
     }
@@ -89,8 +89,7 @@ public class CompoundEdit implements Edit, Serializable
 	this.parent = parent;
     }
     
-    @Override
-	public String getType()
+    public String getType()
     {
 	return type;
     }
@@ -100,8 +99,7 @@ public class CompoundEdit implements Edit, Serializable
 	this.type = type;
     }
 
-    @Override
-	public int getLength()
+    public int getLength()
     {
 	return length;
     }
@@ -121,9 +119,23 @@ public class CompoundEdit implements Edit, Serializable
 	this.comment = comment;
     }
 
-    @Override
-	public boolean isCompound()
+    public boolean getVisible()
     {
-	return true;
+	return visible;
+    }
+
+    public void setVisible(boolean visible)
+    {
+	this.visible = visible;
+    }
+
+    public CompoundEdit getMask()
+    {
+	return mask;
+    }
+    
+    public void setMask(CompoundEdit mask)
+    {
+	this.mask = mask;
     }
 }

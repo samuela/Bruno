@@ -62,16 +62,22 @@ public class EditHistoryView extends JPanel
 		@Override
 		    public void actionPerformed(ActionEvent e) {
 		    if (selectedNode != null) {
-			//			int numComponents = nodesView.getComponents().length;
 			undoController.revert(selectedNode.getEdit());
-			/*			Component[] components = nodesView.getComponents();
-			int newLength = components.length;
-			addCompoundNode((NodeComponent) components[newLength - 1],
-			(NodeComponent) components[numComponents], "Revert");*/
 		    }
 		}
 	    });
 
+	JButton expandNode = new JButton("Expand");
+	c.gridx = 1;
+	rightSide.add(expandNode, c);
+	expandNode.addActionListener(new ActionListener(){
+		@Override
+		    public void actionPerformed(ActionEvent e){
+		    if (selectedNode != null){
+			expand(selectedNode);
+		    }
+		}
+	    });
 
 	c.anchor = GridBagConstraints.PAGE_END;
 	c.fill = GridBagConstraints.BOTH;
@@ -124,25 +130,8 @@ public class EditHistoryView extends JPanel
     {
 	NodeComponent newNode = new NodeComponent(edit, undoController);
 	nodesView.add(newNode);
+	edit.setVisible(true);
 	revalidateNodeComponents();
-    }
-
-    /* Getters and Setters */
-    public NodeComponent getSelectedNode()
-    {
-	return selectedNode;
-    }
-
-    public void setSelectedNode(NodeComponent selectedNode)
-    {
-	this.selectedNode = selectedNode;
-	comment.setText(selectedNode.getComment());
-	comment.setEditable(true);
-    }
-    
-    public void setDocument(Document doc) {
-	textArea.setDocument(doc);
-	// textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 
     public void compress(NodeComponent n1, NodeComponent n2)
@@ -162,97 +151,55 @@ public class EditHistoryView extends JPanel
 	}
 	int lower = (index1 <= index2) ? index1 : index2;
 	int higher = (index1 <= index2) ? index2 : index1;
-	NodeComponent lowerNode = ((NodeComponent) nodeComponents[lower]);
-	CompoundEdit edit = lowerNode.getEdit();
-	String comment = ((NodeComponent) nodeComponents[higher]).getComment();
-	lowerNode.setComment(comment);
+	CompoundEdit mask = ((NodeComponent) nodeComponents[higher]).getEdit();
 	for (int i = higher; i > lower; i--) {
-	    //  nodes.add((NodeComponent) nodeComponents[i]);
-	    edit.addEdit(((NodeComponent) nodeComponents[lower]).getEdit(), "display");
+	    CompoundEdit toRemove = ((NodeComponent) nodesView.getComponent(lower)).getEdit();
+	    toRemove.setVisible(false);
+	    toRemove.setMask(mask);
 	    nodesView.remove(lower);
 	}
 	revalidateNodeComponents();
     }
-    
-}
 
-    
-/*
-    public void addNode(Edit edit) {
-	NodeComponent newNode = new NodeComponent(edit, undoController);
-	nodesView.add(newNode);
-	revalidateNodeComponents();
-    }
-
-    public void setDocument(Document doc) {
-	textArea.setDocument(doc);
-	// textArea.setCaretPosition(textArea.getDocument().getLength());
-    }
-
-    public void setCaretPosition(int position) {
-	int length = textArea.getDocument().getLength();
-	if (0 <= position && position < length)
-	    textArea.setCaretPosition(position);
-    }
-
-    public void setClickedNode(NodeComponent n) {
-	clickedNode = n;
-	comment.setText(n.getComment());
-	comment.setEditable(true);
-    }
-
-    public NodeComponent getClickedNode() {
-	return clickedNode;
-    }
-
-    public NodeComponent addCompoundNode(NodeComponent n1, NodeComponent n2,
-					 String comment) {
+    public void expand(NodeComponent node)
+    {
 	Component[] nodeComponents = nodesView.getComponents();
-	int index1 = -1;
-	int index2 = -1;
-	for (int i = 0; i < nodeComponents.length; i++) {
-	    if (nodeComponents[i] == n1) {
-		index1 = i;
-	    }
-	    if (nodeComponents[i] == n2) {
-		index2 = i;
-	    }
-	    if (index1 >= 0 && index2 >= 0)
-		break;
-	}
-	int lower = (index1 <= index2) ? index1 : index2;
-	int higher = (index1 <= index2) ? index2 : index1;
-	List<NodeComponent> nodes = new ArrayList<NodeComponent>();
-	for (int i = higher; i >= lower; i--) {
-	    nodes.add((NodeComponent) nodeComponents[i]);
-	    nodesView.remove(lower);
-	}
-	NodeComponent compound = new CompoundNodeComponent(undoController,
-							   nodes);
-	if (!comment.equals(""))
-	    compound.setComment(comment);
-	nodesView.add(compound, lower);
-	revalidateNodeComponents();
-	return compound;
-    }
-
-    public void expandCompoundNode(CompoundNodeComponent node) {
-	List<NodeComponent> hiddenNodes = node.getHiddenNodes();
 	int index = -1;
-	Component[] nodeComponents = nodesView.getComponents();
-	for (int i = 0; i < nodeComponents.length; i++) {
-	    if (nodeComponents[i] == node) {
+	for (int i=0; i < nodeComponents.length; i++){
+	    if (nodeComponents[i] == node){
 		index = i;
 		break;
 	    }
 	}
-	nodesView.remove(index);
-	for (NodeComponent n : hiddenNodes) {
-	    nodesView.add(n, index);
+	CompoundEdit edit = node.getEdit().getParent();
+	while (edit != null && !edit.getVisible()){
+	    if (edit.getMask() == node.getEdit()){
+		nodesView.add(new NodeComponent(edit, undoController), index);
+		edit.setVisible(true);
+		edit.setMask(edit);
+	    }
+	    edit = edit.getParent();
 	}
 	revalidateNodeComponents();
     }
 
-*/
-	
+    /* Getters and Setters */
+    public NodeComponent getSelectedNode()
+    {
+	return selectedNode;
+    }
+
+    public void setSelectedNode(NodeComponent selectedNode)
+    {
+	this.selectedNode = selectedNode;
+	comment.setText(selectedNode.getComment());
+	comment.setEditable(true);
+    }
+    
+    public void setDocument(Document doc) {
+	textArea.setDocument(doc);
+    }
+
+    
+}
 

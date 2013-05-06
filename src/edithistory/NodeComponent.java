@@ -78,7 +78,10 @@ public class NodeComponent extends JPanel {
     }
 
     public void setColor() {
-	if (edit.getType().equals("addition")) {
+	if (edit.getComment() != null && !edit.getComment().equals("")){
+	    setBackground(Color.orange);
+	}
+	else if (edit.getType().equals("addition")) {
 	    setBackground(new Color(0, brightness, 0));
 	}
 	else if (edit.getType().equals("deletion")) {
@@ -108,10 +111,7 @@ public class NodeComponent extends JPanel {
     public void setComment(String comment)
     {
 	edit.setComment(comment);
-	if (comment != null && !(comment.equals(""))) {
-	    setBackground(Color.orange);
-	} else
-	    setColor();
+	setColor();
     }
 
     public String getComment()
@@ -160,20 +160,5 @@ public class NodeComponent extends JPanel {
 	else
 	    selectForCompound();
     }
-
-    /*    public Edit getLastEdit() {
-	return edit;
-	}*/
-
-    /*
-     * public void setUndoController(UndoController undoController) {
-     * this.undoController = undoController; }
-     */
-
-
-    /*
-     * public NodeComponent makeOppositeComponent(EditHistoryView view) { return
-     * edit.getOppositeEdit(undoController); }
-     */
 
 }
