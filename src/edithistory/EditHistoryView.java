@@ -96,6 +96,13 @@ public class EditHistoryView extends JPanel
 	nodesViewScrollPane = new JScrollPane(nodesView);
 	nodesViewScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
+	/*	nodesViewScrollPane.addMouseListener(new MouseAdapter(){
+		@Override
+		    public void mouseDragged(MouseEvent e){
+		    
+		}
+		});*/
+
 	splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				   nodesViewScrollPane, rightSide);
 	add(splitPane);

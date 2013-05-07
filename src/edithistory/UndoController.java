@@ -27,8 +27,8 @@ public class UndoController implements UndoableEditListener, Serializable {
     private transient UndoAction undoAction;
     private transient JTextArea textArea;
     private transient EditHistoryView view;
-    //    private transient NodeComponent toCompound1;
-    //    private transient NodeComponent toCompound2;
+    private transient NodeComponent toCompound1;
+    private transient NodeComponent toCompound2;
 
     public UndoController(JTextArea textArea) {
 	this.textArea = textArea;
@@ -105,7 +105,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 	}
     }
 
-    /*    public void selectNodeForCompound(NodeComponent node) {
+    public void selectNodeForCompound(NodeComponent node) {
 	if (toCompound1 == null)
 	    toCompound1 = node;
 	else if (toCompound2 == null) {
@@ -122,7 +122,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 	if (toCompound1 == node) {
 	    toCompound1 = null;
 	}
-	}*/
+    }
 
     /* Getters and Setters */
     public UndoAction getUndoAction() {
