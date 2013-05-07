@@ -27,12 +27,12 @@ public class UndoController implements UndoableEditListener, Serializable
     public UndoController(JTextArea textArea)
     {
 	this.textArea = textArea;
-	undoAction = new UndoAction(this);
 	lastUndoEdit = new CompoundEdit();
 	lastDisplayEdit = new CompoundEdit();
 	toUndo = lastUndoEdit;
 	view = new EditHistoryView(this);
 	view.addEdit(lastDisplayEdit);
+	undoAction = new UndoAction(this);
     }
 
     @Override
