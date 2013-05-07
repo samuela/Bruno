@@ -12,111 +12,135 @@ import com.google.common.collect.Lists;
  * This class represents several edits put into one.
  */
 public class CompoundEdit implements Serializable {
-	private static final long serialVersionUID = 1L;
-	private List<MyUndoableEdit> edits;
-	private CompoundEdit parent;
-	private String type;// addition, deletion, or empty
-	private int length;
-	private String comment;
-	private boolean visible;
-	private CompoundEdit mask;
+    private static final long serialVersionUID = 1L;
+    private List<MyUndoableEdit> edits;
+    private CompoundEdit parent;
+    private String type;// addition, deletion, or empty
+    private int length;
+    private String comment;
+    private boolean visible;
+    private CompoundEdit mask;
+    private boolean isMask;
+    private boolean isRevert;
 
-	public CompoundEdit() {
-		edits = new ArrayList<>();
-		setType("empty");
-		setVisible(false);
-		setMask(this);
+    public CompoundEdit() {
+	edits = new ArrayList<>();
+	setType("empty");
+	setVisible(false);
+	setMask(this);
+	setIsMask(false);
+	setIsRevert(false);
+    }
+
+    public CompoundEdit(MyUndoableEdit e, CompoundEdit parent) {
+	this();
+	edits.add(e);
+	setParent(parent);
+	setType(e.getType());
+	setLength(e.getLength());
+    }
+
+    public void undo(Document document) {
+	for (MyUndoableEdit e : Lists.reverse(edits)) {
+	    e.undo(document);
 	}
+    }
 
-	public CompoundEdit(MyUndoableEdit e, CompoundEdit parent) {
-		this();
+    public boolean addEdit(MyUndoableEdit e, String method) {
+	if (method.equals("undo")) {
+	    return false;
+	} else {
+	    String changedText = e.getText();
+	    if (e.getLength() > 1)
+		return false;
+	    else if (!getType().equals(e.getType()))
+		return false;
+	    else if (getLength() >= 5
+		     && (changedText.equals(" ") || changedText.equals("\n") || changedText
+			 .equals("\t"))) {
+		return false;
+	    } else {
 		edits.add(e);
-		setParent(parent);
-		setType(e.getType());
-		setLength(e.getLength());
+		setLength(getLength() + e.getLength());
+		return true;
+	    }
 	}
+    }
 
-	public void undo(Document document) {
-		for (MyUndoableEdit e : Lists.reverse(edits)) {
-			e.undo(document);
-		}
-	}
+    /* Getters and Setters */
+    public List<MyUndoableEdit> getEdits() {
+	return edits;
+    }
 
-	public boolean addEdit(MyUndoableEdit e, String method) {
-		if (method.equals("undo")) {
-			return false;
-		} else {
-			String changedText = e.getText();
-			if (e.getLength() > 1)
-				return false;
-			else if (!getType().equals(e.getType()))
-				return false;
-			else if (getLength() >= 5
-					&& (changedText.equals(" ") || changedText.equals("\n") || changedText
-							.equals("\t"))) {
-				return false;
-			} else {
-				edits.add(e);
-				setLength(getLength() + e.getLength());
-				return true;
-			}
-		}
-	}
+    public void setEdits(List<MyUndoableEdit> edits) {
+	this.edits = edits;
+    }
 
-	/* Getters and Setters */
-	public List<MyUndoableEdit> getEdits() {
-		return edits;
-	}
+    public CompoundEdit getParent() {
+	return parent;
+    }
 
-	public void setEdits(List<MyUndoableEdit> edits) {
-		this.edits = edits;
-	}
+    public void setParent(CompoundEdit parent) {
+	this.parent = parent;
+    }
 
-	public CompoundEdit getParent() {
-		return parent;
-	}
+    public String getType() {
+	return type;
+    }
 
-	public void setParent(CompoundEdit parent) {
-		this.parent = parent;
-	}
+    public void setType(String type) {
+	this.type = type;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public int getLength() {
+	return length;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setLength(int length) {
+	this.length = length;
+    }
 
-	public int getLength() {
-		return length;
-	}
+    public String getComment() {
+	return comment;
+    }
 
-	public void setLength(int length) {
-		this.length = length;
-	}
+    public void setComment(String comment) {
+	this.comment = comment;
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public boolean getVisible() {
+	return visible;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public void setVisible(boolean visible) {
+	this.visible = visible;
+    }
 
-	public boolean getVisible() {
-		return visible;
-	}
+    public CompoundEdit getMask() {
+	return mask;
+    }
 
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
+    public void setMask(CompoundEdit mask) {
+	this.mask = mask;
+    }
+    
+    public boolean getIsMask()
+    {
+	return isMask;
+    }
 
-	public CompoundEdit getMask() {
-		return mask;
-	}
+    public void setIsMask(boolean isMask)
+    {
+	this.isMask = isMask;
+    }
 
-	public void setMask(CompoundEdit mask) {
-		this.mask = mask;
-	}
+    public boolean getIsRevert()
+    {
+	return isRevert;
+    }
+
+    public void setIsRevert(boolean isRevert)
+    {
+	this.isRevert = isRevert;
+    }
 }

@@ -160,6 +160,7 @@ public class EditHistoryView extends JPanel
 	int lower = (index1 <= index2) ? index1 : index2;
 	int higher = (index1 <= index2) ? index2 : index1;
 	CompoundEdit mask = ((NodeComponent) nodeComponents[higher]).getEdit();
+	mask.setIsMask(true);
 	for (int i = higher; i > lower; i--) {
 	    CompoundEdit toRemove = ((NodeComponent) nodesView.getComponent(lower)).getEdit();
 	    toRemove.setVisible(false);
@@ -171,24 +172,27 @@ public class EditHistoryView extends JPanel
 
     public void expand(NodeComponent node)
     {
-	Component[] nodeComponents = nodesView.getComponents();
-	int index = -1;
-	for (int i=0; i < nodeComponents.length; i++){
-	    if (nodeComponents[i] == node){
-		index = i;
-		break;
+	if (node.getEdit().getIsMask()){
+	    Component[] nodeComponents = nodesView.getComponents();
+	    int index = -1;
+	    for (int i=0; i < nodeComponents.length; i++){
+		if (nodeComponents[i] == node){
+		    index = i;
+		    break;
+		}
 	    }
-	}
-	CompoundEdit edit = node.getEdit().getParent();
-	while (edit != null && !edit.getVisible()){
-	    if (edit.getMask() == node.getEdit()){
-		nodesView.add(new NodeComponent(edit, undoController), index);
-		edit.setVisible(true);
-		edit.setMask(edit);
+	    CompoundEdit edit = node.getEdit().getParent();
+	    while (edit != null && !edit.getVisible()){
+		if (edit.getMask() == node.getEdit()){
+		    nodesView.add(new NodeComponent(edit, undoController), index);
+		    edit.setVisible(true);
+		    edit.setMask(edit);
+		}
+		edit = edit.getParent();
 	    }
-	    edit = edit.getParent();
+	    node.getEdit().setIsMask(false);
+	    revalidateNodeComponents();
 	}
-	revalidateNodeComponents();
     }
 
     /* Getters and Setters */
