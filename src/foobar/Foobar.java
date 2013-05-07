@@ -97,8 +97,10 @@ public final class Foobar extends JPanel {
 	 * text field.
 	 */
 	protected void executeFooable() {
-		// Execute the Fooable
-		this.getPopupManager().getSuggestions().getSelectedValue().doAction();
+		if (this.getPopupManager().getSuggestions().getSelectedValue() != null) {
+			// Execute the Fooable
+			this.getPopupManager().getSuggestions().getSelectedValue().doAction();
+		}
 
 		// Hide the suggested Fooables
 		this.popupManager.destroyPopup();

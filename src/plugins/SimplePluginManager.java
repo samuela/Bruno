@@ -223,7 +223,7 @@ public class SimplePluginManager implements PluginManager {
 			errorLog.println("Invalid plugins directory.");
 			return null;
 		}
-		for (File f : pluginsDir.listFiles()) {
+		for (File f : pluginsDir.listFiles()) {	
 			try {
 				if (f.isDirectory()) {
 					try {
