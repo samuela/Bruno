@@ -149,7 +149,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 		return lastDisplayEdit;
 	}
 
-	// /* Deserialization */
+	 /* Deserialization */
 	// public static UndoController buildFromJSON(UndoController undoController,
 	// JTextArea textArea) {
 	// undoController.setTextArea(textArea);
