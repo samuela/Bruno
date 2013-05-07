@@ -26,6 +26,7 @@ public class EditHistoryView extends JPanel
     private UndoController undoController;
     private NodeComponent selectedNode;
     private JTextArea comment;
+    private JButton expandNode;
 
     public EditHistoryView(UndoController uc) {
 	this.undoController = uc;
@@ -67,7 +68,7 @@ public class EditHistoryView extends JPanel
 		}
 	    });
 
-	JButton expandNode = new JButton("Expand");
+	expandNode = new JButton("Expand");
 	c.gridx = 1;
 	rightSide.add(expandNode, c);
 	expandNode.addActionListener(new ActionListener(){
@@ -75,9 +76,11 @@ public class EditHistoryView extends JPanel
 		    public void actionPerformed(ActionEvent e){
 		    if (selectedNode != null){
 			expand(selectedNode);
+			expandNode.setEnabled(false);
 		    }
 		}
 	    });
+	expandNode.setEnabled(false);
 
 	c.anchor = GridBagConstraints.PAGE_END;
 	c.fill = GridBagConstraints.BOTH;
@@ -208,6 +211,7 @@ public class EditHistoryView extends JPanel
 	this.selectedNode = selectedNode;
 	comment.setText(selectedNode.getComment());
 	comment.setEditable(true);
+	expandNode.setEnabled(selectedNode.getEdit().getIsMask());
     }
     
     public void setDocument(Document doc) {
