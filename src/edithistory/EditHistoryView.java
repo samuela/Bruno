@@ -161,6 +161,7 @@ public class EditHistoryView extends JPanel
 	int higher = (index1 <= index2) ? index2 : index1;
 	CompoundEdit mask = ((NodeComponent) nodeComponents[higher]).getEdit();
 	mask.setIsMask(true);
+	((NodeComponent) nodeComponents[higher]).setColor();
 	for (int i = higher; i > lower; i--) {
 	    CompoundEdit toRemove = ((NodeComponent) nodesView.getComponent(lower)).getEdit();
 	    toRemove.setVisible(false);
@@ -191,6 +192,7 @@ public class EditHistoryView extends JPanel
 		edit = edit.getParent();
 	    }
 	    node.getEdit().setIsMask(false);
+	    node.setColor();
 	    revalidateNodeComponents();
 	}
     }

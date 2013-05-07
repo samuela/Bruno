@@ -94,11 +94,13 @@ public class UndoController implements UndoableEditListener, Serializable {
 	}
 	Component[] nodeComponents = view.getNodeComponents();
 	int numNewComponents = nodeComponents.length - numComponents;
+	NodeComponent lastNodeComponent = (NodeComponent) nodeComponents[nodeComponents.length - 1];
 	if (numNewComponents > 1) {
 	    view.compress((NodeComponent) nodeComponents[nodeComponents.length - numNewComponents],
-			  (NodeComponent) nodeComponents[nodeComponents.length - 1]);
+			  lastNodeComponent);
 	}
-	((NodeComponent) nodeComponents[nodeComponents.length - 1]).getEdit().setIsRevert(true);
+	lastNodeComponent.getEdit().setIsRevert(true);
+	lastNodeComponent.setColor();
     }
 
     public void selectNodeForCompound(NodeComponent node) {

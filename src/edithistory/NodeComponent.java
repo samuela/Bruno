@@ -87,8 +87,14 @@ public class NodeComponent extends JPanel {
 	else if (edit.getType().equals("deletion")) {
 	    setBackground(new Color(brightness, 0, 0));
 	} 
-	else {
-	    setBackground(Color.gray);// top node
+	else if (edit.getType().equals("empty")){
+	    setBackground(Color.gray);
+	}
+	if (edit.getIsRevert()){
+	    setBackground(new Color(brightness, 0, brightness));
+	}
+	else if (edit.getIsMask()){
+	    setBackground(new Color(0, 0, brightness));
 	}
     }
 
