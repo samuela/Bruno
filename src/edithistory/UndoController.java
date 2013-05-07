@@ -150,38 +150,6 @@ public class UndoController implements UndoableEditListener, Serializable {
 	}
 
 	 /* Deserialization */
-	// public static UndoController buildFromJSON(UndoController undoController,
-	// JTextArea textArea) {
-	// undoController.setTextArea(textArea);
-	// undoController.setView(new EditHistoryView(undoController));
-	// CompoundEdit edit = undoController.getLastDisplayEdit();
-	// while (edit != null) {
-	// if (edit.getVisible()) {
-	// undoController.getView().addEdit(edit, 0);
-	// }
-	// edit = edit.getParent();
-	// }
-	// undoController.setUndoAction(new UndoAction(undoController));
-	// return undoController;
-	// }
-
-	public static UndoController fromJSON(Reader file, JTextArea textArea) {
-		Gson gson = new Gson();
-		UndoController undoController = gson.fromJson(file,
-				UndoController.class);
-		undoController.setTextArea(textArea);
-		undoController.setView(new EditHistoryView(undoController));
-		CompoundEdit edit = undoController.getLastDisplayEdit();
-		while (edit != null) {
-			if (edit.getVisible()) {
-				undoController.getView().addEdit(edit);
-			}
-			edit = edit.getParent();
-		}
-		undoController.setUndoAction(new UndoAction(undoController));
-		return undoController;
-	}
-
 	private void readObject(ObjectInputStream s) throws ClassNotFoundException,
 			IOException {
 		s.defaultReadObject();
@@ -190,7 +158,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 		CompoundEdit edit = getLastDisplayEdit();
 		while (edit != null) {
 			if (edit.getVisible()) {
-				getView().addEdit(edit, 0);
+				getView().addEditAtBeginning(edit);
 			}
 			edit = edit.getParent();
 		}
