@@ -15,163 +15,150 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 public class NodeComponent extends JPanel {
-	private static final long serialVersionUID = 1L;
-	private UndoController undoController;
-	private Edit edit;
-	public static final Border thinBlackBorder = BorderFactory
-			.createLineBorder(Color.black, 1, false);
-	public static final Border thickBlackBorder = BorderFactory
-			.createLineBorder(Color.black, 3, false);
-	public static final Border thickBlueBorder = BorderFactory
-			.createLineBorder(Color.blue, 3, false);
-	public static final int brightNess = 235;
-	private boolean selectedForCompound;
+    private static final long serialVersionUID = 1L;
+    private UndoController undoController;
+    private CompoundEdit edit;
+    public static final Border thinBlackBorder = BorderFactory.createLineBorder(Color.black, 1, false);
+    public static final Border thickBlackBorder = BorderFactory.createLineBorder(Color.black, 3, false);
+    public static final Border thickBlueBorder = BorderFactory.createLineBorder(Color.blue, 3, false);
+    public static final int brightness = 235;
+    private boolean selectedForCompound;
 
-	public NodeComponent(UndoController uc) {
-		undoController = uc;
-		setBorder(thinBlackBorder);
-		setOpaque(true);
-		selectedForCompound = false;
+    public NodeComponent(UndoController uc) {
+	undoController = uc;
+	setBorder(thinBlackBorder);
+	setOpaque(true);
+	selectedForCompound = false;
 
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				NodeComponent.this.mouseEntered(e);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				NodeComponent.this.mouseClicked(e);
-			}
-		});
-	}
-
-	public NodeComponent(Edit edit, UndoController undoController) {
-		this(undoController);
-		this.edit = edit;
-		setColor();
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		EditHistoryView view = undoController.getView();
-		if (view.getClickedNode() != null)
-			if (!view.getClickedNode().isSelectedForCompound())
-				view.getClickedNode().setBorder(thinBlackBorder);
-		if (!selectedForCompound)
-			setBorder(thickBlackBorder);
-		view.setClickedNode(NodeComponent.this);
-		undoController.getView().setDocument(getDocument());
-	}
-
-	public void mouseClicked(MouseEvent e) {
-		int modifiers = e.getModifiers();
-		if (modifiers == 4 || modifiers == 18) {
-			changeSelectionForCompound();
+	addMouseListener(new MouseAdapter() {
+		@Override
+		    public void mouseEntered(MouseEvent e) {
+		    NodeComponent.this.mouseEntered(e);
 		}
-	}
 
-	@Override
+		@Override
+		    public void mouseClicked(MouseEvent e) {
+		    NodeComponent.this.mouseClicked(e);
+		}
+	    });
+    }
+
+    public NodeComponent(CompoundEdit edit, UndoController undoController) {
+	this(undoController);
+	this.edit = edit;
+	setColor();
+    }
+
+    public void mouseEntered(MouseEvent e) {
+	EditHistoryView view = undoController.getView();
+	if (view.getSelectedNode() != null){
+	    view.getSelectedNode().unselectedBorder();
+	}
+	selectedBorder();
+	view.setSelectedNode(this);
+	undoController.getView().setDocument(getDocument());
+    }
+    
+    public void mouseClicked(MouseEvent e) {
+	int modifiers = e.getModifiers();
+	if (modifiers == 4 || modifiers == 18) {
+	    changeSelectionForCompound();
+	}
+    }
+    
+    @Override
 	public Dimension getPreferredSize() {
-		Dimension d = super.getPreferredSize();
-		return new Dimension((int) d.getWidth(), 50);
-	}
+	Dimension d = super.getPreferredSize();
+	return new Dimension((int) d.getWidth(), 50);
+    }
 
-	@Override
+    @Override
 	public Dimension getMaximumSize() {
-		return new Dimension(5000000, 50);
+	return new Dimension(5000000, 50);
+    }
+
+    public void setColor() {
+	if (edit.getComment() != null && !edit.getComment().equals("")){
+	    setBackground(Color.orange);
 	}
-
-	public void setColor() {
-		if (edit.getType().equals("addition")) {
-			setBackground(new Color(0, brightNess, 0));
-		} else if (edit.getType().equals("deletion")) {
-			setBackground(new Color(brightNess, 0, 0));
-		} else {
-			setBackground(Color.gray);// top node
-		}
+	else if (edit.getType().equals("addition")) {
+	    setBackground(new Color(0, brightness, 0));
 	}
-
-	public void setComment(String comment) {
-		edit.setComment(comment);
-		if (!(comment.equals(""))) {
-			setBackground(Color.orange);
-		} else
-			setColor();
+	else if (edit.getType().equals("deletion")) {
+	    setBackground(new Color(brightness, 0, 0));
+	} 
+	else {
+	    setBackground(Color.gray);// top node
 	}
+    }
 
-	public String getComment() {
-		return edit.getComment();
+    public void selectedBorder()
+    {
+	if (!selectedForCompound)
+	    setBorder(thickBlackBorder);
+	else
+	    setBorder(thickBlueBorder);
+    }
+
+    public void unselectedBorder()
+    {
+	if (!selectedForCompound)
+	    setBorder(thinBlackBorder);
+	else
+	    setBorder(thickBlueBorder);
+    }
+
+    public void setComment(String comment)
+    {
+	edit.setComment(comment);
+	setColor();
+    }
+
+    public String getComment()
+    {
+	return edit.getComment();
+    }
+
+    public Document getDocument()
+    {
+	return undoController.restoreTo(edit);
+    }
+
+    public UndoController getUndoController() {
+	return undoController;
+    }
+
+    public CompoundEdit getEdit()
+    {
+	return edit;
+    }
+
+    public boolean isSelectedForCompound() {
+	return selectedForCompound;
+    }
+
+    public void selectForCompound() {
+	if (!isSelectedForCompound()) {
+	    selectedForCompound = true;
+	    setBorder(thickBlueBorder);
+	    undoController.selectNodeForCompound(this);
 	}
+    }
 
-	public Document getDocument() {
-		undoController.backInTime(edit);
-		Document document = undoController.getDocument();
-		RSyntaxDocument restoredDocument = new RSyntaxDocument(
-				SyntaxConstants.SYNTAX_STYLE_JAVA);
-		try {
-			restoredDocument.insertString(0,
-					document.getText(0, document.getLength()), null);
-		} catch (BadLocationException e1) {
-		}
-		undoController.forwardInTime(edit);
-		return restoredDocument;
+    public void deselectForCompound() {
+	if (isSelectedForCompound()) {
+	    selectedForCompound = false;
+	    undoController.deselectNodeForCompound(this);
+	    setBorder(thinBlackBorder);
 	}
+    }
 
-	public void revert() {
-
-		Document restoredDocument = getDocument();
-		Document currentDocument = undoController.getDocument();
-		try {
-			currentDocument.remove(0, currentDocument.getLength());
-			currentDocument.insertString(0,
-					restoredDocument.getText(0, restoredDocument.getLength()),
-					null);
-		} catch (BadLocationException e) {
-		}
-	}
-
-	public boolean isSelectedForCompound() {
-		return selectedForCompound;
-	}
-
-	public void selectForCompound() {
-		if (!isSelectedForCompound()) {
-			selectedForCompound = true;
-			setBorder(thickBlueBorder);
-			undoController.selectNodeForCompound(this);
-		}
-	}
-
-	public void deselectForCompound() {
-		if (isSelectedForCompound()) {
-			selectedForCompound = false;
-			undoController.deselectNodeForCompound(this);
-			setBorder(thinBlackBorder);
-		}
-	}
-
-	public void changeSelectionForCompound() {
-		if (isSelectedForCompound()) {
-			deselectForCompound();
-		} else
-			selectForCompound();
-	}
-
-	public Edit getLastEdit() {
-		return edit;
-	}
-
-	/*
-	 * public void setUndoController(UndoController undoController) {
-	 * this.undoController = undoController; }
-	 */
-	public UndoController getUndoController() {
-		return undoController;
-	}
-
-	/*
-	 * public NodeComponent makeOppositeComponent(EditHistoryView view) { return
-	 * edit.getOppositeEdit(undoController); }
-	 */
+    public void changeSelectionForCompound() {
+	if (isSelectedForCompound()) {
+	    deselectForCompound();
+	} 
+	else
+	    selectForCompound();
+    }
 
 }

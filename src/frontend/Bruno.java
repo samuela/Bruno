@@ -183,6 +183,9 @@ public class Bruno extends JFrame {
 	// setJMenuBar(menuBar);
 	// }
 
+	/**
+	 * Toggle the Foobar.
+	 */
 	public void toggleFoobar() {
 		getRootPane().getActionMap().get("foobar").actionPerformed(null);
 	}
@@ -214,6 +217,13 @@ public class Bruno extends JFrame {
 	 * @param doc
 	 */
 	public void openDocument(DocumentModel doc) {
+		// Don't allow opening the currently open file
+		if (doc != null && editingWindow != null
+				&& doc.getFile().equals(editingWindow.getDoc().getFile())) {
+			editingWindow.getTextArea().requestFocus();
+			return;
+		}
+
 		// Save current file
 		if (editingWindow != null) {
 			try {

@@ -110,8 +110,7 @@ public class FileSystemTreeModel implements TreeModel {
 					File[] files = file.listFiles();
 					List<File> childrenFiles = Arrays.asList(files);
 					for (File f : childrenFiles) {
-						if (!f.isHidden()
-								&& !f.getName().endsWith(Bruno.FILE_EXT)) {
+						if (ProjectExplorer.belongsInProjectExplorer(f)) {
 							children.add(new TreeFileObject(f));
 						}
 					}
