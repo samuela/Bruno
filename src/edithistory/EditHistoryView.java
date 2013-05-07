@@ -27,6 +27,7 @@ public class EditHistoryView extends JPanel
     private NodeComponent selectedNode;
     private JTextArea comment;
     private JButton expandNode;
+    private JScrollPane nodesViewScrollPane;
 
     public EditHistoryView(UndoController uc) {
 	this.undoController = uc;
@@ -92,7 +93,7 @@ public class EditHistoryView extends JPanel
 	rightSide.add(rightBottom, c);
 
 	// increase scroll speed!
-	JScrollPane nodesViewScrollPane = new JScrollPane(nodesView);
+	nodesViewScrollPane = new JScrollPane(nodesView);
 	nodesViewScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
 	splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
@@ -131,10 +132,25 @@ public class EditHistoryView extends JPanel
 
     public void addEdit(CompoundEdit edit)
     {
+	JScrollBar scrollBar = nodesViewScrollPane.getVerticalScrollBar();
+	int currentValue = scrollBar.getValue();
+	boolean atBottom = (currentValue == scrollBar.getMaximum() - scrollBar.getVisibleAmount());
+
 	NodeComponent newNode = new NodeComponent(edit, undoController);
 	nodesView.add(newNode);
 	edit.setVisible(true);
 	revalidateNodeComponents();
+
+	if (atBottom){
+	    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		    @Override
+			public void run()
+		    {
+			JScrollBar scrollBar = nodesViewScrollPane.getVerticalScrollBar();
+			scrollBar.setValue(scrollBar.getMaximum());
+		    }
+		});
+	}
     }
 
     public void addEditAtBeginning(CompoundEdit edit)

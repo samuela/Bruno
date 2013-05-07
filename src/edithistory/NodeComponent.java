@@ -22,13 +22,13 @@ public class NodeComponent extends JPanel {
     public static final Border thickBlackBorder = BorderFactory.createLineBorder(Color.black, 3, false);
     public static final Border thickBlueBorder = BorderFactory.createLineBorder(Color.blue, 3, false);
     public static final int brightness = 235;
-    private boolean selectedForCompound;
+    //    private boolean selectedForCompound;
 
     public NodeComponent(UndoController uc) {
 	undoController = uc;
 	setBorder(thinBlackBorder);
 	setOpaque(true);
-	selectedForCompound = false;
+	//	selectedForCompound = false;
 
 	addMouseListener(new MouseAdapter() {
 		@Override
@@ -62,7 +62,7 @@ public class NodeComponent extends JPanel {
     public void mouseClicked(MouseEvent e) {
 	int modifiers = e.getModifiers();
 	if (e.getClickCount() == 1 && (modifiers == 4 || modifiers == 18)) {
-	    changeSelectionForCompound();
+	    //	    changeSelectionForCompound();
 	}
 	else if (e.getClickCount() == 2 && modifiers == 16){
 	    undoController.revert(getEdit());
@@ -103,18 +103,20 @@ public class NodeComponent extends JPanel {
 
     public void selectedBorder()
     {
-	if (!selectedForCompound)
+	/*	if (!selectedForCompound)
 	    setBorder(thickBlackBorder);
 	else
-	    setBorder(thickBlueBorder);
+	setBorder(thickBlueBorder); */
+	setBorder(thickBlackBorder);
     }
 
     public void unselectedBorder()
     {
-	if (!selectedForCompound)
+	/*	if (!selectedForCompound)
 	    setBorder(thinBlackBorder);
 	else
-	    setBorder(thickBlueBorder);
+	setBorder(thickBlueBorder);*/
+	setBorder(thinBlackBorder);
     }
 
     public void setComment(String comment)
@@ -142,7 +144,7 @@ public class NodeComponent extends JPanel {
 	return edit;
     }
 
-    public boolean isSelectedForCompound() {
+    /*    public boolean isSelectedForCompound() {
 	return selectedForCompound;
     }
 
@@ -169,5 +171,5 @@ public class NodeComponent extends JPanel {
 	else
 	    selectForCompound();
     }
-
+    */
 }
