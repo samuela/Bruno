@@ -128,8 +128,13 @@ public class EditHistoryView extends JPanel
 
     public void addEdit(CompoundEdit edit)
     {
+	addEdit(edit, 0);
+    }
+
+    public void addEdit(CompoundEdit edit, int index)
+    {
 	NodeComponent newNode = new NodeComponent(edit, undoController);
-	nodesView.add(newNode);
+	nodesView.add(newNode, index);
 	edit.setVisible(true);
 	revalidateNodeComponents();
     }

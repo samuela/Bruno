@@ -126,6 +126,11 @@ public class UndoController implements UndoableEditListener, Serializable
 	return undoAction;
     }
 
+    public void setUndoAction(UndoAction undoAction)
+    {
+	this.undoAction = undoAction;
+    }
+
     public String getUndoPresentationName()
     {
 	return UIManager.getString("AbstractUndoaleEdit.undoText");
@@ -134,6 +139,37 @@ public class UndoController implements UndoableEditListener, Serializable
     public EditHistoryView getView()
     {
 	return view;
+    }
+
+    public void setView(EditHistoryView view)
+    {
+	this.view = view;
+    }
+
+    public void setTextArea(JTextArea textArea)
+    {
+	this.textArea = textArea;
+    }
+
+    public CompoundEdit getLastDisplayEdit()
+    {
+	return lastDisplayEdit;
+    }
+
+    /* Deserialization */
+    public static UndoController buildFromJSON(UndoController undoController, JTextArea textArea)
+    {
+	undoController.setTextArea(textArea);
+	undoController.setView(new EditHistoryView(undoController));
+	CompoundEdit edit = undoController.getLastDisplayEdit();
+	while (edit != null){
+	    if (edit.getVisible()){
+		undoController.getView().addEdit(edit, 0);
+	    }
+	    edit = edit.getParent();
+	}
+	undoController.setUndoAction(new UndoAction(undoController));
+	return undoController;
     }
 
 }
