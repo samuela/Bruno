@@ -146,7 +146,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 		return lastDisplayEdit;
 	}
 
-	// /* Deserialization */
+	 /* Deserialization */
 	// public static UndoController buildFromJSON(UndoController undoController,
 	// JTextArea textArea) {
 	// undoController.setTextArea(textArea);
@@ -171,7 +171,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 		CompoundEdit edit = undoController.getLastDisplayEdit();
 		while (edit != null) {
 			if (edit.getVisible()) {
-				undoController.getView().addEdit(edit, 0);
+				undoController.getView().addEdit(edit);
 			}
 			edit = edit.getParent();
 		}
