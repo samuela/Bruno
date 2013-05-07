@@ -1,12 +1,14 @@
 package frontend;
 
-import java.awt.Event;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.Scanner;
 
@@ -16,6 +18,8 @@ import javax.swing.KeyStroke;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
+
+import com.google.gson.Gson;
 
 import edithistory.UndoController;
 
@@ -66,18 +70,26 @@ public class EditingWindow {
 		textArea.setCaretPosition(0);
 
 		// Setup undo tree
-		undoController = new UndoController(textArea);
+		if (doc.getMetadataFile() != null && doc.getMetadataFile().exists()) {
+			// Read from metadata file if it exists
+			Reader metadataReader = new InputStreamReader(new FileInputStream(
+					doc.getMetadataFile()));
+			undoController = UndoController.fromJSON(metadataReader, textArea);
+		} else {
+			// Otherwise, start with a blank slate
+			undoController = new UndoController(textArea);
+		}
 		textArea.getDocument().addUndoableEditListener(undoController);
 
 		textArea.getInputMap().put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()),
 				undoController.getUndoAction());
-		/*	textArea.getInputMap().put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()
-						+ Event.SHIFT_MASK), undoController.getRedoAction());*/
-
+		/*
+		 * textArea.getInputMap().put( KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+		 * Toolkit .getDefaultToolkit().getMenuShortcutKeyMask() +
+		 * Event.SHIFT_MASK), undoController.getRedoAction());
+		 */
 	}
 
 	/**
@@ -93,6 +105,15 @@ public class EditingWindow {
 					doc.getFile()));
 			writer.write(textArea.getText());
 			writer.close();
+
+			// File where will we store edit history, etc.
+			Writer metadataWriter = new OutputStreamWriter(
+					new FileOutputStream(doc.getMetadataFile()));
+
+			// Save metadata
+			Gson gson = new Gson();
+			gson.toJson(undoController, metadataWriter);
+			metadataWriter.close();
 		}
 	}
 
