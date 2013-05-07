@@ -61,8 +61,11 @@ public class NodeComponent extends JPanel {
     
     public void mouseClicked(MouseEvent e) {
 	int modifiers = e.getModifiers();
-	if (modifiers == 4 || modifiers == 18) {
+	if (e.getClickCount() == 1 && (modifiers == 4 || modifiers == 18)) {
 	    changeSelectionForCompound();
+	}
+	else if (e.getClickCount() == 2 && modifiers == 16){
+	    undoController.revert(getEdit());
 	}
     }
     
