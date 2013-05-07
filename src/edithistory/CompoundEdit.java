@@ -11,20 +11,23 @@ import javax.swing.text.Document;
 /**
  * This class represents several edits put into one.
  */
-public class CompoundEdit implements Serializable
+public class CompoundEdit implements  Serializable
 {
     private static final long serialVersionUID = 1L;
     private List<MyUndoableEdit> edits;
     private CompoundEdit parent;
-    private CompoundEdit child;
     private String type;//addition, deletion, or empty
     private int length;
     private String comment;
-
+    private boolean visible;
+    private CompoundEdit mask;
+    
     public CompoundEdit()
     {
 	edits = new ArrayList<>();
 	setType("empty");
+	setVisible(false);
+	setMask(this);
     }
 
     public CompoundEdit(MyUndoableEdit e, CompoundEdit parent)
@@ -43,24 +46,39 @@ public class CompoundEdit implements Serializable
 	}
     }
     
-    public boolean addEdit(MyUndoableEdit e)
+    public boolean addEdit(MyUndoableEdit e, String method)
     {
-	String changedText = e.getText();
-	if (e.getLength() > 1)
-	    return false;
-	else if (!getType().equals(e.getType()))
-	    return false;
-	else if (getLength() >= 5 && (changedText.equals(" ") || changedText.equals("\n") || changedText.equals("\t"))) {
+	if (method.equals("undo")){
 	    return false;
 	}
 	else{
-	    edits.add(e);
-	    setLength(getLength() + e.getLength());
-	    return true;
+	    String changedText = e.getText();
+	    if (e.getLength() > 1)
+		return false;
+	    else if (!getType().equals(e.getType()))
+		return false;
+	    else if (getLength() >= 5 && (changedText.equals(" ") || changedText.equals("\n") || changedText.equals("\t"))) {
+		return false;
+	    }
+	    else{
+		edits.add(e);
+		setLength(getLength() + e.getLength());
+		return true;
+	    }
 	}
     }
 
     /* Getters and Setters */
+    public List<MyUndoableEdit> getEdits()
+    {
+	return edits;
+    }
+    
+    public void setEdits(List<MyUndoableEdit> edits)
+    {
+	this.edits = edits;
+    }
+
     public CompoundEdit getParent()
     {
 	return parent;
@@ -99,5 +117,25 @@ public class CompoundEdit implements Serializable
     public void setComment(String comment)
     {
 	this.comment = comment;
+    }
+
+    public boolean getVisible()
+    {
+	return visible;
+    }
+
+    public void setVisible(boolean visible)
+    {
+	this.visible = visible;
+    }
+
+    public CompoundEdit getMask()
+    {
+	return mask;
+    }
+    
+    public void setMask(CompoundEdit mask)
+    {
+	this.mask = mask;
     }
 }

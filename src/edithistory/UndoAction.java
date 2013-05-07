@@ -13,6 +13,7 @@ public class UndoAction extends AbstractAction {
 		super("Undo");
 		this.undoController = undoController;
 		setEnabled(false);
+		updateUndoState();
 	}
 
 	public void actionPerformed(ActionEvent e) {

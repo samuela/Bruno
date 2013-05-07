@@ -1,31 +1,38 @@
 package edithistory;
 
+import java.io.Serializable;
 import javax.swing.UIManager;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
+import java.awt.Component;
 import javax.swing.text.Document;
 import javax.swing.text.BadLocationException;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
-public class UndoController implements UndoableEditListener
+public class UndoController implements UndoableEditListener, Serializable
 {
-    private CompoundEdit lastEdit;
+    private static final long serialVersionUID = 1L;
+    private CompoundEdit lastUndoEdit;
     private CompoundEdit toUndo;
-    private UndoAction undoAction;
-    private JTextArea textArea;
-    private EditHistoryView view;
+    private CompoundEdit lastDisplayEdit;
+    private transient UndoAction undoAction;
+    private transient JTextArea textArea;
+    private transient EditHistoryView view;
+    private transient NodeComponent toCompound1;
+    private transient NodeComponent toCompound2;
 
     public UndoController(JTextArea textArea)
     {
 	this.textArea = textArea;
-	undoAction = new UndoAction(this);
-	lastEdit = new CompoundEdit();
-	toUndo = lastEdit;
+	lastUndoEdit = new CompoundEdit();
+	lastDisplayEdit = new CompoundEdit();
+	toUndo = lastUndoEdit;
 	view = new EditHistoryView(this);
-	view.addEdit(lastEdit);
+	view.addEdit(lastDisplayEdit);
+	undoAction = new UndoAction(this);
     }
 
     @Override
@@ -37,15 +44,14 @@ public class UndoController implements UndoableEditListener
 
     public void addEdit(MyUndoableEdit e)
     {
-	if (!lastEdit.addEdit(e))
-	    createNewEdit(e);
-	toUndo = lastEdit;
-    }
-
-    public void createNewEdit(MyUndoableEdit e)
-    {
-	lastEdit = new CompoundEdit(e, lastEdit);
-	view.addEdit(lastEdit);
+	if (!lastUndoEdit.addEdit(e, "undo")){
+	    lastUndoEdit = new CompoundEdit(e, lastUndoEdit);
+	}
+	if (!lastDisplayEdit.addEdit(e, "display")){
+	    lastDisplayEdit = new CompoundEdit(e, lastDisplayEdit);
+	    view.addEdit(lastDisplayEdit);
+	}
+	toUndo = lastUndoEdit;
     }
 
     public boolean canUndo()
@@ -69,7 +75,7 @@ public class UndoController implements UndoableEditListener
 	} 
 	catch (BadLocationException e1) {
 	}
-	CompoundEdit e = lastEdit;
+	CompoundEdit e = lastDisplayEdit;
 	while (e != edit){
 	    e.undo(restoredDocument);
 	    e = e.getParent();
@@ -77,10 +83,52 @@ public class UndoController implements UndoableEditListener
 	return restoredDocument;
     }
 
+    public void revert(CompoundEdit edit)
+    {
+	int numComponents = view.getNodeComponents().length;
+	Document restored = restoreTo(edit);
+	try{
+	    textArea.replaceRange(restored.getText(0, restored.getLength()), 0, textArea.getDocument().getLength());
+	}
+	catch(BadLocationException ex){}
+	Component[] nodeComponents = view.getNodeComponents();
+	int numNewComponents = nodeComponents.length - numComponents;
+	if (numNewComponents > 1){
+	    view.compress((NodeComponent) nodeComponents[nodeComponents.length - numNewComponents],
+			  (NodeComponent) nodeComponents[nodeComponents.length - 1]);
+	}
+    }
+
+    public void selectNodeForCompound(NodeComponent node)
+    {
+	if (toCompound1 == null)
+	    toCompound1 = node;
+	else if (toCompound2 == null){
+	    toCompound2 = node;
+	    view.compress(toCompound1, toCompound2);
+	    toCompound1.deselectForCompound();
+	    toCompound2.deselectForCompound();
+	    toCompound1 = null;
+	    toCompound2 = null;
+	}
+    }
+
+    public void deselectNodeForCompound(NodeComponent node)
+    {
+	if (toCompound1 == node){
+	    toCompound1 = null;
+	}
+    }
+
     /* Getters and Setters */
     public UndoAction getUndoAction()
     {
 	return undoAction;
+    }
+
+    public void setUndoAction(UndoAction undoAction)
+    {
+	this.undoAction = undoAction;
     }
 
     public String getUndoPresentationName()
@@ -91,6 +139,37 @@ public class UndoController implements UndoableEditListener
     public EditHistoryView getView()
     {
 	return view;
+    }
+
+    public void setView(EditHistoryView view)
+    {
+	this.view = view;
+    }
+
+    public void setTextArea(JTextArea textArea)
+    {
+	this.textArea = textArea;
+    }
+
+    public CompoundEdit getLastDisplayEdit()
+    {
+	return lastDisplayEdit;
+    }
+
+    /* Deserialization */
+    public static UndoController buildFromJSON(UndoController undoController, JTextArea textArea)
+    {
+	undoController.setTextArea(textArea);
+	undoController.setView(new EditHistoryView(undoController));
+	CompoundEdit edit = undoController.getLastDisplayEdit();
+	while (edit != null){
+	    if (edit.getVisible()){
+		undoController.getView().addEdit(edit, 0);
+	    }
+	    edit = edit.getParent();
+	}
+	undoController.setUndoAction(new UndoAction(undoController));
+	return undoController;
     }
 
 }

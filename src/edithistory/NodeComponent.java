@@ -21,14 +21,14 @@ public class NodeComponent extends JPanel {
     public static final Border thinBlackBorder = BorderFactory.createLineBorder(Color.black, 1, false);
     public static final Border thickBlackBorder = BorderFactory.createLineBorder(Color.black, 3, false);
     public static final Border thickBlueBorder = BorderFactory.createLineBorder(Color.blue, 3, false);
-    public static final int brightNess = 235;
-    //    private boolean selectedForCompound;
+    public static final int brightness = 235;
+    private boolean selectedForCompound;
 
     public NodeComponent(UndoController uc) {
 	undoController = uc;
 	setBorder(thinBlackBorder);
 	setOpaque(true);
-	//	selectedForCompound = false;
+	selectedForCompound = false;
 
 	addMouseListener(new MouseAdapter() {
 		@Override
@@ -51,20 +51,21 @@ public class NodeComponent extends JPanel {
 
     public void mouseEntered(MouseEvent e) {
 	EditHistoryView view = undoController.getView();
-	if (view.getSelectedNode() != null)
-		view.getSelectedNode().setBorder(thinBlackBorder);
-	setBorder(thickBlackBorder);
+	if (view.getSelectedNode() != null){
+	    view.getSelectedNode().unselectedBorder();
+	}
+	selectedBorder();
 	view.setSelectedNode(this);
 	undoController.getView().setDocument(getDocument());
     }
-
+    
     public void mouseClicked(MouseEvent e) {
-	/*	int modifiers = e.getModifiers();
+	int modifiers = e.getModifiers();
 	if (modifiers == 4 || modifiers == 18) {
 	    changeSelectionForCompound();
-	    }*/
+	}
     }
-
+    
     @Override
 	public Dimension getPreferredSize() {
 	Dimension d = super.getPreferredSize();
@@ -77,22 +78,40 @@ public class NodeComponent extends JPanel {
     }
 
     public void setColor() {
-	if (edit.getType().equals("addition")) {
-	    setBackground(new Color(0, brightNess, 0));
-	} else if (edit.getType().equals("deletion")) {
-	    setBackground(new Color(brightNess, 0, 0));
-	} else {
+	if (edit.getComment() != null && !edit.getComment().equals("")){
+	    setBackground(Color.orange);
+	}
+	else if (edit.getType().equals("addition")) {
+	    setBackground(new Color(0, brightness, 0));
+	}
+	else if (edit.getType().equals("deletion")) {
+	    setBackground(new Color(brightness, 0, 0));
+	} 
+	else {
 	    setBackground(Color.gray);// top node
 	}
+    }
+
+    public void selectedBorder()
+    {
+	if (!selectedForCompound)
+	    setBorder(thickBlackBorder);
+	else
+	    setBorder(thickBlueBorder);
+    }
+
+    public void unselectedBorder()
+    {
+	if (!selectedForCompound)
+	    setBorder(thinBlackBorder);
+	else
+	    setBorder(thickBlueBorder);
     }
 
     public void setComment(String comment)
     {
 	edit.setComment(comment);
-	if (!(comment.equals(""))) {
-	    setBackground(Color.orange);
-	} else
-	    setColor();
+	setColor();
     }
 
     public String getComment()
@@ -105,24 +124,20 @@ public class NodeComponent extends JPanel {
 	return undoController.restoreTo(edit);
     }
 
-    /*    public void revert() {
+    public UndoController getUndoController() {
+	return undoController;
+    }
 
-	Document restoredDocument = getDocument();
-	Document currentDocument = undoController.getDocument();
-	try {
-	    currentDocument.remove(0, currentDocument.getLength());
-	    currentDocument.insertString(0,
-					 restoredDocument.getText(0, restoredDocument.getLength()),
-					 null);
-	} catch (BadLocationException e) {
-	}
-	}*/
+    public CompoundEdit getEdit()
+    {
+	return edit;
+    }
 
-    /*    public boolean isSelectedForCompound() {
+    public boolean isSelectedForCompound() {
 	return selectedForCompound;
-	}*/
+    }
 
-    /*    public void selectForCompound() {
+    public void selectForCompound() {
 	if (!isSelectedForCompound()) {
 	    selectedForCompound = true;
 	    setBorder(thickBlueBorder);
@@ -141,25 +156,9 @@ public class NodeComponent extends JPanel {
     public void changeSelectionForCompound() {
 	if (isSelectedForCompound()) {
 	    deselectForCompound();
-	} else
+	} 
+	else
 	    selectForCompound();
-	    }*/
-
-    /*    public Edit getLastEdit() {
-	return edit;
-	}*/
-
-    /*
-     * public void setUndoController(UndoController undoController) {
-     * this.undoController = undoController; }
-     */
-    public UndoController getUndoController() {
-	return undoController;
     }
-
-    /*
-     * public NodeComponent makeOppositeComponent(EditHistoryView view) { return
-     * edit.getOppositeEdit(undoController); }
-     */
 
 }
