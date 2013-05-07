@@ -6,7 +6,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
 
@@ -249,7 +248,7 @@ public class Bruno extends JFrame {
 
 		try {
 			editingWindow = new EditingWindow(doc);
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this,
 					"Failed to open file " + doc.getFile(),
 					"File opening error", JOptionPane.ERROR_MESSAGE);

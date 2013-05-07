@@ -1,6 +1,8 @@
 package edithistory;
 
 import java.awt.Component;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Reader;
 import java.io.Serializable;
 
@@ -17,6 +19,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import com.google.gson.Gson;
 
 public class UndoController implements UndoableEditListener, Serializable {
+
 	private static final long serialVersionUID = 1L;
 	private CompoundEdit lastUndoEdit;
 	private CompoundEdit toUndo;
@@ -171,7 +174,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 		CompoundEdit edit = undoController.getLastDisplayEdit();
 		while (edit != null) {
 			if (edit.getVisible()) {
-				undoController.getView().addEdit(edit, 0);
+				undoController.getView().addEdit(edit);
 			}
 			edit = edit.getParent();
 		}
@@ -179,4 +182,18 @@ public class UndoController implements UndoableEditListener, Serializable {
 		return undoController;
 	}
 
+	private void readObject(ObjectInputStream s) throws ClassNotFoundException,
+			IOException {
+		s.defaultReadObject();
+
+		setView(new EditHistoryView(this));
+		CompoundEdit edit = getLastDisplayEdit();
+		while (edit != null) {
+			if (edit.getVisible()) {
+				getView().addEdit(edit, 0);
+			}
+			edit = edit.getParent();
+		}
+		setUndoAction(new UndoAction(this));
+	}
 }

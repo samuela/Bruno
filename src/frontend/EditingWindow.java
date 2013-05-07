@@ -3,12 +3,11 @@ package frontend;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.Writer;
 import java.util.Scanner;
 
@@ -18,8 +17,6 @@ import javax.swing.KeyStroke;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
-
-import com.google.gson.Gson;
 
 import edithistory.UndoController;
 
@@ -37,7 +34,8 @@ public class EditingWindow {
 	private RTextScrollPane scrollPane;
 	private UndoController undoController;
 
-	public EditingWindow(DocumentModel doc) throws FileNotFoundException {
+	public EditingWindow(DocumentModel doc) throws IOException,
+			ClassNotFoundException {
 		this.doc = doc;
 
 		// Read contents of file
@@ -72,9 +70,11 @@ public class EditingWindow {
 		// Setup undo tree
 		if (doc.getMetadataFile() != null && doc.getMetadataFile().exists()) {
 			// Read from metadata file if it exists
-			Reader metadataReader = new InputStreamReader(new FileInputStream(
-					doc.getMetadataFile()));
-			undoController = UndoController.fromJSON(metadataReader, textArea);
+			ObjectInputStream metadataStream = new ObjectInputStream(
+					new FileInputStream(doc.getMetadataFile()));
+			undoController = (UndoController) metadataStream.readObject();
+			metadataStream.close();
+			undoController.setTextArea(textArea);
 		} else {
 			// Otherwise, start with a blank slate
 			undoController = new UndoController(textArea);
@@ -107,12 +107,11 @@ public class EditingWindow {
 			writer.close();
 
 			// File where will we store edit history, etc.
-			Writer metadataWriter = new OutputStreamWriter(
+			ObjectOutputStream metadataWriter = new ObjectOutputStream(
 					new FileOutputStream(doc.getMetadataFile()));
 
 			// Save metadata
-			Gson gson = new Gson();
-			gson.toJson(undoController, metadataWriter);
+			metadataWriter.writeObject(undoController);
 			metadataWriter.close();
 		}
 	}
