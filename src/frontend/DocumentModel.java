@@ -24,6 +24,10 @@ public class DocumentModel {
 		return file;
 	}
 
+	public void setFile(File file) {
+		this.file = file;
+	}
+
 	public File getMetadataFile() {
 		if (file == null) {
 			return null;

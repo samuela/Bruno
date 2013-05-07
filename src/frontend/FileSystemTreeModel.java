@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.event.TreeModelListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
@@ -109,8 +110,9 @@ public class FileSystemTreeModel implements TreeModel {
 				if (file.isDirectory()) {
 					File[] files = file.listFiles();
 					List<File> childrenFiles = Arrays.asList(files);
+					FileFilter bff = new BrunoFileFilter();
 					for (File f : childrenFiles) {
-						if (ProjectExplorer.belongsInProjectExplorer(f)) {
+						if (bff.accept(f)) {
 							children.add(new TreeFileObject(f));
 						}
 					}

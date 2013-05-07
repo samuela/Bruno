@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.TreePath;
 
 import foobar.FileFooable;
@@ -108,13 +109,9 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 		addFooables(folder);
 	}
 
-	protected static boolean belongsInProjectExplorer(File file) {
-		return !file.isHidden() && !file.getName().endsWith(Bruno.FILE_EXT)
-				&& !file.getName().endsWith("~");
-	}
-
 	private void addFooables(File f) {
-		if (belongsInProjectExplorer(f)) {
+		FileFilter bff = new BrunoFileFilter();
+		if (bff.accept(f)) {
 			if (f.isFile()) {
 				parentApp.getFoobar().addFooable(new FileFooable(parentApp, f));
 			} else {

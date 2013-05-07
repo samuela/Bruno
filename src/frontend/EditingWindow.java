@@ -2,6 +2,7 @@ package frontend;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.Writer;
 import java.util.Scanner;
 
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.KeyStroke;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -99,21 +101,34 @@ public class EditingWindow {
 	 */
 	public void save() throws IOException {
 		if (doc.getFile() == null) {
-			// TODO check if the file is non-empty and ask to save
-		} else {
-			Writer writer = new OutputStreamWriter(new FileOutputStream(
-					doc.getFile()));
-			writer.write(textArea.getText());
-			writer.close();
+			// If the file is unsaved and empty, ignore
+			if (textArea.getText().isEmpty()) {
+				return;
+			}
 
-			// File where will we store edit history, etc.
-			ObjectOutputStream metadataWriter = new ObjectOutputStream(
-					new FileOutputStream(doc.getMetadataFile()));
-
-			// Save metadata
-			metadataWriter.writeObject(undoController);
-			metadataWriter.close();
+			final JFileChooser fc = new JFileChooser();
+			fc.setFileFilter(new BrunoFileFilter());
+			if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				doc.setFile(file);
+			} else {
+				// They chose cancel, don't do anything else
+				return;
+			}
 		}
+
+		Writer writer = new OutputStreamWriter(new FileOutputStream(
+				doc.getFile()));
+		writer.write(textArea.getText());
+		writer.close();
+
+		// File where will we store edit history, etc.
+		ObjectOutputStream metadataWriter = new ObjectOutputStream(
+				new FileOutputStream(doc.getMetadataFile()));
+
+		// Save metadata
+		metadataWriter.writeObject(undoController);
+		metadataWriter.close();
 	}
 
 	public boolean requestFocusInWindow() {
