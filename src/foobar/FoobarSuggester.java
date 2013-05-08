@@ -97,6 +97,45 @@ public abstract class FoobarSuggester {
 		return sortedList;
 	}
 
+	/**
+	 * Computes the Levenshtein distance between str1 and str2, while
+	 * additionally weighting distances based on string length and key-to-key
+	 * distances on a QWERTY keyboard.
+	 * 
+	 * @param str1
+	 *            A string to compare with str2
+	 * @param str2
+	 *            A string to compare with str1
+	 * @return The weighted Levenshtein distance of str1 and str2
+	 */
+	private static final int weightedLevenshteinDistance(String str1,
+			String str2) {
+		int[][] distances = new int[str1.length() + 1][str2.length() + 1];
+
+		for (int i = 0; i < str1.length() + 1; i++) {
+			distances[i][0] = i;
+		}
+
+		for (int j = 1; j < str2.length() + 1; j++) {
+			distances[0][j] = j;
+		}
+
+		for (int i = 1; i < str1.length() + 1; i++) {
+			for (int j = 1; j < str2.length() + 1; j++) {
+				distances[i][j] = getKeyDistance(str1.charAt(0), str2.charAt(0))
+						/ 3 // magic
+						+ Math.min(
+								distances[i - 1][j - 1]
+										+ (str1.charAt(i - 1) == str2
+												.charAt(j - 1) ? 0 : 1), Math
+										.min(distances[i - 1][j] + 1,
+												distances[i][j - 1] + 1));
+			}
+		}
+
+		return distances[str1.length()][str2.length()];
+	}
+
 	// Dropped in favor of weighted Levenshtein Distance
 	// /**
 	// * Computes the Levenshtein Distances between str1 and str2 using dynamic
@@ -132,41 +171,43 @@ public abstract class FoobarSuggester {
 	// return distances[str1.length()][str2.length()];
 	// }
 
-	/**
-	 * Computes the Levenshtein distance between str1 and str2, while
-	 * additionally weighting distances based on string length and key-to-key
-	 * distances on a QWERTY keyboard.
-	 * 
-	 * @param str1
-	 *            A string to compare with str2
-	 * @param str2
-	 *            A string to compare with str1
-	 * @return The weighted Levenshtein distance of str1 and str2
-	 */
-	private static int weightedLevenshteinDistance(String str1, String str2) {
-		if (str1.length() == 0)
-			return str2.length();
-		if (str2.length() == 0)
-			return str1.length();
-
-		if (str1.charAt(0) == str2.charAt(0)) {
-			return weightedLevenshteinDistance(str1.substring(1),
-					str2.substring(1));
-		}
-
-		int a = weightedLevenshteinDistance(str1.substring(1),
-				str2.substring(1));
-		int b = weightedLevenshteinDistance(str1, str2.substring(1));
-		int c = weightedLevenshteinDistance(str1.substring(1), str2);
-
-		if (a > b)
-			a = b;
-		if (a > c)
-			a = c;
-
-		return a + 1 + Math.min(str1.length(), str2.length())
-				+ getKeyDistance(str1.charAt(0), str2.charAt(0));
-	}
+	// Recursion is slow as fuck in Java..
+	// /**
+	// * Computes the Levenshtein distance between str1 and str2, while
+	// * additionally weighting distances based on string length and key-to-key
+	// * distances on a QWERTY keyboard.
+	// *
+	// * @param str1
+	// * A string to compare with str2
+	// * @param str2
+	// * A string to compare with str1
+	// * @return The weighted Levenshtein distance of str1 and str2
+	// */
+	// private static int weightedLevenshteinDistance(String str1, String str2)
+	// {
+	// if (str1.length() == 0)
+	// return str2.length();
+	// if (str2.length() == 0)
+	// return str1.length();
+	//
+	// if (str1.charAt(0) == str2.charAt(0)) {
+	// return weightedLevenshteinDistance(str1.substring(1),
+	// str2.substring(1));
+	// }
+	//
+	// int a = weightedLevenshteinDistance(str1.substring(1),
+	// str2.substring(1));
+	// int b = weightedLevenshteinDistance(str1, str2.substring(1));
+	// int c = weightedLevenshteinDistance(str1.substring(1), str2);
+	//
+	// if (a > b)
+	// a = b;
+	// if (a > c)
+	// a = c;
+	//
+	// return a + 1 + Math.min(str1.length(), str2.length())
+	// + getKeyDistance(str1.charAt(0), str2.charAt(0));
+	// }
 
 	private static int getKeyDistance(char chr1, char chr2) {
 		return (int) Math.sqrt(Math.pow(getX(chr2) - getX(chr1), 2)
