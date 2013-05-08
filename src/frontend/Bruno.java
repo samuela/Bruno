@@ -169,7 +169,6 @@ public class Bruno extends JFrame {
 	private void setUpPlugins() {
 		pluginManager.exposeVariable("bruno", this);
 		pluginManager.exposeVariable("editingWindow", editingWindow);
-		pluginManager.exposeVariable("promptFactory", new Prompt());
 		// loadPlugins();
 		Set<ScriptFooable> workingDirScripts = pluginManager
 				.getAllScriptFooables(new File("plugins/"));
