@@ -1,7 +1,7 @@
 package frontend;
 
 import java.awt.Dimension;
-import java.awt.Image;
+//import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -26,7 +26,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import plugins.PluginManager;
 import plugins.SimplePluginManager;
 
-import com.apple.eawt.Application;
+//import com.apple.eawt.Application;
 
 import foobar.Foobar;
 import foobar.ScriptFooable;
@@ -212,9 +212,9 @@ public class Bruno extends JFrame {
 		if (System.getProperty("os.name").equals("Mac OS X")) {
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 		}
-		Application application = Application.getApplication();
-		Image image = Toolkit.getDefaultToolkit().getImage("resources/*.jpg");
-		application.setDockIconImage(image);
+		//Application application = Application.getApplication();
+		//Image image = Toolkit.getDefaultToolkit().getImage("resources/*.jpg");
+		//application.setDockIconImage(image);
 	}
 
 	/**
