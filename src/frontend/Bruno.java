@@ -96,7 +96,6 @@ public class Bruno extends JFrame {
 	}
 	
 	public boolean requestFocusInWindow() {
-		super.requestFocusInWindow();
 		return this.editingWindow.requestFocusInWindow();
 	}
 
@@ -125,22 +124,14 @@ public class Bruno extends JFrame {
 						.getDefaultToolkit().getMenuShortcutKeyMask()),
 				"foobar");
 		getRootPane().getActionMap().put("foobar", new AbstractAction() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 4189934329254672244L;
-
-			private boolean hasFocus = false;
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (!hasFocus) {
-					foobar.requestFocusInWindow();
-					hasFocus = true;
-				} else {
+				if (getFocusOwner().equals(foobar.getField())) {
 					editingWindow.requestFocusInWindow();
-					hasFocus = false;
+				} else {
+					foobar.requestFocusInWindow();
 				}
 			}
 

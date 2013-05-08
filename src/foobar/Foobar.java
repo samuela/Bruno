@@ -177,4 +177,13 @@ public final class Foobar extends JPanel {
 	protected FoobarPopupManager getPopupManager() {
 		return this.popupManager;
 	}
+
+	/**
+	 * Get the Foobar's text field to check for focus.
+	 * 
+	 * @return The text field used by Foobar
+	 */
+	public FoobarField getField() {
+		return this.field;
+	}
 }
