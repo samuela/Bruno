@@ -1,7 +1,6 @@
 package frontend;
 
 import java.awt.Dimension;
-//import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -31,11 +30,10 @@ import org.fife.ui.autocomplete.ShorthandCompletion;
 
 import plugins.PluginManager;
 import plugins.SimplePluginManager;
-
-//import com.apple.eawt.Application;
-
 import foobar.Foobar;
 import foobar.ScriptFooable;
+//import java.awt.Image;
+//import com.apple.eawt.Application;
 
 /**
  * The main Bruno application.
@@ -59,8 +57,9 @@ public class Bruno extends JFrame {
 	private EditingWindow editingWindow;
 
 	private PluginManager pluginManager = new SimplePluginManager();
-	
-	private AutoCompletion ac = new AutoCompletion(createJavaCompletionProvider());
+
+	private AutoCompletion ac = new AutoCompletion(
+			createJavaCompletionProvider());
 
 	private Foobar foobar;
 
@@ -105,12 +104,12 @@ public class Bruno extends JFrame {
 		setUpPlugins();
 		setUpKeybindings();
 	}
-	
+
 	public void addJavaCompletion() {
 		ac.setCompletionProvider(createJavaCompletionProvider());
 		ac.install(editingWindow.getTextArea());
 	}
-	
+
 	public void removeCompletion() {
 		ac.uninstall();
 	}
@@ -176,6 +175,24 @@ public class Bruno extends JFrame {
 
 	private void setUpKeybindings() {
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit
+						.getDefaultToolkit().getMenuShortcutKeyMask()), "new");
+		getRootPane().getActionMap().put("new", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 4189934329254672244L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("new file");
+				openDocument(new DocumentModel());
+			}
+
+		});
+
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()), "open");
 		getRootPane().getActionMap().put("open", new AbstractAction() {
@@ -188,6 +205,7 @@ public class Bruno extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setFileFilter(new BrunoFileFilter());
 				fc.showOpenDialog(getRootPane());
 				openFile(fc.getSelectedFile());
 			}
@@ -227,7 +245,7 @@ public class Bruno extends JFrame {
 				// Save current file
 				if (editingWindow != null) {
 					try {
-						editingWindow.save();
+						editingWindow.save(true);
 					} catch (IOException e0) {
 						e0.printStackTrace();
 					}
@@ -301,7 +319,7 @@ public class Bruno extends JFrame {
 	 */
 	public void openDocument(DocumentModel doc) {
 		// Don't allow opening the currently open file
-		if (doc != null && editingWindow != null
+		if (doc != null && doc.getFile() != null && editingWindow != null
 				&& doc.getFile().equals(editingWindow.getDoc().getFile())) {
 			editingWindow.getTextArea().requestFocus();
 			return;
