@@ -118,6 +118,7 @@ public class SimplePluginManager implements PluginManager {
             engine.eval(userScript.getText());
 
         } catch (ScriptException e) {
+        	e.printStackTrace();
             throw new ScriptException("Error in Script: " + userScript);
         }
     }

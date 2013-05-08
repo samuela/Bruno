@@ -1,1 +1,0 @@
-bruno.getRootPane().getActionMap().get("save").actionPerformed(null);

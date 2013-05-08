@@ -66,8 +66,9 @@ public final class FoobarPopupManager {
 	 * Hide the Popup if present.
 	 */
 	protected void destroyPopup() {
-		if (this.popup != null)
+		if (this.popup != null) {
 			this.popup.hide();
+		}
 	}
 
 	/**

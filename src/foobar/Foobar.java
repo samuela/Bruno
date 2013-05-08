@@ -97,16 +97,19 @@ public final class Foobar extends JPanel {
 	 * text field.
 	 */
 	protected void executeFooable() {
-		if (this.getPopupManager().getSuggestions().getSelectedValue() != null) {
-			// Execute the Fooable
-			this.getPopupManager().getSuggestions().getSelectedValue().doAction();
+		if (!this.field.getText().equals("")) {
+			Fooable f = this.getPopupManager().getSuggestions()
+					.getSelectedValue();
+
+			// Hide the suggested Fooables
+			this.popupManager.destroyPopup();
+
+			// Clear the text field
+			this.field.setText("");
+
+			if (f != null)
+				f.doAction();
 		}
-
-		// Hide the suggested Fooables
-		this.popupManager.destroyPopup();
-
-		// Clear the text field
-		this.field.setText("");
 	}
 
 	/**
