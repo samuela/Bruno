@@ -1,6 +1,8 @@
 package frontend;
 
 import java.awt.Toolkit;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,13 +33,15 @@ import edithistory.UndoController;
  */
 public class EditingWindow {
 
+	private final Bruno parentApp;
 	private final DocumentModel doc;
 	private RSyntaxTextArea textArea;
 	private RTextScrollPane scrollPane;
 	private UndoController undoController;
 
-	public EditingWindow(DocumentModel doc) throws IOException,
-			ClassNotFoundException {
+	public EditingWindow(final Bruno parentApp, final DocumentModel doc)
+			throws IOException, ClassNotFoundException {
+		this.parentApp = parentApp;
 		this.doc = doc;
 
 		// Read contents of file
@@ -92,6 +96,29 @@ public class EditingWindow {
 		 * Toolkit .getDefaultToolkit().getMenuShortcutKeyMask() +
 		 * Event.SHIFT_MASK), undoController.getRedoAction());
 		 */
+
+		textArea.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				try {
+					save();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Update the title bar
+				String filename = "Untitled";
+				if (doc.getFile() != null) {
+					filename = doc.getFile().getName();
+				}
+				parentApp.setTitle(filename + " - Bruno");
+			}
+		});
 	}
 
 	/**

@@ -186,7 +186,6 @@ public class Bruno extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("new file");
 				openDocument(new DocumentModel());
 			}
 
@@ -337,7 +336,7 @@ public class Bruno extends JFrame {
 		}
 
 		try {
-			editingWindow = new EditingWindow(doc);
+			editingWindow = new EditingWindow(this, doc);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this,
 					"Failed to open file " + doc.getFile(),
@@ -352,6 +351,9 @@ public class Bruno extends JFrame {
 		// Because fuck Swing
 		editingWindowPlaceholder.setVisible(false);
 		editingWindowPlaceholder.setVisible(true);
+
+		// Now focus the text area
+		editingWindow.getTextArea().requestFocus();
 	}
 
 	/**
@@ -367,7 +369,6 @@ public class Bruno extends JFrame {
 	 * Close the editor.
 	 */
 	public void close() {
-		// TODO save current file
 		setVisible(false);
 		dispose();
 		System.exit(0);
