@@ -23,7 +23,7 @@ public final class FoobarTest extends JFrame {
 		this.setResizable(false);
 
 		// Add a new Foobar to the frame
-		foobar = new Foobar();
+		foobar = new Foobar(null);
 		this.add(foobar);
 
 		this.pack();

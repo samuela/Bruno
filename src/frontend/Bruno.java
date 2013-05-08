@@ -75,7 +75,7 @@ public class Bruno extends JFrame {
 		tabPane.addTab("Projects", new ProjectExplorer(this));
 		tabPane.addTab("Edit History", undoViewPlaceholder);
 
-		foobar = new Foobar();
+		foobar = new Foobar(this);
 		foobar.setMaximumSize(new Dimension(999999, (int) foobar
 				.getPreferredSize().getHeight()));
 		sidePane.add(foobar);
@@ -93,6 +93,11 @@ public class Bruno extends JFrame {
 
 		setUpPlugins();
 		setUpKeybindings();
+	}
+	
+	public boolean requestFocusInWindow() {
+		super.requestFocusInWindow();
+		return this.editingWindow.requestFocusInWindow();
 	}
 
 	private void setUpKeybindings() {

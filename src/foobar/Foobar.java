@@ -6,6 +6,8 @@ import java.util.HashSet;
 
 import javax.swing.JPanel;
 
+import frontend.Bruno;
+
 /**
  * Foobar is a container class for FoobarField and FoobarSuggestions. The Foobar
  * is a fuzzy-matching, suggestive command interface for the Bruno text editor.
@@ -34,10 +36,18 @@ public final class Foobar extends JPanel {
 	private final FoobarPopupManager popupManager;
 
 	/**
+	 * The parent to Foobar
+	 */
+	private Bruno parent;
+
+	/**
 	 * Create a new Foobar containing no Fooables.
 	 */
-	public Foobar() {
+	public Foobar(Bruno parent) {
 		super(new BorderLayout());
+
+		// Store a reference to the parent
+		this.parent = parent;
 
 		// Store all Fooables in a HashSet
 		this.fooables = new HashSet<>();
@@ -98,6 +108,7 @@ public final class Foobar extends JPanel {
 	 */
 	protected void executeFooable() {
 		if (!this.field.getText().equals("")) {
+			// Get Fooable
 			Fooable f = this.getPopupManager().getSuggestions()
 					.getSelectedValue();
 
@@ -107,8 +118,13 @@ public final class Foobar extends JPanel {
 			// Clear the text field
 			this.field.setText("");
 
+			// Execute action
 			if (f != null)
 				f.doAction();
+
+			// Focus back on text area
+			if (this.parent != null)
+				this.parent.requestFocusInWindow();
 		}
 	}
 
