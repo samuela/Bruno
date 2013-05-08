@@ -14,6 +14,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 public class UndoController implements UndoableEditListener, Serializable {
@@ -23,12 +24,13 @@ public class UndoController implements UndoableEditListener, Serializable {
     private CompoundEdit toUndo;
     private CompoundEdit lastDisplayEdit;
     private transient UndoAction undoAction;
-    private transient JTextArea textArea;
+    private transient RSyntaxTextArea textArea;
     private transient EditHistoryView view;
     private transient NodeComponent toCompound1;
     private transient NodeComponent toCompound2;
+    private String syntaxStyle;
 
-    public UndoController(JTextArea textArea) {
+    public UndoController(RSyntaxTextArea textArea) {
 	this.textArea = textArea;
 	lastUndoEdit = new CompoundEdit();
 	lastDisplayEdit = new CompoundEdit();
@@ -36,6 +38,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 	view = new EditHistoryView(this);
 	view.addEdit(lastDisplayEdit);
 	undoAction = new UndoAction(this);
+	setSyntaxStyle(textArea.getSyntaxEditingStyle());
     }
 
     @Override
@@ -67,8 +70,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 
     public Document restoreTo(CompoundEdit edit) {
 	Document document = textArea.getDocument();
-	RSyntaxDocument restoredDocument = new RSyntaxDocument(
-							       SyntaxConstants.SYNTAX_STYLE_JAVA);
+	RSyntaxDocument restoredDocument = new RSyntaxDocument(syntaxStyle);
 	try {
 	    restoredDocument.insertString(0,
 					  document.getText(0, document.getLength()), null);
@@ -143,13 +145,20 @@ public class UndoController implements UndoableEditListener, Serializable {
 	this.view = view;
     }
 
-    public void setTextArea(JTextArea textArea) {
+    public void setTextArea(RSyntaxTextArea textArea) {
 	this.textArea = textArea;
     }
 
     public CompoundEdit getLastDisplayEdit() {
 	return lastDisplayEdit;
     }
+
+    public void setSyntaxStyle(String syntaxStyle)
+    {
+	this.syntaxStyle = syntaxStyle;
+	view.getTextArea().setSyntaxEditingStyle(syntaxStyle);
+    }
+
 
     /* Deserialization */
     private void readObject(ObjectInputStream s) throws ClassNotFoundException,

@@ -238,12 +238,19 @@ public class EditHistoryView extends JPanel
     }
     
     public void setDocument(Document doc) {
+	String syntaxEditingStyle = textArea.getSyntaxEditingStyle();
 	textArea.setDocument(doc);
+	textArea.setSyntaxEditingStyle(syntaxEditingStyle);
     }
 
     public Component[] getNodeComponents()
     {
 	return nodesView.getComponents();
+    }
+
+    public RSyntaxTextArea getTextArea()
+    {
+	return textArea;
     }
     
 }

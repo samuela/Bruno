@@ -31,123 +31,130 @@ import edithistory.UndoController;
  */
 public class EditingWindow {
 
-	private final DocumentModel doc;
-	private RSyntaxTextArea textArea;
-	private RTextScrollPane scrollPane;
-	private UndoController undoController;
+    private final DocumentModel doc;
+    private RSyntaxTextArea textArea;
+    private RTextScrollPane scrollPane;
+    private UndoController undoController;
 
-	public EditingWindow(DocumentModel doc) throws IOException,
-			ClassNotFoundException {
-		this.doc = doc;
+    public EditingWindow(DocumentModel doc) throws IOException,
+						   ClassNotFoundException {
+	this.doc = doc;
 
-		// Read contents of file
-		StringBuilder contents = new StringBuilder();
-		if (doc.getFile() != null) {
-			Scanner scanner = null;
-			try {
-				scanner = new Scanner(doc.getFile());
-				while (scanner.hasNextLine()) {
-					contents.append(scanner.nextLine()
-							+ System.getProperty("line.separator"));
-				}
-			} finally {
-				scanner.close();
-			}
+	// Read contents of file
+	StringBuilder contents = new StringBuilder();
+	if (doc.getFile() != null) {
+	    Scanner scanner = null;
+	    try {
+		scanner = new Scanner(doc.getFile());
+		while (scanner.hasNextLine()) {
+		    contents.append(scanner.nextLine()
+				    + System.getProperty("line.separator"));
 		}
-
-		textArea = new RSyntaxTextArea();
-		textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
-		textArea.setCodeFoldingEnabled(true);
-		textArea.setAntiAliasingEnabled(true);
-		scrollPane = new RTextScrollPane(textArea);
-		scrollPane.setFoldIndicatorEnabled(true);
-		scrollPane.setLineNumbersEnabled(true);
-
-		// Set text in text area
-		textArea.setText(contents.toString());
-
-		// Stay at the top of the document
-		textArea.setCaretPosition(0);
-
-		// Setup undo tree
-		if (doc.getMetadataFile() != null && doc.getMetadataFile().exists()) {
-			// Read from metadata file if it exists
-			ObjectInputStream metadataStream = new ObjectInputStream(
-					new FileInputStream(doc.getMetadataFile()));
-			undoController = (UndoController) metadataStream.readObject();
-			metadataStream.close();
-			undoController.setTextArea(textArea);
-		} else {
-			// Otherwise, start with a blank slate
-			undoController = new UndoController(textArea);
-		}
-		textArea.getDocument().addUndoableEditListener(undoController);
-
-		textArea.getInputMap().put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()),
-				undoController.getUndoAction());
-		/*
-		 * textArea.getInputMap().put( KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-		 * Toolkit .getDefaultToolkit().getMenuShortcutKeyMask() +
-		 * Event.SHIFT_MASK), undoController.getRedoAction());
-		 */
+	    } finally {
+		scanner.close();
+	    }
 	}
 
-	/**
-	 * Save the document.
-	 * 
-	 * @throws IOException
+	textArea = new RSyntaxTextArea();
+	textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+	textArea.setCodeFoldingEnabled(true);
+	textArea.setAntiAliasingEnabled(true);
+	scrollPane = new RTextScrollPane(textArea);
+	scrollPane.setFoldIndicatorEnabled(true);
+	scrollPane.setLineNumbersEnabled(true);
+
+	// Set text in text area
+	textArea.setText(contents.toString());
+
+	// Stay at the top of the document
+	textArea.setCaretPosition(0);
+
+	// Setup undo tree
+	if (doc.getMetadataFile() != null && doc.getMetadataFile().exists()) {
+	    // Read from metadata file if it exists
+	    ObjectInputStream metadataStream = new ObjectInputStream(
+								     new FileInputStream(doc.getMetadataFile()));
+	    undoController = (UndoController) metadataStream.readObject();
+	    metadataStream.close();
+	    undoController.setTextArea(textArea);
+	} else {
+	    // Otherwise, start with a blank slate
+	    undoController = new UndoController(textArea);
+	}
+	textArea.getDocument().addUndoableEditListener(undoController);
+
+	textArea.getInputMap().put(
+				   KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
+							  .getDefaultToolkit().getMenuShortcutKeyMask()),
+				   undoController.getUndoAction());
+	/*
+	 * textArea.getInputMap().put( KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+	 * Toolkit .getDefaultToolkit().getMenuShortcutKeyMask() +
+	 * Event.SHIFT_MASK), undoController.getRedoAction());
 	 */
-	public void save() throws IOException {
-		if (doc.getFile() == null) {
-			// If the file is unsaved and empty, ignore
-			if (textArea.getText().isEmpty()) {
-				return;
-			}
+    }
 
-			final JFileChooser fc = new JFileChooser();
-			fc.setFileFilter(new BrunoFileFilter());
-			if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-				File file = fc.getSelectedFile();
-				doc.setFile(file);
-			} else {
-				// They chose cancel, don't do anything else
-				return;
-			}
-		}
+    /**
+     * Save the document.
+     * 
+     * @throws IOException
+     */
+    public void save() throws IOException {
+	if (doc.getFile() == null) {
+	    // If the file is unsaved and empty, ignore
+	    if (textArea.getText().isEmpty()) {
+		return;
+	    }
 
-		Writer writer = new OutputStreamWriter(new FileOutputStream(
-				doc.getFile()));
-		writer.write(textArea.getText());
-		writer.close();
-
-		// File where will we store edit history, etc.
-		ObjectOutputStream metadataWriter = new ObjectOutputStream(
-				new FileOutputStream(doc.getMetadataFile()));
-
-		// Save metadata
-		metadataWriter.writeObject(undoController);
-		metadataWriter.close();
+	    final JFileChooser fc = new JFileChooser();
+	    fc.setFileFilter(new BrunoFileFilter());
+	    if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+		File file = fc.getSelectedFile();
+		doc.setFile(file);
+	    } else {
+		// They chose cancel, don't do anything else
+		return;
+	    }
 	}
 
-	public boolean requestFocusInWindow() {
-		return textArea.requestFocusInWindow();
-	}
+	Writer writer = new OutputStreamWriter(new FileOutputStream(
+								    doc.getFile()));
+	writer.write(textArea.getText());
+	writer.close();
 
-	public DocumentModel getDoc() {
-		return doc;
-	}
+	// File where will we store edit history, etc.
+	ObjectOutputStream metadataWriter = new ObjectOutputStream(
+								   new FileOutputStream(doc.getMetadataFile()));
 
-	public RSyntaxTextArea getTextArea() {
-		return textArea;
-	}
+	// Save metadata
+	metadataWriter.writeObject(undoController);
+	metadataWriter.close();
+    }
 
-	public JComponent getView() {
-		return scrollPane;
-	}
+    public boolean requestFocusInWindow() {
+	return textArea.requestFocusInWindow();
+    }
 
-	public UndoController getUndoController() {
-		return undoController;
-	}
+    public DocumentModel getDoc() {
+	return doc;
+    }
+
+    public RSyntaxTextArea getTextArea() {
+	return textArea;
+    }
+
+    public JComponent getView() {
+	return scrollPane;
+    }
+
+    public UndoController getUndoController() {
+	return undoController;
+    }
+
+    public void setSyntaxStyle(String syntaxStyle)
+    {
+	getTextArea().setSyntaxEditingStyle(syntaxStyle);
+	getUndoController().setSyntaxStyle(syntaxStyle);
+    }
+
 }
