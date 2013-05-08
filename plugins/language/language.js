@@ -12,8 +12,11 @@ var choice = JOptionPane.showInputDialog(
                     languages,
                     "Java");
 
+bruno.removeCompletion();
+
 if (choice.equals("Java")) {
 	editingWindow.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+     bruno.addJavaCompletion();
 }
 else if (choice.equals("C")) {
 	editingWindow.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
