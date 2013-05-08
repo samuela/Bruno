@@ -12,8 +12,8 @@ import java.util.Map.Entry;
 /**
  * FoobarSuggester provides a static getSuggestions method, which returns
  * suggestions based on a ranking algorithm. The ranking algorithm ranks
- * Fooables by their keyword with the smallest Levenshtein Distance. If there is
- * a tie, then the ranking algorithm reverts to String comparison.
+ * Fooables by their keyword with the smallest weighted Levenshtein Distance. If
+ * there is a tie, then the ranking algorithm reverts to String comparison.
  * 
  * @author Frank Goodman
  * 
@@ -39,7 +39,8 @@ public abstract class FoobarSuggester {
 			min = Integer.MAX_VALUE;
 
 			for (String keyword : fooable.getKeywords()) {
-				dist = FoobarSuggester.levenshteinDistance(keyword, query);
+				dist = FoobarSuggester.weightedLevenshteinDistance(keyword,
+						query);
 				min = dist < min ? dist : min;
 			}
 
@@ -96,37 +97,178 @@ public abstract class FoobarSuggester {
 		return sortedList;
 	}
 
+	// Dropped in favor of weighted Levenshtein Distance
+	// /**
+	// * Computes the Levenshtein Distances between str1 and str2 using dynamic
+	// * programming to save on computation.
+	// *
+	// * @param str1
+	// * A string to compare with str2
+	// * @param str2
+	// * A string to compare with str1
+	// * @return The Levenshtein Distance between str1 and str2
+	// */
+	// private static final int levenshteinDistance(String str1, String str2) {
+	// int[][] distances = new int[str1.length() + 1][str2.length() + 1];
+	//
+	// for (int i = 0; i < str1.length() + 1; i++) {
+	// distances[i][0] = i;
+	// }
+	//
+	// for (int j = 1; j < str2.length() + 1; j++) {
+	// distances[0][j] = j;
+	// }
+	//
+	// for (int i = 1; i < str1.length() + 1; i++) {
+	// for (int j = 1; j < str2.length() + 1; j++) {
+	// distances[i][j] = Math.min(
+	// distances[i - 1][j - 1]
+	// + (str1.charAt(i - 1) == str2.charAt(j - 1) ? 0
+	// : 1), Math.min(distances[i - 1][j] + 1,
+	// distances[i][j - 1] + 1));
+	// }
+	// }
+	//
+	// return distances[str1.length()][str2.length()];
+	// }
+
 	/**
-	 * Computes the Levenshtein Distances between str1 and str2 using dynamic
-	 * programming to save on computation.
+	 * Computes the Levenshtein distance between str1 and str2, while
+	 * additionally weighting distances based on string length and key-to-key
+	 * distances on a QWERTY keyboard.
 	 * 
 	 * @param str1
 	 *            A string to compare with str2
 	 * @param str2
 	 *            A string to compare with str1
-	 * @return The Levenshtein Distance between str1 and str2
+	 * @return The weighted Levenshtein distance of str1 and str2
 	 */
-	private static final int levenshteinDistance(String str1, String str2) {
-		int[][] distances = new int[str1.length() + 1][str2.length() + 1];
+	private static int weightedLevenshteinDistance(String str1, String str2) {
+		if (str1.length() == 0)
+			return str2.length();
+		if (str2.length() == 0)
+			return str1.length();
 
-		for (int i = 0; i < str1.length() + 1; i++) {
-			distances[i][0] = i;
+		if (str1.charAt(0) == str2.charAt(0)) {
+			return weightedLevenshteinDistance(str1.substring(1),
+					str2.substring(1));
 		}
 
-		for (int j = 1; j < str2.length() + 1; j++) {
-			distances[0][j] = j;
-		}
+		int a = weightedLevenshteinDistance(str1.substring(1),
+				str2.substring(1));
+		int b = weightedLevenshteinDistance(str1, str2.substring(1));
+		int c = weightedLevenshteinDistance(str1.substring(1), str2);
 
-		for (int i = 1; i < str1.length() + 1; i++) {
-			for (int j = 1; j < str2.length() + 1; j++) {
-				distances[i][j] = Math.min(
-						distances[i - 1][j - 1]
-								+ (str1.charAt(i - 1) == str2.charAt(j - 1) ? 0
-										: 1), Math.min(distances[i - 1][j] + 1,
-								distances[i][j - 1] + 1));
-			}
-		}
+		if (a > b)
+			a = b;
+		if (a > c)
+			a = c;
 
-		return distances[str1.length()][str2.length()];
+		return a + 1 + Math.min(str1.length(), str2.length())
+				+ getKeyDistance(str1.charAt(0), str2.charAt(0));
+	}
+
+	private static int getKeyDistance(char chr1, char chr2) {
+		return (int) Math.sqrt(Math.pow(getX(chr2) - getX(chr1), 2)
+				+ Math.pow(getY(chr2) - getY(chr1), 2));
+	}
+
+	/**
+	 * Get the row on a QWERTY keyboard containing chr. The first, 0-th, row is
+	 * the zxc... row. The last, 2-nd, row is the qwe... row. Characters lying
+	 * outside the alphabetic area of the keyboard are assigned to the "10-th"
+	 * row.
+	 * 
+	 * @param chr
+	 *            A character
+	 * @return The keyboard row containing chr
+	 */
+	private static int getY(char chr) {
+		switch (chr) {
+		case 'z':
+		case 'x':
+		case 'c':
+		case 'v':
+		case 'b':
+		case 'n':
+		case 'm':
+			return 0;
+		case 'a':
+		case 's':
+		case 'd':
+		case 'f':
+		case 'g':
+		case 'h':
+		case 'j':
+		case 'k':
+		case 'l':
+			return 1;
+		case 'q':
+		case 'w':
+		case 'e':
+		case 'r':
+		case 't':
+		case 'y':
+		case 'u':
+		case 'i':
+		case 'o':
+		case 'p':
+			return 2;
+		default:
+			return 3;
+		}
+	}
+
+	/**
+	 * Get the column on a QWERTY keyboard containing chr. The first, 0-th,
+	 * column is the qaz column. The last, 9-th, column is the p column.
+	 * Characters lying outside the alphabetic area of the keyboard are assigned
+	 * to the "10-th" column.
+	 * 
+	 * @param chr
+	 *            A character
+	 * @return The keyboard column containing chr
+	 */
+	private static int getX(char chr) {
+		switch (chr) {
+		case 'q':
+		case 'a':
+		case 'z':
+			return 0;
+		case 'w':
+		case 's':
+		case 'x':
+			return 1;
+		case 'e':
+		case 'd':
+		case 'c':
+			return 3;
+		case 'r':
+		case 'f':
+		case 'v':
+			return 4;
+		case 't':
+		case 'g':
+		case 'b':
+			return 5;
+		case 'y':
+		case 'h':
+		case 'n':
+			return 6;
+		case 'u':
+		case 'j':
+		case 'm':
+			return 7;
+		case 'i':
+		case 'k':
+			return 8;
+		case 'o':
+		case 'l':
+			return 9;
+		case 'p':
+			return 10;
+		default:
+			return 11;
+		}
 	}
 }
