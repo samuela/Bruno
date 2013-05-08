@@ -16,8 +16,6 @@ import javax.swing.text.Document;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
-import com.google.gson.Gson;
-
 public class UndoController implements UndoableEditListener, Serializable {
 
     private static final long serialVersionUID = 1L;
