@@ -206,7 +206,8 @@ public class Bruno extends JFrame {
 				JFileChooser fc = new JFileChooser();
 				fc.setFileFilter(new BrunoFileFilter());
 				fc.showOpenDialog(getRootPane());
-				openFile(fc.getSelectedFile());
+				if (fc.getSelectedFile() != null)
+					openFile(fc.getSelectedFile());
 			}
 
 		});
