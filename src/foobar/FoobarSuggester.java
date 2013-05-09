@@ -123,7 +123,6 @@ public abstract class FoobarSuggester {
 		for (int i = 1; i < str1.length() + 1; i++) {
 			for (int j = 1; j < str2.length() + 1; j++) {
 				distances[i][j] = getKeyDistance(str1.charAt(0), str2.charAt(0))
-						/ 3 // magic
 						+ Math.min(
 								distances[i - 1][j - 1]
 										+ (str1.charAt(i - 1) == str2
