@@ -51,6 +51,11 @@ public class SimplePluginManager implements PluginManager {
 
 	}
 
+    public void clearPlugins(){
+        pluginsByScriptName_ = new HashMap<>();
+        pluginsByName_ = new HashMap<>();
+    }
+
 	public ScriptEngine getEngineByExtension(String ext) {
 		return enginesByExtension_.get(ext);
 	}
@@ -124,6 +129,7 @@ public class SimplePluginManager implements PluginManager {
                     try {
                         engine.eval(userScript.getFileReader());
                     } catch (ScriptException e) {
+                        System.err.println("script " + userScript + " messed up");
                         ErrorLogger.log("Error in script: " + userScript);
                     }
                 }

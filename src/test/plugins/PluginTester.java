@@ -256,7 +256,7 @@ public class PluginTester {
         Plugin p = pm.loadPlugin(new File(TEST_PATH + "/expose"));
         Bruno b = new Bruno();
         pm.exposeVariable("bruno", b);
-        EditingWindow ew = b.getCurrentEditingWindow();
+        EditingWindow ew = b.getEditingWindow();
         RSyntaxTextArea rs = ew.getTextArea();
         boolean bool = rs.getMarkOccurrences();
 
