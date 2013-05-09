@@ -454,10 +454,11 @@ public class Bruno extends JFrame {
 	if (file.isFile()){
 	    DocumentModel doc1 = new DocumentModel(file);
 	    if (doc1.getMetadataFile().exists()){
+		System.out.println(file);
 		EditingWindow ew = null;
 		DocumentModel doc2 = getEditingWindow().getDoc();
 		if (doc2 != null && !doc2.getFile().equals(file)){
-		    ew = new EditingWindow(null, doc1);
+		    ew = new EditingWindow(null, doc2);
 		}
 		else{
 		    ew = getEditingWindow();
@@ -468,13 +469,14 @@ public class Bruno extends JFrame {
 		//Save
 		ew.save();
 	    }
-	    else{
-		File[] fileList = file.listFiles();
-		for (int i=0; i<fileList.length; i++){
-		    process(fileList[i], comment);
-		}
+	}
+	else{
+	    File[] fileList = file.listFiles();
+	    for (int i=0; i<fileList.length; i++){
+		process(fileList[i], comment);
 	    }
 	}
     }
+
 
 }
