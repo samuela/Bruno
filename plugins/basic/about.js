@@ -2,6 +2,6 @@ importClass(javax.swing.JOptionPane);
 
 JOptionPane.showMessageDialog(
     null,
-    "Select a language",
+    "Bruno was created by Samuel Ainsworth, Frank Goodman, Jonathan Lessinger, and Michael Scheer",
     "About",
-    JOptionPane.NORMAL_MESSAGE);
+    JOptionPane.INFORMATION_MESSAGE);
