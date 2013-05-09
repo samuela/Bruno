@@ -20,6 +20,11 @@ public interface PluginManager {
   //  Set<Plugin> loadPlugins(File file) throws IllegalArgumentException;
 
     /**
+     * clears all previously loaded plugins
+     */
+    public void clear();
+
+    /**
      *
      * @param topLevelPluginDir the system bruno plugin directory
      * @return a set containing a fooable for each script successfully loaded, or null

@@ -51,7 +51,7 @@ public class SimplePluginManager implements PluginManager {
 
 	}
 
-    public void clearPlugins(){
+    public void clear(){
         pluginsByScriptName_ = new HashMap<>();
         pluginsByName_ = new HashMap<>();
     }

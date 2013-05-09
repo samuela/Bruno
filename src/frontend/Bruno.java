@@ -261,6 +261,10 @@ public class Bruno extends JFrame {
 		return editingWindow;
 	}
 
+    public ProjectExplorer getProjectExplorer(){
+        return projectExplorer;
+    }
+
 	private void setUpPlugins() {
 		pluginManager.exposeVariable("bruno", this);
 		// loadPlugins();
