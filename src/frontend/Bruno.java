@@ -405,6 +405,10 @@ public class Bruno extends JFrame {
 	return foobar;
     }
 
+    public ProjectExplorer getProjectExplorer(){
+        return projectExplorer;
+    }
+
     /**
      * @param args
      */

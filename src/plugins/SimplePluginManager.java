@@ -131,6 +131,7 @@ public class SimplePluginManager implements PluginManager {
                         engine.eval(userScript.getFileReader());
                     } catch (ScriptException e) {
                         System.err.println("script " + userScript + " messed up");
+                        e.printStackTrace();
                         ErrorLogger.log("Error in script: " + userScript);
                     }
                 }
