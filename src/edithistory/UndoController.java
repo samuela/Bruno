@@ -216,4 +216,10 @@ public class UndoController implements UndoableEditListener, Serializable {
 	    edit = edit.getParent();
 	}
     }
+
+    public void compressAll()
+    {
+	Component[] nodeComponents = view.getNodeComponents();
+	view.compress((NodeComponent) nodeComponents[0], (NodeComponent) nodeComponents[nodeComponents.length - 1]);
+    }
 }
