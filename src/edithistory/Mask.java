@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents a compression of nodes
+ */
 public class Mask implements Serializable
 {
     private static final long serialVersionUID = 1L;

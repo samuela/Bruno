@@ -28,7 +28,6 @@ import org.fife.ui.autocomplete.CompletionProvider;
 import org.fife.ui.autocomplete.DefaultCompletionProvider;
 import org.fife.ui.autocomplete.ShorthandCompletion;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import plugins.PluginManager;
 import plugins.SimplePluginManager;
 import foobar.Foobar;
@@ -45,8 +44,8 @@ import foobar.ScriptFooable;
 public class Bruno extends JFrame {
 
 	/**
-	 * 
-	 */
+     * 
+     */
 	private static final long serialVersionUID = 1987233037023049749L;
 
 	public static final String FILE_EXT = ".bruno~";
@@ -63,6 +62,7 @@ public class Bruno extends JFrame {
 			createJavaCompletionProvider());
 
 	private Foobar foobar;
+	private ProjectExplorer projectExplorer;
 
 	public Bruno() {
 		setTitle("Bruno");
@@ -80,7 +80,8 @@ public class Bruno extends JFrame {
 		JPanel sidePane = new JPanel();
 		sidePane.setLayout(new BoxLayout(sidePane, BoxLayout.PAGE_AXIS));
 		tabPane = new JTabbedPane();
-		tabPane.addTab("Projects", new ProjectExplorer(this));
+		projectExplorer = new ProjectExplorer(this);
+		tabPane.addTab("Projects", projectExplorer);
 		tabPane.addTab("Edit History", undoViewPlaceholder);
 
 		foobar = new Foobar(this);
@@ -181,8 +182,8 @@ public class Bruno extends JFrame {
 		getRootPane().getActionMap().put("new", new AbstractAction() {
 
 			/**
-			 * 
-			 */
+		 * 
+		 */
 			private static final long serialVersionUID = 4189934329254672244L;
 
 			@Override
@@ -198,8 +199,8 @@ public class Bruno extends JFrame {
 		getRootPane().getActionMap().put("open", new AbstractAction() {
 
 			/**
-			 * 
-			 */
+		 * 
+		 */
 			private static final long serialVersionUID = 4189934329254672244L;
 
 			@Override
@@ -237,8 +238,8 @@ public class Bruno extends JFrame {
 		getRootPane().getActionMap().put("save", new AbstractAction() {
 
 			/**
-			 * 
-			 */
+		 * 
+		 */
 			private static final long serialVersionUID = 4189934329254672244L;
 
 			@Override
@@ -259,7 +260,6 @@ public class Bruno extends JFrame {
 	public EditingWindow getCurrentEditingWindow() {
 		return editingWindow;
 	}
-
 
 	private void setUpPlugins() {
 		pluginManager.exposeVariable("bruno", this);

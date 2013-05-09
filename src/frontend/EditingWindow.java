@@ -1,6 +1,8 @@
 package frontend;
 
+import java.awt.BorderLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -14,8 +16,10 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Scanner;
 
+import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -35,8 +39,12 @@ public class EditingWindow {
 
 	private final Bruno parentApp;
 	private final DocumentModel doc;
+
+	private JPanel mainPanel;
+	private FindAndReplaceToolBar findAndReplaceToolBar;
 	private RSyntaxTextArea textArea;
 	private RTextScrollPane scrollPane;
+
 	private UndoController undoController;
 
 	public EditingWindow(final Bruno parentApp, final DocumentModel doc)
@@ -85,12 +93,32 @@ public class EditingWindow {
 			// Otherwise, start with a blank slate
 			undoController = new UndoController(textArea);
 		}
+
 		textArea.getDocument().addUndoableEditListener(undoController);
 
 		textArea.getInputMap().put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()),
 				undoController.getUndoAction());
+
+		textArea.getInputMap().put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit
+						.getDefaultToolkit().getMenuShortcutKeyMask()),
+				"findreplace");
+		textArea.getActionMap().put("findreplace", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 5243489231071068035L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showFindAndReplaceToolBar();
+			}
+
+		});
+
 		/*
 		 * textArea.getInputMap().put( KeyStroke.getKeyStroke(KeyEvent.VK_Z,
 		 * Toolkit .getDefaultToolkit().getMenuShortcutKeyMask() +
@@ -121,6 +149,14 @@ public class EditingWindow {
 				parentApp.setTitle(filename + " - Bruno");
 			}
 		});
+
+		mainPanel = new JPanel(new BorderLayout());
+		mainPanel.add(scrollPane);
+
+		// Create the find and replace toolbar
+		findAndReplaceToolBar = new FindAndReplaceToolBar(textArea);
+		findAndReplaceToolBar.setVisible(false);
+		mainPanel.add(findAndReplaceToolBar, BorderLayout.SOUTH);
 	}
 
 	/**
@@ -164,6 +200,19 @@ public class EditingWindow {
 		save(false);
 	}
 
+	public void toggleFindAndReplaceToolBar() {
+		findAndReplaceToolBar.setVisible(!findAndReplaceToolBar.isVisible());
+	}
+
+	public void showFindAndReplaceToolBar() {
+		findAndReplaceToolBar.setVisible(true);
+	}
+
+	public void setSyntaxStyle(String syntaxStyle) {
+		getTextArea().setSyntaxEditingStyle(syntaxStyle);
+		getUndoController().setSyntaxStyle(syntaxStyle);
+	}
+
 	public boolean requestFocusInWindow() {
 		return textArea.requestFocusInWindow();
 	}
@@ -177,16 +226,15 @@ public class EditingWindow {
 	}
 
 	public JComponent getView() {
-		return scrollPane;
+		return mainPanel;
 	}
 
 	public UndoController getUndoController() {
 		return undoController;
 	}
 
-	public void setSyntaxStyle(String syntaxStyle) {
-		getTextArea().setSyntaxEditingStyle(syntaxStyle);
-		getUndoController().setSyntaxStyle(syntaxStyle);
+	public FindAndReplaceToolBar getFindAndReplaceToolBar() {
+		return findAndReplaceToolBar;
 	}
 
 }
