@@ -203,8 +203,10 @@ public class EditingWindow {
 		metadataWriter.close();
 
 		// Reload project explorer
-		parentApp.getProjectExplorer().showFolder(
-				parentApp.getProjectExplorer().getCurrentFolder());
+		if (parentApp != null) {
+			parentApp.getProjectExplorer().showFolder(
+					parentApp.getProjectExplorer().getCurrentFolder());
+		}
 	}
 
 	public void save() throws IOException {
