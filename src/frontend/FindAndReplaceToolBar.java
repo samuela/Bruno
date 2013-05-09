@@ -10,6 +10,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.SearchContext;
@@ -148,7 +149,13 @@ public class FindAndReplaceToolBar extends JToolBar implements ActionListener {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			searchField.requestFocus();
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					searchField.requestFocus();
+				}
+			});
 		}
 	}
 
