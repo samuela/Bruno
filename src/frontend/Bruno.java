@@ -269,11 +269,17 @@ public class Bruno extends JFrame {
 		Set<ScriptFooable> libraryScripts = pluginManager
 				.getAllScriptFooables(new File(
 						"/Library/Application Support/Bruno/plugins/"));
-
+		
 		if (workingDirScripts != null)
 			foobar.addFooables(workingDirScripts);
 		if (libraryScripts != null)
 			foobar.addFooables(libraryScripts);
+	}
+
+	public void reloadPlugins() {
+		foobar.clearFooables();
+		pluginManager.clear();
+		setUpPlugins();
 	}
 
 	// /**
