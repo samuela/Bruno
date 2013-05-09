@@ -255,9 +255,12 @@ public class Bruno extends JFrame {
 		});
 	}
 
+	public EditingWindow getEditingWindow() {
+		return editingWindow;
+	}
+
 	private void setUpPlugins() {
 		pluginManager.exposeVariable("bruno", this);
-		pluginManager.exposeVariable("editingWindow", editingWindow);
 		// loadPlugins();
 		Set<ScriptFooable> workingDirScripts = pluginManager
 				.getAllScriptFooables(new File("plugins/"));
@@ -338,6 +341,10 @@ public class Bruno extends JFrame {
 
 		try {
 			editingWindow = new EditingWindow(this, doc);
+
+			if (doc.getFile() != null
+					&& doc.getFile().getName().endsWith(".java"))
+				ac.install(editingWindow.getTextArea());
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this,
 					"Failed to open file " + doc.getFile(),

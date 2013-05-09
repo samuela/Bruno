@@ -39,8 +39,8 @@ public abstract class FoobarSuggester {
 			min = Integer.MAX_VALUE;
 
 			for (String keyword : fooable.getKeywords()) {
-				dist = FoobarSuggester.weightedLevenshteinDistance(keyword,
-						query);
+				dist = FoobarSuggester.weightedLevenshteinDistance(
+						keyword.toLowerCase(), query.toLowerCase());
 				min = dist < min ? dist : min;
 			}
 
@@ -233,6 +233,9 @@ public abstract class FoobarSuggester {
 		case 'b':
 		case 'n':
 		case 'm':
+		case ',':
+		case '.':
+		case '/':
 			return 0;
 		case 'a':
 		case 's':
@@ -255,8 +258,26 @@ public abstract class FoobarSuggester {
 		case 'o':
 		case 'p':
 			return 2;
-		default:
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		case '0':
+		case '-':
+		case '=':
+		case '~':
+		case '!':
+		case '#':
+		case '_':
+		case '+':
 			return 3;
+		default:
+			return 4;
 		}
 	}
 
@@ -272,41 +293,61 @@ public abstract class FoobarSuggester {
 	 */
 	private static int getX(char chr) {
 		switch (chr) {
+		case '1':
+		case '!':
+		case '~':
+		case '`':
 		case 'q':
 		case 'a':
 		case 'z':
 			return 0;
+		case '2':
 		case 'w':
 		case 's':
 		case 'x':
 			return 1;
+		case '#':
+		case '3':
 		case 'e':
 		case 'd':
 		case 'c':
 			return 3;
+		case '4':
 		case 'r':
 		case 'f':
 		case 'v':
 			return 4;
+		case '5':
 		case 't':
 		case 'g':
 		case 'b':
 			return 5;
+		case '6':
 		case 'y':
 		case 'h':
 		case 'n':
 			return 6;
+		case '7':
 		case 'u':
 		case 'j':
 		case 'm':
 			return 7;
+		case '8':
 		case 'i':
 		case 'k':
+		case ',':
 			return 8;
+		case '9':
 		case 'o':
 		case 'l':
+		case '.':
 			return 9;
+		case '-':
+		case '_':
+		case '+':
+		case '=':
 		case 'p':
+		case '/':
 			return 10;
 		default:
 			return 11;

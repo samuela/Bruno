@@ -159,9 +159,14 @@ public final class Foobar extends JPanel {
 	 * @param query
 	 *            The term by which to search for suggestions
 	 */
-	protected void showSuggestions(String query) {
-		this.popupManager.createPopup(FoobarSuggester.getSuggestions(query,
-				this.fooables));
+	protected void showSuggestions(final String query) {
+		new Runnable() {
+			@Override
+			public void run() {
+				popupManager.createPopup(FoobarSuggester.getSuggestions(query,
+						fooables));
+			}
+		}.run();
 	}
 
 	@Override
