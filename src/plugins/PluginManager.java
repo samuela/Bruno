@@ -19,10 +19,7 @@ public interface PluginManager {
     // @Deprecated
   //  Set<Plugin> loadPlugins(File file) throws IllegalArgumentException;
 
-    /**
-     * clears all previously loaded plugins
-     */
-    public void clear();
+
 
     /**
      *
@@ -55,12 +52,8 @@ public interface PluginManager {
     void executeScript(String userScript);
 
     /**
-     *
-     * @param bundle
-     * @return
-     *
-     * not supported in this version
+     * Clear old plugins before loading new ones
      */
-  //  LanguageBundle loadLanguageBundle(File bundle);
+    void clear();
 
 }

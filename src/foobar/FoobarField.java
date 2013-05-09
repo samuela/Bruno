@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.util.Collections;
 
-import javax.swing.JTextField;
+import frontend.PlaceholderTextField;
 
 /**
  * The FoobarField is the text field to search for Fooables. This is contained
@@ -14,7 +14,7 @@ import javax.swing.JTextField;
  * @author Frank Goodman
  * 
  */
-public final class FoobarField extends JTextField {
+public final class FoobarField extends PlaceholderTextField {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -32,6 +32,8 @@ public final class FoobarField extends JTextField {
 
 		// Default size
 		this.setPreferredSize(new Dimension(220, 30));
+
+		this.setPlaceholderText("Foo...");
 
 		this.setVisible(true);
 	}
