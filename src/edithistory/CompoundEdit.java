@@ -40,12 +40,18 @@ public class CompoundEdit implements Serializable {
 	setLength(e.getLength());
     }
 
+    /**
+     * Undoes the effect of this CompoundEdit on a document.
+     */
     public void undo(Document document) {
 	for (MyUndoableEdit e : Lists.reverse(edits)) {
 	    e.undo(document);
 	}
     }
 
+    /**
+     * Tries to add a new MyUndoableEdit to this edit.
+     */
     public boolean addEdit(MyUndoableEdit e, String method) {
 	if (method.equals("undo")) {
 	    return false;

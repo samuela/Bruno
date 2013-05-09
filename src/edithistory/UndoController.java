@@ -17,6 +17,9 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
+/**
+ * This class encapsulates the edit history information and actions of one document.
+ */
 public class UndoController implements UndoableEditListener, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,6 +50,9 @@ public class UndoController implements UndoableEditListener, Serializable {
 	undoAction.updateUndoState();
     }
 
+    /**
+     * Adds an edit to the undo ring as well as the display.
+     */
     public void addEdit(MyUndoableEdit e) {
 	if (!lastUndoEdit.addEdit(e, "undo")) {
 	    lastUndoEdit = new CompoundEdit(e, lastUndoEdit);
@@ -58,16 +64,26 @@ public class UndoController implements UndoableEditListener, Serializable {
 	toUndo = lastUndoEdit;
     }
 
+    /**
+     * True if the undo action is allowed to happen.
+     */
     public boolean canUndo() {
 	return (!toUndo.getType().equals("empty"));
     }
 
+
+    /**
+     * Undoes the last edit
+     */
     public void undo() {
 	CompoundEdit currentToUndo = toUndo;
 	toUndo.undo(textArea.getDocument());
 	toUndo = currentToUndo.getParent();
     }
 
+    /**
+     * Returns the state of the document when edit was the last edit performed.
+     */
     public Document restoreTo(CompoundEdit edit) {
 	Document document = textArea.getDocument();
 	RSyntaxDocument restoredDocument = new RSyntaxDocument(syntaxStyle);
@@ -84,6 +100,10 @@ public class UndoController implements UndoableEditListener, Serializable {
 	return restoredDocument;
     }
 
+
+    /**
+     * Changes the document back to its state when edit was the last edit performed.
+     */
     public void revert(CompoundEdit edit) {
 	if (edit != lastDisplayEdit){
 	    int numComponents = view.getNodeComponents().length;
@@ -105,6 +125,10 @@ public class UndoController implements UndoableEditListener, Serializable {
 	}
     }
 
+    /**
+     * Selects a node in the edit history view to be compressed. If one is already selected
+     * it performs the compression.
+     */
     public void selectNodeForCompound(NodeComponent node) {
 	if (toCompound1 == null)
 	    toCompound1 = node;
@@ -118,6 +142,10 @@ public class UndoController implements UndoableEditListener, Serializable {
 	}
     }
 
+
+    /**
+     * Deselects a node for compression.
+     */
     public void deselectNodeForCompound(NodeComponent node) {
 	if (toCompound1 == node) {
 	    toCompound1 = null;

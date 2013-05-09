@@ -10,7 +10,7 @@ import plugins.PluginManager;
 import plugins.Script;
 
 /**
- * A Fooable wrapper for Scripts.
+ * A wrapper Fooable for executing scripts.
  * 
  * @author samuelainsworth
  * 

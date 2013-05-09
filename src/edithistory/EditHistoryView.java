@@ -16,6 +16,9 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+/**
+ * This class is the edit history view on the right side of Bruno.
+ */
 public class EditHistoryView extends JPanel
 {
     private static final long serialVersionUID = 1L;
@@ -34,6 +37,7 @@ public class EditHistoryView extends JPanel
 	layout = new CardLayout();
 	setLayout(layout);
 
+	//set up the text area
 	textArea = new RSyntaxTextArea();
 	textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
 	textArea.setCodeFoldingEnabled(true);
@@ -45,6 +49,7 @@ public class EditHistoryView extends JPanel
 
 	nodesView = new Box(BoxLayout.Y_AXIS);
 
+	//set up the comment box
 	comment = new JTextArea(3, 15);
 	comment.setEditable(false);
 	comment.getDocument().addDocumentListener(new MyDocumentListener());
@@ -52,6 +57,7 @@ public class EditHistoryView extends JPanel
 	JSplitPane rightBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 						comment, sp);
 
+	//set up the buttons
 	JPanel rightSide = new JPanel(new GridBagLayout());
 	GridBagConstraints c = new GridBagConstraints();
 	c.fill = GridBagConstraints.HORIZONTAL;
@@ -92,7 +98,7 @@ public class EditHistoryView extends JPanel
 	c.gridy = 1;
 	rightSide.add(rightBottom, c);
 
-	// increase scroll speed!
+	//set up the scroll pane for the NodeComponents
 	nodesViewScrollPane = new JScrollPane(nodesView);
 	nodesViewScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -110,6 +116,9 @@ public class EditHistoryView extends JPanel
 	rightBottom.setDividerLocation(20);
     }
 
+    /**
+     * Document listener for the comment box.
+     */
     private class MyDocumentListener implements DocumentListener {
 	@Override
 	    public void changedUpdate(DocumentEvent e) {
@@ -132,11 +141,18 @@ public class EditHistoryView extends JPanel
 	}
     }
 
+    /**
+     * Recalculate the positions of the NodeComponents.
+     */
     public void revalidateNodeComponents() {
 	splitPane.setDividerLocation(70);
 	splitPane.setDividerLocation(splitPane.getLastDividerLocation());
     }
 
+    /**
+     * Add a new edit to the edit history view. If the scrollbar is already at the bottom
+     * keep it there otherwise don't move it.
+     */
     public void addEdit(CompoundEdit edit)
     {
 	JScrollBar scrollBar = nodesViewScrollPane.getVerticalScrollBar();
@@ -160,6 +176,9 @@ public class EditHistoryView extends JPanel
 	}
     }
 
+    /**
+     * Adds an edit to the beginning. This is used only in deserialization of an UndoController.
+     */
     public void addEditAtBeginning(CompoundEdit edit)
     {
 	NodeComponent newNode = new NodeComponent(edit, undoController);
@@ -168,6 +187,9 @@ public class EditHistoryView extends JPanel
 	revalidateNodeComponents();
     }
 
+    /**
+     * Used to compress some nodes.
+     */
     public void compress(NodeComponent n1, NodeComponent n2)
     {
 	Component[] nodeComponents = nodesView.getComponents();
@@ -197,6 +219,9 @@ public class EditHistoryView extends JPanel
 	revalidateNodeComponents();
     }
 
+    /**
+     * Expands a compressed node.
+     */
     public void expand(NodeComponent node)
     {
 	if (node.getEdit().getIsMask()){

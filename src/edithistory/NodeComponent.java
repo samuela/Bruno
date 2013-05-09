@@ -14,6 +14,11 @@ import javax.swing.text.Document;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
+/**
+ * This class is a component that goes in the edit history view.
+ * The red, green, orange, purple, and blue boxes in the edit history view
+ * are NodeComponents.
+ */
 public class NodeComponent extends JPanel {
     private static final long serialVersionUID = 1L;
     private UndoController undoController;
@@ -49,6 +54,9 @@ public class NodeComponent extends JPanel {
 	setColor();
     }
 
+    /**
+     * Selects this NodeComponent when the mouse enters it.
+     */
     public void mouseEntered(MouseEvent e) {
 	EditHistoryView view = undoController.getView();
 	if (view.getSelectedNode() != null){
@@ -59,6 +67,9 @@ public class NodeComponent extends JPanel {
 	undoController.getView().setDocument(getDocument());
     }
     
+    /**
+     * Double click reverts, right click selects for compression.
+     */
     public void mouseClicked(MouseEvent e) {
 	int modifiers = e.getModifiers();
 	if (e.getClickCount() == 1 && (modifiers == 4 || modifiers == 18)) {
@@ -80,6 +91,9 @@ public class NodeComponent extends JPanel {
 	return new Dimension(5000000, 50);
     }
 
+    /**
+     * Sets the background color of this node appropriately.
+     */
     public void setColor() {
 	if (edit.getComment() != null && !edit.getComment().equals("")){
 	    setBackground(Color.orange);
@@ -101,6 +115,9 @@ public class NodeComponent extends JPanel {
 	}
     }
 
+    /**
+     * Adds the appropriate border for a selected node.
+     */
     public void selectedBorder()
     {
 	if (!selectedForCompound)
@@ -109,6 +126,9 @@ public class NodeComponent extends JPanel {
 	    setBorder(thickBlueBorder);
     }
 
+    /**
+     * Adds the appropriate border for an unselected node.
+     */
     public void unselectedBorder()
     {
 	if (!selectedForCompound)
