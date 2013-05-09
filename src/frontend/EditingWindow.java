@@ -102,7 +102,9 @@ public class EditingWindow {
 			@Override
 			public void focusLost(FocusEvent e) {
 				try {
-					save();
+					if (doc != null && doc.getFile() != null) {
+						save();
+					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
