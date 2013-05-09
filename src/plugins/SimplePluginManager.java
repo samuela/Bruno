@@ -51,9 +51,9 @@ public class SimplePluginManager implements PluginManager {
 
 	}
 
-    public void clearPlugins(){
-        pluginsByScriptName_ = new HashMap<>();
-        pluginsByName_ = new HashMap<>();
+    public void clear(){
+        pluginsByScriptName_.clear();
+        pluginsByName_.clear();
     }
 
 	public ScriptEngine getEngineByExtension(String ext) {

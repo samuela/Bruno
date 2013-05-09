@@ -272,15 +272,6 @@ public class Bruno extends JFrame {
 	return editingWindow;
     }
 	
-    private void setUpPlugins() {
-	pluginManager.exposeVariable("bruno", this);
-	// loadPlugins();
-	Set<ScriptFooable> workingDirScripts = pluginManager
-	    .getAllScriptFooables(new File("plugins/"));
-	Set<ScriptFooable> libraryScripts = pluginManager
-	    .getAllScriptFooables(new File(
-					   "/Library/Application Support/Bruno/plugins/"));
-
 	private void setUpPlugins() {
 		pluginManager.exposeVariable("bruno", this);
 		// loadPlugins();
@@ -333,6 +324,13 @@ public class Bruno extends JFrame {
 	// Image image =
 	// Toolkit.getDefaultToolkit().getImage("resources/*.jpg");
 	// application.setDockIconImage(image);
+    }
+    
+    /**
+     * Toggle the Foobar.
+     */
+    public void toggleFoobar() {
+    	getRootPane().getActionMap().get("foobar").actionPerformed(null);
     }
 
     /**

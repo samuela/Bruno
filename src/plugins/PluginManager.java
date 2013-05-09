@@ -50,12 +50,8 @@ public interface PluginManager {
     void executeScript(String userScript);
 
     /**
-     *
-     * @param bundle
-     * @return
-     *
-     * not supported in this version
+     * Clear old plugins before loading new ones
      */
-  //  LanguageBundle loadLanguageBundle(File bundle);
+    void clear();
 
 }
