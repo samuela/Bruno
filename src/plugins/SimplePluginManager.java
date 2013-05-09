@@ -8,12 +8,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
+import javax.swing.*;
 
 import errorhandling.ErrorLogger;
 import foobar.ScriptFooable;
@@ -37,7 +41,7 @@ public class SimplePluginManager implements PluginManager {
 	private Bindings globals;
 
 	public SimplePluginManager() {
-		factory_ = new ScriptEngineManager();
+        factory_ = new ScriptEngineManager();
 		enginesByExtension_ = new HashMap<>();
 	//	scriptBufferedReaders_ = new HashMap<>();
 		pluginsByScriptName_ = new HashMap<>();
@@ -81,7 +85,7 @@ public class SimplePluginManager implements PluginManager {
         return hasPlugin && found!=null && hasEngine(s.getExtension());
 	}
 
-	public void executeScript(String name) throws ScriptException, IllegalArgumentException {
+	public void executeScript(String name) throws IllegalArgumentException {
         Plugin p = pluginsByScriptName_.get(name);
         if(p==null){
             throw new IllegalArgumentException("no plugin contains script " + name);
@@ -98,28 +102,34 @@ public class SimplePluginManager implements PluginManager {
 	// 1) engine for extension exists
 	// 2) file for script exists
 	@Override
-	public void executeScript(Script userScript) throws ScriptException {
+	public void executeScript(final Script userScript) {
       //  System.out.println("executing " + userScript);
         // System.out.println("getting engine for " +
         // userScript.getExtension());
-        ScriptEngine engine = enginesByExtension_
+        final ScriptEngine engine = enginesByExtension_
                 .get(userScript.getExtension());
         // System.out.println("ext:" + userScript.getExtension());
         // System.out.println("contains py:" +
         // enginesByExtension_.containsKey("py"));
-        try {
+
             // System.out.println("engine null: " + (engine == null));
             putAll(engine);
             // System.out.println(engine);
             // System.out.println(scriptFileReaders_.get(userScript));
      //       BufferedReader scriptReader = scriptBufferedReaders_.get(userScript);
 
-            engine.eval(userScript.getText());
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        engine.eval(userScript.getFileReader());
+                    } catch (ScriptException e) {
+                        ErrorLogger.log("Error in script: " + userScript);
+                    }
+                }
+            });
+            userScript.resetReader();
 
-        } catch (ScriptException e) {
-        	e.printStackTrace();
-            throw new ScriptException("Error in Script: " + userScript);
-        }
     }
 
 	private void putAll(ScriptEngine engine) {
@@ -164,7 +174,7 @@ public class SimplePluginManager implements PluginManager {
 
 
 			try {
-				s = new Script(path, plugin, FileUtils.readFileToString(f));
+				s = new Script(path, plugin, new BufferedReader(new FileReader(f)), f);
 			} catch (IllegalArgumentException | IOException e) {
 				// invalid path - ignore file
 				// either
@@ -233,12 +243,12 @@ public class SimplePluginManager implements PluginManager {
                         }
 					} catch (IllegalArgumentException e) {
                         ErrorLogger.log("Failed to load plugin " + f + ": "
-								+ e.getMessage());
+                                + e.getMessage());
 					}
 				}
 			} catch (SecurityException e) {
                 ErrorLogger.log("Couldn't load plugin at "
-						+ f.getAbsolutePath());
+                        + f.getAbsolutePath());
 			}
 		}
 		return plugins;

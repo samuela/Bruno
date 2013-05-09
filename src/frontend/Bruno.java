@@ -256,7 +256,7 @@ public class Bruno extends JFrame {
 		});
 	}
 
-	public EditingWindow getEditingWindow() {
+	public EditingWindow getCurrentEditingWindow() {
 		return editingWindow;
 	}
 

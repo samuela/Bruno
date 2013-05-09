@@ -45,9 +45,9 @@ public interface PluginManager {
      */
     void revokeVariable(String key);
 
-    void executeScript(Script userScript) throws ScriptException;
+    void executeScript(Script userScript);
 
-    void executeScript(String userScript) throws ScriptException;
+    void executeScript(String userScript);
 
     /**
      *
