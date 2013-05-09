@@ -12,6 +12,8 @@ import java.util.Set;
 
 import javax.swing.*;
 
+import edithistory.UndoController;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import plugins.PluginManager;
 import plugins.SimplePluginManager;
 
@@ -79,10 +81,25 @@ public class Bruno extends JFrame {
 
 		// Open blank initial document
 		openDocument(new DocumentModel());
+        //todo initialize with untitled so file field is never null
 
 		setUpPlugins();
 		setUpKeybindings();
 	}
+
+    /*****script accessors************/
+    public RSyntaxTextArea getCurrentTextArea(){
+        return editingWindow.getTextArea();
+    }
+
+    public UndoController getCurrentUndoController(){
+        return editingWindow.getUndoController();
+    }
+
+    public EditingWindow getCurrentEditingWindow(){
+        return editingWindow;
+    }
+    /**********************************/
 
 	private void setUpKeybindings() {
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(

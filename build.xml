@@ -75,7 +75,7 @@
         <pathelement location="${derived.jar}"/>
       </classpath>
       <formatter type="brief" usefile="false"/>
-      <sysproperty key="java.awt.headless" value="true"/>
+      <!--sysproperty key="java.awt.headless" value="true"/-->
       <test name="${testcase}" if="testcase"/>
       <batchtest unless="testcase">
         <fileset dir="${derived.classes}" includes="test/**/*Test*.class"/>
@@ -150,9 +150,9 @@
     </exec>
   </target>-->
 
-<!--<taskdef name="bundleapp"
+<taskdef name="bundleapp"
              classname="com.oracle.appbundler.AppBundlerTask"   
-             classpath="lib/appbundler-1.0.jar" />-->
+             classpath="lib/appbundler-1.0.jar" />
 
     <target name="bundle" depends="clean,compile">
       <mkdir dir="${app.dist}"/>
