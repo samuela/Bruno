@@ -5,8 +5,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import frontend.Bruno;
-import frontend.ProjectExplorer;
+import org.bruno.frontend.Bruno;
+import org.bruno.frontend.ProjectExplorer;
+
 
 /**
  * A wrapper Fooable for opening files.

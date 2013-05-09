@@ -1,4 +1,4 @@
-package frontend;
+package org.bruno.frontend;
 
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
@@ -146,7 +146,9 @@ public class EditingWindow {
 				if (doc.getFile() != null) {
 					filename = doc.getFile().getName();
 				}
-				parentApp.setTitle(filename + " - Bruno");
+				if (parentApp != null) {
+					parentApp.setTitle(filename + " - Bruno");
+				}
 			}
 		});
 

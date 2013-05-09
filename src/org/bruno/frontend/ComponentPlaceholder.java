@@ -1,4 +1,4 @@
-package frontend;
+package org.bruno.frontend;
 
 import java.awt.BorderLayout;
 

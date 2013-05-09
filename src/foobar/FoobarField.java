@@ -5,7 +5,8 @@ import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.util.Collections;
 
-import frontend.PlaceholderTextField;
+import org.bruno.frontend.PlaceholderTextField;
+
 
 /**
  * The FoobarField is the text field to search for Fooables. This is contained

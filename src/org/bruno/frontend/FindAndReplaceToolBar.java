@@ -1,4 +1,4 @@
-package frontend;
+package org.bruno.frontend;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
