@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.script.ScriptException;
 
+import errorhandling.ErrorLogger;
 import plugins.PluginManager;
 import plugins.Script;
 
@@ -47,9 +48,13 @@ public class ScriptFooable implements Fooable {
 	@Override
 	public Set<String> getKeywords() {
 		Set<String> r = new HashSet<>();
+
+		r.add(script.getName());
+        r.add(script.getPluginName());
+
 		r.addAll(Arrays.asList(getName().split(" ")));
-		return r;
-	}
+        return r;
+    }
 
 	/**
 	 * Execute this Fooable's script.
@@ -60,7 +65,7 @@ public class ScriptFooable implements Fooable {
 			manager.executeScript(script);
 		} catch (ScriptException e) {
 			// e.printStackTrace();
-			System.err.println("Error in script " + script.getName());
+			ErrorLogger.log("Error in script " + script.getName());
 		}
 	}
 

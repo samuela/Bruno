@@ -28,6 +28,7 @@ import org.fife.ui.autocomplete.CompletionProvider;
 import org.fife.ui.autocomplete.DefaultCompletionProvider;
 import org.fife.ui.autocomplete.ShorthandCompletion;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import plugins.PluginManager;
 import plugins.SimplePluginManager;
 import foobar.Foobar;
@@ -258,6 +259,7 @@ public class Bruno extends JFrame {
 	public EditingWindow getEditingWindow() {
 		return editingWindow;
 	}
+
 
 	private void setUpPlugins() {
 		pluginManager.exposeVariable("bruno", this);

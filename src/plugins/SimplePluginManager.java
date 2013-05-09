@@ -15,6 +15,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
+import errorhandling.ErrorLogger;
 import foobar.ScriptFooable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
@@ -32,7 +33,6 @@ public class SimplePluginManager implements PluginManager {
 //	private Map<Script, BufferedReader> scriptBufferedReaders_;
 	private Map<String, Plugin> pluginsByScriptName_;
 	private Map<String, Plugin> pluginsByName_;
-	private PrintWriter errorLog;
 
 	private Bindings globals;
 
@@ -44,16 +44,7 @@ public class SimplePluginManager implements PluginManager {
 		pluginsByName_ = new HashMap<>();
 		globals = new SimpleBindings();
 		
-		try {
-			errorLog = new PrintWriter(new BufferedWriter(new FileWriter(
-					System.getProperty("user.home") + "/bruno.log", true)),
-					true);
-			errorLog.println(new Timestamp((new Date()).getTime()));
-		} catch (IOException e) {
-			errorLog = new PrintWriter(System.err, true);
-			e.printStackTrace(); // To change body of catch statement use File |
-									// Settings | File Templates.
-		}
+
 	}
 
 	public ScriptEngine getEngineByExtension(String ext) {
@@ -90,7 +81,15 @@ public class SimplePluginManager implements PluginManager {
         return hasPlugin && found!=null && hasEngine(s.getExtension());
 	}
 
-	public void executeScript(String name) throws ScriptException {
+	public void executeScript(String name) throws ScriptException, IllegalArgumentException {
+        Plugin p = pluginsByScriptName_.get(name);
+        if(p==null){
+            throw new IllegalArgumentException("no plugin contains script " + name);
+        }
+        Script s = p.getScriptByName(name);
+        if(s==null){
+            throw new IllegalArgumentException("plugin " + p + " does not contain script " + s);
+        }
 		executeScript(pluginsByScriptName_.get(name).getScriptByName(name));
 	}
 
@@ -169,12 +168,12 @@ public class SimplePluginManager implements PluginManager {
 			} catch (IllegalArgumentException | IOException e) {
 				// invalid path - ignore file
 				// either
-				errorLog.println("Couldn't load script " + path + " : "
-						+ e.getMessage());
+                ErrorLogger.log("Couldn't load script " + path + " : "
+                        + e.getMessage());
 				continue;
 			}
             if (pluginsByScriptName_.containsKey(s.getName())) {
-				errorLog.println("A script with name '" + s.getName()
+                ErrorLogger.log("A script with name '" + s.getName()
 						+ "' already exists in plugin"
 						+ pluginsByScriptName_.get(s.getName()));
 				continue;
@@ -187,7 +186,7 @@ public class SimplePluginManager implements PluginManager {
 				ScriptEngine newScriptEngine = factory_
 						.getEngineByExtension(extension);
 				if (newScriptEngine == null) {
-					errorLog.println("Invalid extension: " + s.getPath());
+                    ErrorLogger.log("Invalid extension: " + s.getPath());
 					continue;
 				} else {
 					enginesByExtension_.put(extension,
@@ -221,7 +220,7 @@ public class SimplePluginManager implements PluginManager {
 	Set<Plugin> loadPlugins(File pluginsDir) {
 		Set<Plugin> plugins = new HashSet<>();
 		if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
-			errorLog.println("Invalid plugins directory.");
+            ErrorLogger.log("Invalid plugins directory.");
 			return null;
 		}
 		for (File f : pluginsDir.listFiles()) {	
@@ -233,12 +232,12 @@ public class SimplePluginManager implements PluginManager {
 						    plugins.add(p);
                         }
 					} catch (IllegalArgumentException e) {
-						errorLog.println("Failed to load plugin " + f + ": "
+                        ErrorLogger.log("Failed to load plugin " + f + ": "
 								+ e.getMessage());
 					}
 				}
 			} catch (SecurityException e) {
-				errorLog.println("Couldn't load plugin at "
+                ErrorLogger.log("Couldn't load plugin at "
 						+ f.getAbsolutePath());
 			}
 		}
@@ -247,7 +246,7 @@ public class SimplePluginManager implements PluginManager {
 
     @Override
     /**
-     * @throws IllegalStateException if topLevelPluginDir does not exist, is unreadable,
+     * @returns null if topLevelPluginDir does not exist, is unreadable,
      * or invalid in some way
      */
     public Set<ScriptFooable> getAllScriptFooables(File topLevelPluginDir){

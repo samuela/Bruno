@@ -1,6 +1,9 @@
 package test.plugins;
 
 import foobar.ScriptFooable;
+import frontend.Bruno;
+import frontend.EditingWindow;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.junit.Ignore;
 import org.junit.Test;
 import plugins.Plugin;
@@ -10,6 +13,7 @@ import plugins.SimplePluginManager;
 
 import javax.script.*;
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -146,7 +150,7 @@ public class PluginTester {
         Plugin p = simpleManager.loadPlugin(f);
 
         Script writeHello = p.getScriptByName("write");
-        System.out.println(writeHello.getPath());
+     //   System.out.println(writeHello.getPath());
 
         assertTrue((simpleManager).supportsScript(writeHello));
 
@@ -217,9 +221,39 @@ public class PluginTester {
         Set<ScriptFooable> sfoos = p.getAllScriptFooables(new File(TEST_PATH));
       // System.out.println(sfoos);
         //this particular plugins directory has 7 distinctly named, viable scripts
-        assertTrue(7 == sfoos.size());
+        assertTrue(8 == sfoos.size());
     }
 
+    @Test
+    public void exposeBrunoTrest(){
+        SimplePluginManager pm = new SimplePluginManager();
+        Plugin p = pm.loadPlugin(new File(TEST_PATH + "/expose"));
+        Bruno b = new Bruno();
+        pm.exposeVariable("bruno", b);
+        EditingWindow ew = b.getEditingWindow();
+        RSyntaxTextArea rs = ew.getTextArea();
+        boolean bool = rs.getMarkOccurrences();
+        try {
+            pm.executeScript("markoccurrences");
+        } catch (ScriptException e) {
+            System.err.println("exposeBrunoTest failed");
+        }
+        boolean bool2 = rs.getMarkOccurrences();
+        assertFalse(bool==bool2);
+    }
+
+
+    public void dialogTest(){
+        SimplePluginManager pm = new SimplePluginManager();
+        Plugin p = pm.loadPlugin(new File(TEST_PATH + "/expose"));
+        Bruno b = new Bruno();
+        pm.exposeVariable("bruno", b);
+        try {
+            pm.executeScript("dialog");
+        } catch (ScriptException e) {
+            System.err.println("dialogTest failed");
+        }
+    }
 /*
     //JUST SCREWING AROUND WITH JAVASCRIPT
     @Test
