@@ -281,30 +281,38 @@ public class Bruno extends JFrame {
 	    .getAllScriptFooables(new File(
 					   "/Library/Application Support/Bruno/plugins/"));
 
-	if (workingDirScripts != null)
-	    foobar.addFooables(workingDirScripts);
-	if (libraryScripts != null)
-	    foobar.addFooables(libraryScripts);
-    }
+	private void setUpPlugins() {
+		pluginManager.exposeVariable("bruno", this);
+		// loadPlugins();
+		Set<ScriptFooable> workingDirScripts = pluginManager
+				.getAllScriptFooables(new File("plugins/"));
+		Set<ScriptFooable> libraryScripts = pluginManager
+				.getAllScriptFooables(new File(
+						"/Library/Application Support/Bruno/plugins/"));
+		
+		if (workingDirScripts != null)
+			foobar.addFooables(workingDirScripts);
+		if (libraryScripts != null)
+			foobar.addFooables(libraryScripts);
+	}
 
-    // /**
-    // * Sets up demo menu bar
-    // */
-    // private void setDemoMenuBar() {
-    // JMenuBar menuBar = new JMenuBar();
-    // JMenu file = new JMenu("File");
-    // JMenuItem item = new JMenuItem("Woah");
-    // file.add(item);
-    // menuBar.add(file);
-    // setJMenuBar(menuBar);
-    // }
+	public void reloadPlugins() {
+		foobar.clearFooables();
+		pluginManager.clear();
+		setUpPlugins();
+	}
 
-    /**
-     * Toggle the Foobar.
-     */
-    public void toggleFoobar() {
-	getRootPane().getActionMap().get("foobar").actionPerformed(null);
-    }
+	// /**
+	// * Sets up demo menu bar
+	// */
+	// private void setDemoMenuBar() {
+	// JMenuBar menuBar = new JMenuBar();
+	// JMenu file = new JMenu("File");
+	// JMenuItem item = new JMenuItem("Woah");
+	// file.add(item);
+	// menuBar.add(file);
+	// setJMenuBar(menuBar);
+	// }
 
     /**
      * Sets up nice look and feel adjustments.

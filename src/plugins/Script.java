@@ -1,6 +1,9 @@
 package plugins;
 
-import java.io.File;
+import errorhandling.ErrorLogger;
+import org.xml.sax.ErrorHandler;
+
+import java.io.*;
 
 /**
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:21 PM To
@@ -12,8 +15,10 @@ public class Script {
 	private final Plugin plugin_;
 	private final String path_;
 	private final String name_;
+    private BufferedReader reader_;
+    private final File file_;
 
-    private final String text_;
+//   private final String text_;
 
     public String getExtension() {
 		return extension_;
@@ -44,9 +49,10 @@ public class Script {
 	 * @throws IllegalArgumentException
 	 *             if path does not have an extension
 	 */
-	public Script(String path, Plugin plugin, String text) throws IllegalArgumentException {
-        text_ = text;
-
+	public Script(String path, Plugin plugin, BufferedReader reader, File f) throws IllegalArgumentException {
+    //    text_ = text;
+        file_ = f;
+        reader_ = reader;
         extension_ = path.substring(path.lastIndexOf('.') + 1);
 		plugin_ = plugin;
 		path_ = path;
@@ -88,7 +94,20 @@ public class Script {
 		}
 	}
 
+    public Reader getFileReader(){
+        return reader_;
+    }
+
+    public void resetReader() {
+        try {
+            reader_ = new BufferedReader(new FileReader(file_));
+        } catch (FileNotFoundException e) {
+            ErrorLogger.log("Unable to reset script " + this.getName() + ". Restart Bruno.");
+        }
+    }
+ /*
     public String getText() {
         return text_;
     }
+    */
 }

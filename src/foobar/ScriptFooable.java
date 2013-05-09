@@ -61,12 +61,7 @@ public class ScriptFooable implements Fooable {
 	 */
 	@Override
 	public void doAction() {
-		try {
 			manager.executeScript(script);
-		} catch (ScriptException e) {
-			// e.printStackTrace();
-			ErrorLogger.log("Error in script " + script.getName());
-		}
 	}
 
 	@Override

@@ -119,13 +119,15 @@ public class PluginTester {
 
 
         //SEE IT IN ACTION
-        try {
 
             simpleManager.executeScript(hello);
          //   simpleManager.executeScript(hello);
-        } catch (ScriptException e) {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+
     }
 
     @Test
@@ -134,12 +136,8 @@ public class PluginTester {
         s.loadPlugin(new File(TEST_PATH + "/write"));
         for(int i = 0; i < 2; i++){
 
-
-        try {
             s.executeScript("write");
-        } catch (ScriptException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+
         }
     }
 
@@ -155,10 +153,12 @@ public class PluginTester {
         assertTrue((simpleManager).supportsScript(writeHello));
 
         //   System.out.println(writeHello==null);
-        try {
+
             simpleManager.executeScript(writeHello);
 
-        } catch (ScriptException e) {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
@@ -179,12 +179,25 @@ public class PluginTester {
         int[] ar = {3};
         simple.exposeVariable("ar", ar);
         simple.executeScript(inc);
-        assertTrue(4==ar[0]);
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            System.err.println("exposeMultipleScripts test failed");
+        }
+     //   System.out.println("bleh" + ar[0]);
+
+        assertTrue(4 == ar[0]);
 
         //expose i to python
         Script sq = expose.getScriptByName("sq");
         simple.exposeVariable("ar", ar);
         simple.executeScript(sq);
+        try{
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            System.err.println("exposeMultipleScripts test failed");
+        }
         assertTrue(16 == ar[0]);
     }
 
@@ -198,12 +211,25 @@ public class PluginTester {
         simple.exposeVariable("ar", ar);
         simple.executeScript(array);
      //   int[] ar2 = (int[])simple.getVariable("ar");
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
         assertTrue(1 == ar[0]);
 
         Socket s = new Socket();
         assertFalse(s.isClosed());
         simple.exposeVariable("s", s);
         simple.executeScript(expose.getScriptByName("close"));
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
         assertTrue(s.isClosed());
     }
 
@@ -220,12 +246,12 @@ public class PluginTester {
         SimplePluginManager p = new SimplePluginManager();
         Set<ScriptFooable> sfoos = p.getAllScriptFooables(new File(TEST_PATH));
       // System.out.println(sfoos);
-        //this particular plugins directory has 7 distinctly named, viable scripts
-        assertTrue(8 == sfoos.size());
+        //this particular plugins directory has 9 distinctly named, viable scripts
+        assertTrue(9 == sfoos.size());
     }
 
     @Test
-    public void exposeBrunoTrest(){
+    public void exposeBrunoTest(){
         SimplePluginManager pm = new SimplePluginManager();
         Plugin p = pm.loadPlugin(new File(TEST_PATH + "/expose"));
         Bruno b = new Bruno();
@@ -233,12 +259,16 @@ public class PluginTester {
         EditingWindow ew = b.getEditingWindow();
         RSyntaxTextArea rs = ew.getTextArea();
         boolean bool = rs.getMarkOccurrences();
-        try {
+
             pm.executeScript("markoccurrences");
-        } catch (ScriptException e) {
-            System.err.println("exposeBrunoTest failed");
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         boolean bool2 = rs.getMarkOccurrences();
+
         assertFalse(bool==bool2);
     }
 
@@ -248,11 +278,9 @@ public class PluginTester {
         Plugin p = pm.loadPlugin(new File(TEST_PATH + "/expose"));
         Bruno b = new Bruno();
         pm.exposeVariable("bruno", b);
-        try {
+
             pm.executeScript("dialog");
-        } catch (ScriptException e) {
-            System.err.println("dialogTest failed");
-        }
+
     }
 /*
     //JUST SCREWING AROUND WITH JAVASCRIPT

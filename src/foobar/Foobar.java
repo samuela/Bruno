@@ -3,6 +3,7 @@ package foobar;
 import java.awt.BorderLayout;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -23,7 +24,7 @@ public final class Foobar extends JPanel {
 	/**
 	 * The complete collection of Fooables callable from this Foobar
 	 */
-	private final Collection<Fooable> fooables;
+	private final Set<Fooable> fooables;
 
 	/**
 	 * The field for Fooable query entries
@@ -100,6 +101,13 @@ public final class Foobar extends JPanel {
 	 */
 	public void removeFooables(Collection<? extends Fooable> f) {
 		this.fooables.removeAll(f);
+	}
+
+	/**
+	 * Remove all Fooables from the Foobar.
+	 */
+	public void clearFooables() {
+		this.fooables.clear();
 	}
 
 	/**
