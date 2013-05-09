@@ -7,7 +7,8 @@ import java.util.Set;
 
 import javax.swing.JPanel;
 
-import frontend.Bruno;
+import org.bruno.frontend.Bruno;
+
 
 /**
  * Foobar is a container class for FoobarField and FoobarSuggestions. The Foobar

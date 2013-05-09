@@ -1,4 +1,4 @@
-package frontend;
+package org.bruno.frontend;
 
 import java.awt.CardLayout;
 import java.awt.Font;
@@ -27,8 +27,9 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.TreePath;
 
+import org.bruno.frontend.FileSystemTreeModel.TreeFileObject;
+
 import foobar.FileFooable;
-import frontend.FileSystemTreeModel.TreeFileObject;
 
 public class ProjectExplorer extends JPanel implements DropTargetListener {
 

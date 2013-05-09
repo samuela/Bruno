@@ -1,8 +1,9 @@
 package test.plugins;
 
 import foobar.ScriptFooable;
-import frontend.Bruno;
-import frontend.EditingWindow;
+
+import org.bruno.frontend.Bruno;
+import org.bruno.frontend.EditingWindow;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.junit.Ignore;
 import org.junit.Test;
