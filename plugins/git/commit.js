@@ -5,17 +5,21 @@ importPackage(Packages.javax.swing);
 
 //println("dialog");
 //var al = new ArrayList();
-var mes = JOptionPane.showInputDialog(bruno, "Enter commit message...");
-println(mes);
 
-var pb = new ProcessBuilder("git", "commit", "-m", mes);
-var d = bruno.getCurrentEditingWindow().getDoc();
-println(d);
-//var path = f.getPath();
-//println(path);
-/*var sep = System.getProperty("file.separator");
-var dirPath = path.substring(0, lastIndexOf(sep)+1);
-pb.directory(new File(dirPath));
-pb.start();
-*/
-//println("dialog ending");
+
+//var pb = new ProcessBuilder("git", "commit", "-m", mes);
+//var pb = new ProcessBuilder("ls");
+var expl = bruno.getProjectExplorer();
+var file = expl.getCurrentFolder();
+println("file" + file);
+if(file==null){
+    JOptionPane.showMessageDialog(null, "no directory loaded.", "commit failed", JOptionPane.ERROR_MESSAGE);
+} else {
+  //    pb.directory(file);
+      var mes = JOptionPane.showInputDialog(bruno, "Enter commit message...");
+      println(mes);
+    Runtime.getRuntime().exec("git commit -m " + mes, null, file);
+    //  pb.start();
+
+    println("commit done");
+}

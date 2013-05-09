@@ -19,6 +19,8 @@ public interface PluginManager {
     // @Deprecated
   //  Set<Plugin> loadPlugins(File file) throws IllegalArgumentException;
 
+
+
     /**
      *
      * @param topLevelPluginDir the system bruno plugin directory
