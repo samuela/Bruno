@@ -83,7 +83,7 @@ public class EditHistoryView extends JPanel
 		    public void actionPerformed(ActionEvent e){
 		    if (selectedNode != null){
 			expand(selectedNode);
-			expandNode.setEnabled(false);
+			//			expandNode.setEnabled(false);
 		    }
 		}
 	    });
@@ -161,7 +161,6 @@ public class EditHistoryView extends JPanel
 
 	NodeComponent newNode = new NodeComponent(edit, undoController);
 	nodesView.add(newNode);
-	edit.setVisible(true);
 	revalidateNodeComponents();
 
 	if (atBottom){
@@ -183,7 +182,6 @@ public class EditHistoryView extends JPanel
     {
 	NodeComponent newNode = new NodeComponent(edit, undoController);
 	nodesView.add(newNode, 0);
-	edit.setVisible(true);
 	revalidateNodeComponents();
     }
 
@@ -207,13 +205,12 @@ public class EditHistoryView extends JPanel
 	}
 	int lower = (index1 <= index2) ? index1 : index2;
 	int higher = (index1 <= index2) ? index2 : index1;
-	CompoundEdit mask = ((NodeComponent) nodeComponents[higher]).getEdit();
-	mask.setIsMask(true);
-	((NodeComponent) nodeComponents[higher]).setColor();
+	CompoundEdit maskingEdit = ((NodeComponent) nodeComponents[higher]).getEdit();
+	Mask mask = new Mask(maskingEdit);
+	((NodeComponent) nodeComponents[higher]).setColor();///////
 	for (int i = higher; i > lower; i--) {
 	    CompoundEdit toRemove = ((NodeComponent) nodesView.getComponent(lower)).getEdit();
-	    toRemove.setVisible(false);
-	    toRemove.setMask(mask);
+	    mask.addEdit(toRemove);
 	    nodesView.remove(lower);
 	}
 	revalidateNodeComponents();
@@ -233,16 +230,11 @@ public class EditHistoryView extends JPanel
 		    break;
 		}
 	    }
-	    CompoundEdit edit = node.getEdit().getParent();
-	    while (edit != null && !edit.getVisible()){
-		if (edit.getMask() == node.getEdit()){
-		    nodesView.add(new NodeComponent(edit, undoController), index);
-		    edit.setVisible(true);
-		    edit.setMask(edit);
-		}
-		edit = edit.getParent();
+	    for (CompoundEdit edit : node.getEdit().getLastMask().getMaskedEdits()){
+		nodesView.add(new NodeComponent(edit, undoController), index);
+		edit.setMask(null);
 	    }
-	    node.getEdit().setIsMask(false);
+	    node.getEdit().removeLastMask();
 	    node.setColor();
 	    revalidateNodeComponents();
 	}
@@ -259,7 +251,7 @@ public class EditHistoryView extends JPanel
 	this.selectedNode = selectedNode;
 	comment.setText(selectedNode.getComment());
 	comment.setEditable(true);
-	expandNode.setEnabled(selectedNode.getEdit().getIsMask());
+	expandNode.setEnabled(selectedNode.getEdit().getCanExpand());
     }
     
     public void setDocument(Document doc) {

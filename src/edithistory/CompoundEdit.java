@@ -11,25 +11,23 @@ import com.google.common.collect.Lists;
 /**
  * This class represents several edits put into one.
  */
-public class CompoundEdit implements Serializable {
+public class CompoundEdit implements Serializable
+{
     private static final long serialVersionUID = 1L;
     private List<MyUndoableEdit> edits;
     private CompoundEdit parent;
     private String type;// addition, deletion, or empty
     private int length;
     private String comment;
-    private boolean visible;
-    private CompoundEdit mask;
-    private boolean isMask;
+    private Mask mask;
+    private List<Mask> masks;
     private boolean isRevert;
 
     public CompoundEdit() {
 	edits = new ArrayList<>();
 	setType("empty");
-	setVisible(false);
-	setMask(this);
-	setIsMask(false);
 	setIsRevert(false);
+	masks = new ArrayList<>();
     }
 
     public CompoundEdit(MyUndoableEdit e, CompoundEdit parent) {
@@ -115,29 +113,45 @@ public class CompoundEdit implements Serializable {
     }
 
     public boolean getVisible() {
-	return visible;
+	return (mask == null);
     }
 
-    public void setVisible(boolean visible) {
-	this.visible = visible;
-    }
-
-    public CompoundEdit getMask() {
+    public Mask getMask() {
 	return mask;
     }
 
-    public void setMask(CompoundEdit mask) {
+    public void setMask(Mask mask) {
 	this.mask = mask;
     }
-    
-    public boolean getIsMask()
+
+    public List<Mask> getMasks()
     {
-	return isMask;
+	return masks;
     }
 
-    public void setIsMask(boolean isMask)
+    public void addMask(Mask mask)
     {
-	this.isMask = isMask;
+	masks.add(mask);
+    }
+
+    public Mask getLastMask()
+    {
+	return masks.get(masks.size() - 1);
+    }
+
+    public void removeLastMask()
+    {
+	masks.remove(masks.size() - 1);
+    }
+
+    public boolean getIsMask()
+    {
+	return (!masks.isEmpty());
+    }
+    
+    public boolean getCanExpand()
+    {
+	return getIsMask() && (!getIsRevert() || masks.size() > 1);
     }
 
     public boolean getIsRevert()
