@@ -1,7 +1,7 @@
 importClass(org.fife.ui.rsyntaxtextarea.SyntaxConstants);
 importClass(javax.swing.JOptionPane);
 
-var languages = ["Java", "C", "Scala", "Ruby", "Python", "XML", "bad language"];
+var languages = ["Java", "C", "Scala", "Ruby", "Python", "XML", "Lisp", "LaTeX", "Perl", "bad language"];
 
 var choice = JOptionPane.showInputDialog(
                     null,
@@ -37,6 +37,15 @@ else if (choice.equals("Python")) {
 }
 else if (choice.equals("XML")) {
     editingWindow.setSyntaxStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+}
+else if (choice.equals("Lisp")){
+   editingWindow.setSyntaxStyle(SyntaxConstants.SYNTAX_STYLE_LISP);
+}
+else if (choice.equals("LaTeX")){
+   editingWindow.setSyntaxStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+}
+else if (choice.equals("Perl")){
+   editingWindow.setSyntaxStyle(SyntaxConstants.SYNTAX_STYLE_PERL);
 }
 else {
     JOptionPane.showMessageDialog(null, "Invalid language choice.", "Select a language", JOptionPane.ERROR_MESSAGE);
