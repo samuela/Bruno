@@ -1,3 +1,3 @@
 importClass(java.awt.Color);
 
-editingWindow.getTextArea().addLineHighlight(editingWindow.getTextArea().getCaretLineNumber(), Color.YELLOW);
+bruno.getEditingWindow().getTextArea().addLineHighlight(bruno.getEditingWindow().getTextArea().getCaretLineNumber(), Color.YELLOW);

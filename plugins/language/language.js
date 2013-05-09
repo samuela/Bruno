@@ -18,23 +18,23 @@ if (choice == null) {
      // do nothing
 }
 else if (choice.equals("Java")) {
-	editingWindow.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+	bruno.getEditingWindow().getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
      bruno.addJavaCompletion();
 }
 else if (choice.equals("C")) {
-	editingWindow.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
+	bruno.getEditingWindow().getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
 }
 else if (choice.equals("Scala")) {
-	editingWindow.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SCALA);
+	bruno.getEditingWindow().getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SCALA);
 }
 else if (choice.equals("Ruby")) {
-	editingWindow.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_RUBY);
+	bruno.getEditingWindow().getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_RUBY);
 }
 else if (choice.equals("Python")) {
-	editingWindow.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
+	bruno.getEditingWindow().getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
 }
 else if (choice.equals("XML")) {
-	editingWindow.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+	bruno.getEditingWindow().getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
 }
 else {
      JOptionPane.showMessageDialog(null, "Invalid language choice.", "Select a language", JOptionPane.ERROR_MESSAGE);
