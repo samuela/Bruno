@@ -39,8 +39,8 @@ public abstract class FoobarSuggester {
 			min = Integer.MAX_VALUE;
 
 			for (String keyword : fooable.getKeywords()) {
-				dist = FoobarSuggester.weightedLevenshteinDistance(keyword,
-						query);
+				dist = FoobarSuggester.weightedLevenshteinDistance(
+						keyword.toLowerCase(), query.toLowerCase());
 				min = dist < min ? dist : min;
 			}
 
