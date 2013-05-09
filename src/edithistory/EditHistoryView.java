@@ -84,7 +84,7 @@ public class EditHistoryView extends JPanel
 		    public void actionPerformed(ActionEvent e){
 		    if (selectedNode != null){
 			expand(selectedNode);
-			//			expandNode.setEnabled(false);
+			expandNode.setEnabled(selectedNode.getEdit().getCanExpand());
 		    }
 		}
 	    });
