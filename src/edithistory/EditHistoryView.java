@@ -16,6 +16,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import com.google.common.collect.Lists;
 /**
  * This class is the edit history view on the right side of Bruno.
  */
@@ -230,7 +231,7 @@ public class EditHistoryView extends JPanel
 		    break;
 		}
 	    }
-	    for (CompoundEdit edit : node.getEdit().getLastMask().getMaskedEdits()){
+	    for (CompoundEdit edit : Lists.reverse(node.getEdit().getLastMask().getMaskedEdits())){
 		nodesView.add(new NodeComponent(edit, undoController), index);
 		edit.setMask(null);
 	    }
