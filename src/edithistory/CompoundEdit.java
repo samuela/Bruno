@@ -28,6 +28,7 @@ public class CompoundEdit implements Serializable
 	setType("empty");
 	setIsRevert(false);
 	masks = new ArrayList<>();
+	setComment("");
     }
 
     public CompoundEdit(MyUndoableEdit e, CompoundEdit parent) {
