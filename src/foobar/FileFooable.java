@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import frontend.Bruno;
+import frontend.ProjectExplorer;
 
 /**
  * A Fooable for Files.
@@ -15,10 +16,13 @@ import frontend.Bruno;
 public class FileFooable implements Fooable {
 
 	private Bruno parentApp;
+	private ProjectExplorer projectExplorer;
 	private File file;
 
-	public FileFooable(Bruno parentApp, File file) {
+	public FileFooable(Bruno parentApp, ProjectExplorer projectExplorer,
+			File file) {
 		this.parentApp = parentApp;
+		this.projectExplorer = projectExplorer;
 		this.file = file;
 	}
 
@@ -29,9 +33,17 @@ public class FileFooable implements Fooable {
 
 	@Override
 	public Set<String> getKeywords() {
-		// TODO split path and add as keywords
 		Set<String> r = new HashSet<>();
-		r.add(file.getName());
+		// split path and add as keywords
+		String[] splitFilename = file.getAbsolutePath().split(File.separator);
+		for (int i = splitFilename.length - 1; i >= 0; i--) {
+			String filenamePiece = splitFilename[i];
+			if (filenamePiece.equals(projectExplorer.getCurrentFolder()
+					.getName())) {
+				break;
+			}
+			r.add(filenamePiece);
+		}
 		return r;
 	}
 

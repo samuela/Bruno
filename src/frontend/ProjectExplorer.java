@@ -16,7 +16,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,6 +41,7 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 	private final CardLayout layout;
 	// private final DropTarget dropTarget;
 	private final JTree fileTree;
+	private File currentFolder;
 
 	public ProjectExplorer(final Bruno parentApp) {
 		this.parentApp = parentApp;
@@ -106,19 +109,38 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 	public void showFolder(File folder) {
 		fileTree.setModel(new FileSystemTreeModel(folder));
 		layout.show(this, "tree");
+
+		if (currentFolder != null) {
+			removeFooables(currentFolder);
+		}
 		addFooables(folder);
+		currentFolder = folder;
 	}
 
-	private void addFooables(File f) {
+	private Set<FileFooable> getAllFileFooables(File f) {
+		Set<FileFooable> r = new HashSet<>();
 		FileFilter bff = new BrunoFileFilter();
 		if (bff.accept(f)) {
 			if (f.isFile()) {
-				parentApp.getFoobar().addFooable(new FileFooable(parentApp, f));
+				r.add(new FileFooable(parentApp, this, f));
 			} else {
 				for (File file : f.listFiles()) {
-					addFooables(file);
+					r.addAll(getAllFileFooables(file));
 				}
 			}
+		}
+		return r;
+	}
+
+	private void addFooables(File f) {
+		for (FileFooable foo : getAllFileFooables(f)) {
+			parentApp.getFoobar().addFooable(foo);
+		}
+	}
+
+	private void removeFooables(File f) {
+		for (FileFooable foo : getAllFileFooables(f)) {
+			parentApp.getFoobar().removeFooable(foo);
 		}
 	}
 
@@ -163,5 +185,9 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 			dtde.dropComplete(true);
 			repaint();
 		}
+	}
+
+	public File getCurrentFolder() {
+		return currentFolder;
 	}
 }
