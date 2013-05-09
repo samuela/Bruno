@@ -225,7 +225,7 @@ public class Bruno extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (getFocusOwner().equals(foobar.getField())) {
+				if (getFocusOwner() != null && getFocusOwner().equals(foobar.getField())) {
 					editingWindow.requestFocusInWindow();
 				} else {
 					foobar.requestFocusInWindow();
