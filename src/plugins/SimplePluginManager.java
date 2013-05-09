@@ -117,6 +117,7 @@ public class SimplePluginManager implements PluginManager {
             engine.eval(userScript.getText());
 
         } catch (ScriptException e) {
+        	e.printStackTrace();
             throw new ScriptException("Error in Script: " + userScript);
         }
     }
@@ -222,7 +223,7 @@ public class SimplePluginManager implements PluginManager {
             ErrorLogger.log("Invalid plugins directory.");
 			return null;
 		}
-		for (File f : pluginsDir.listFiles()) {
+		for (File f : pluginsDir.listFiles()) {	
 			try {
 				if (f.isDirectory()) {
 					try {

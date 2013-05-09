@@ -2,6 +2,7 @@ package test.plugins;
 
 import foobar.ScriptFooable;
 import frontend.Bruno;
+import frontend.EditingWindow;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -229,13 +230,15 @@ public class PluginTester {
         Plugin p = pm.loadPlugin(new File(TEST_PATH + "/expose"));
         Bruno b = new Bruno();
         pm.exposeVariable("bruno", b);
-        boolean bool = b.getCurrentTextArea().getMarkOccurrences();
+        EditingWindow ew = b.getEditingWindow();
+        RSyntaxTextArea rs = ew.getTextArea();
+        boolean bool = rs.getMarkOccurrences();
         try {
             pm.executeScript("markoccurrences");
         } catch (ScriptException e) {
             System.err.println("exposeBrunoTest failed");
         }
-        boolean bool2 = b.getCurrentTextArea().getMarkOccurrences();
+        boolean bool2 = rs.getMarkOccurrences();
         assertFalse(bool==bool2);
     }
 

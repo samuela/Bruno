@@ -6,6 +6,8 @@ import java.util.HashSet;
 
 import javax.swing.JPanel;
 
+import frontend.Bruno;
+
 /**
  * Foobar is a container class for FoobarField and FoobarSuggestions. The Foobar
  * is a fuzzy-matching, suggestive command interface for the Bruno text editor.
@@ -34,10 +36,18 @@ public final class Foobar extends JPanel {
 	private final FoobarPopupManager popupManager;
 
 	/**
+	 * The parent to Foobar
+	 */
+	private Bruno parent;
+
+	/**
 	 * Create a new Foobar containing no Fooables.
 	 */
-	public Foobar() {
+	public Foobar(Bruno parent) {
 		super(new BorderLayout());
+
+		// Store a reference to the parent
+		this.parent = parent;
 
 		// Store all Fooables in a HashSet
 		this.fooables = new HashSet<>();
@@ -97,14 +107,25 @@ public final class Foobar extends JPanel {
 	 * text field.
 	 */
 	protected void executeFooable() {
-		// Execute the Fooable
-		this.getPopupManager().getSuggestions().getSelectedValue().doAction();
+		if (!this.field.getText().equals("")) {
+			// Get Fooable
+			Fooable f = this.getPopupManager().getSuggestions()
+					.getSelectedValue();
 
-		// Hide the suggested Fooables
-		this.popupManager.destroyPopup();
+			// Hide the suggested Fooables
+			this.popupManager.destroyPopup();
 
-		// Clear the text field
-		this.field.setText("");
+			// Clear the text field
+			this.field.setText("");
+
+			// Execute action
+			if (f != null)
+				f.doAction();
+
+			// Focus back on text area
+			if (this.parent != null)
+				this.parent.requestFocusInWindow();
+		}
 	}
 
 	/**
@@ -138,9 +159,14 @@ public final class Foobar extends JPanel {
 	 * @param query
 	 *            The term by which to search for suggestions
 	 */
-	protected void showSuggestions(String query) {
-		this.popupManager.createPopup(FoobarSuggester.getSuggestions(query,
-				this.fooables));
+	protected void showSuggestions(final String query) {
+		new Runnable() {
+			@Override
+			public void run() {
+				popupManager.createPopup(FoobarSuggester.getSuggestions(query,
+						fooables));
+			}
+		}.run();
 	}
 
 	@Override
@@ -155,5 +181,14 @@ public final class Foobar extends JPanel {
 	 */
 	protected FoobarPopupManager getPopupManager() {
 		return this.popupManager;
+	}
+
+	/**
+	 * Get the Foobar's text field to check for focus.
+	 * 
+	 * @return The text field used by Foobar
+	 */
+	public FoobarField getField() {
+		return this.field;
 	}
 }

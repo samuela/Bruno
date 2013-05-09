@@ -1,0 +1,1 @@
+bruno.getEditingWindow().getTextArea().removeAllLineHighlights();

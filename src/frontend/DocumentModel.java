@@ -6,8 +6,6 @@ import java.io.File;
  * Model of a document should store information like the edit history, file
  * location, etc.
  * 
- * TODO Incorporate edit history
- * 
  * @author samuelainsworth
  * 
  */
@@ -24,6 +22,18 @@ public class DocumentModel {
 
 	public File getFile() {
 		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public File getMetadataFile() {
+		if (file == null) {
+			return null;
+		} else {
+			return new File(getFile().getAbsolutePath() + Bruno.FILE_EXT);
+		}
 	}
 
 }
