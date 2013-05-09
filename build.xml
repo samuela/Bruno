@@ -122,7 +122,7 @@
   <target name="run" depends="compile">
   	<!-- We don't need args for now -->
     <!--<input addproperty="args" message="args: " />-->
-    <java classname="frontend.Bruno" failonerror="true" fork="yes">
+    <java classname="org.bruno.frontend.Bruno" failonerror="true" fork="yes">
       <!--<arg line="${args}" />-->
       <classpath>
 		<path id="run.path">
@@ -159,7 +159,7 @@
         <bundleapp outputdirectory="dist"
             name="Bruno"
             displayname="Bruno"
-            mainclassname="frontend.Bruno"
+            mainclassname="org.bruno.frontend.Bruno"
 	   identifier="frontend.Bruno"
 	   icon="resources/large_bruno-review-sacha-baron-cohen-borat-ali-g-larry-charles.icns">
 	  <classpath file="derived/*.jar"/>
