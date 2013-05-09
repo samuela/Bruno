@@ -18,7 +18,7 @@ if(file==null){
   //    pb.directory(file);
       var mes = JOptionPane.showInputDialog(bruno, "Enter commit message...");
       println(mes);
-    Runtime.getRuntime().exec("git commit -m \"" + mes + "\"", null, file);
+    Runtime.getRuntime().exec("git commit -m " + mes, null, file);
     //  pb.start();
 
     println("commit done");
