@@ -1,4 +1,4 @@
-package foobar;
+package org.bruno.foobar;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;

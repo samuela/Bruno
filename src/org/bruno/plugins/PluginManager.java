@@ -1,11 +1,12 @@
-package plugins;
+package org.bruno.plugins;
 
-import foobar.ScriptFooable;
 
 import java.io.File;
 import java.util.Set;
 
 import javax.script.ScriptException;
+
+import org.bruno.foobar.ScriptFooable;
 
 /**
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:13 PM To

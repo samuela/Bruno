@@ -1,16 +1,16 @@
 package test.plugins;
 
-import foobar.ScriptFooable;
 
+import org.bruno.foobar.ScriptFooable;
 import org.bruno.frontend.Bruno;
 import org.bruno.frontend.EditingWindow;
+import org.bruno.plugins.Plugin;
+import org.bruno.plugins.PluginManager;
+import org.bruno.plugins.Script;
+import org.bruno.plugins.SimplePluginManager;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.junit.Ignore;
 import org.junit.Test;
-import plugins.Plugin;
-import plugins.PluginManager;
-import plugins.Script;
-import plugins.SimplePluginManager;
 
 import javax.script.*;
 import javax.swing.*;

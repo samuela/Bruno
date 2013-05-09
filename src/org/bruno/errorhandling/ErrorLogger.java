@@ -1,4 +1,4 @@
-package errorhandling;
+package org.bruno.errorhandling;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

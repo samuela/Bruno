@@ -1,4 +1,4 @@
-package foobar;
+package org.bruno.foobar;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -6,9 +6,10 @@ import java.util.Set;
 
 import javax.script.ScriptException;
 
-import errorhandling.ErrorLogger;
-import plugins.PluginManager;
-import plugins.Script;
+import org.bruno.errorhandling.ErrorLogger;
+import org.bruno.plugins.PluginManager;
+import org.bruno.plugins.Script;
+
 
 /**
  * A wrapper Fooable for executing scripts.

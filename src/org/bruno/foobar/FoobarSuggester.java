@@ -1,4 +1,4 @@
-package foobar;
+package org.bruno.foobar;
 
 import java.util.ArrayList;
 import java.util.Collection;

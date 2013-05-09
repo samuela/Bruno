@@ -27,9 +27,9 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.TreePath;
 
+import org.bruno.foobar.FileFooable;
 import org.bruno.frontend.FileSystemTreeModel.TreeFileObject;
 
-import foobar.FileFooable;
 
 public class ProjectExplorer extends JPanel implements DropTargetListener {
 

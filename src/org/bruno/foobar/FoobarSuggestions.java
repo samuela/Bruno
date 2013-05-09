@@ -1,4 +1,4 @@
-package foobar;
+package org.bruno.foobar;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;

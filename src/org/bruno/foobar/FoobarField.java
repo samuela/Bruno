@@ -1,4 +1,4 @@
-package foobar;
+package org.bruno.foobar;
 
 import java.awt.AWTKeyStroke;
 import java.awt.Dimension;

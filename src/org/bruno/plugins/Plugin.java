@@ -1,4 +1,4 @@
-package plugins;
+package org.bruno.plugins;
 
 import java.io.File;
 import java.util.HashMap;
@@ -6,10 +6,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.bruno.foobar.Fooable;
+import org.bruno.foobar.ScriptFooable;
+
 import com.google.common.base.Objects;
 
-import foobar.Fooable;
-import foobar.ScriptFooable;
 
 /**
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:27 PM To

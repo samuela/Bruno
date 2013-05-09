@@ -22,18 +22,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.bruno.foobar.Foobar;
+import org.bruno.foobar.ScriptFooable;
+import org.bruno.plugins.PluginManager;
+import org.bruno.plugins.SimplePluginManager;
 import org.fife.ui.autocomplete.AutoCompletion;
 import org.fife.ui.autocomplete.BasicCompletion;
 import org.fife.ui.autocomplete.CompletionProvider;
 import org.fife.ui.autocomplete.DefaultCompletionProvider;
 import org.fife.ui.autocomplete.ShorthandCompletion;
 
-import plugins.PluginManager;
-import plugins.SimplePluginManager;
-import foobar.Foobar;
-import foobar.ScriptFooable;
-//import java.awt.Image;
-//import com.apple.eawt.Application;
 
 /**
  * The main Bruno application.

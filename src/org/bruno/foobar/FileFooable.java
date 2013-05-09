@@ -1,4 +1,4 @@
-package foobar;
+package org.bruno.foobar;
 
 import java.io.File;
 import java.util.Arrays;

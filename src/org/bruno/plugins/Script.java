@@ -1,6 +1,6 @@
-package plugins;
+package org.bruno.plugins;
 
-import errorhandling.ErrorLogger;
+import org.bruno.errorhandling.ErrorLogger;
 import org.xml.sax.ErrorHandler;
 
 import java.io.*;

@@ -1,4 +1,4 @@
-package plugins;
+package org.bruno.plugins;
 
 import java.io.*;
 import java.sql.Timestamp;
@@ -19,11 +19,11 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.swing.*;
 
-import errorhandling.ErrorLogger;
-import foobar.ScriptFooable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.bruno.errorhandling.ErrorLogger;
+import org.bruno.foobar.ScriptFooable;
 
 /**
  * Created with IntelliJ IDEA. User: jonathan Date: 4/10/13 Time: 10:29 PM To

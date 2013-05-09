@@ -1,4 +1,4 @@
-package edithistory;
+package org.bruno.edithistory;
 
 import java.awt.event.ActionEvent;
 

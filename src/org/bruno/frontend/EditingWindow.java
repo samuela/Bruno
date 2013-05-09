@@ -22,11 +22,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import org.bruno.edithistory.UndoController;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import edithistory.UndoController;
 
 /**
  * An editing view controller. Accepts a document and manages its editing and
