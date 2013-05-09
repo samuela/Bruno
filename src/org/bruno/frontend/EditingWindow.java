@@ -27,7 +27,6 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-
 /**
  * An editing view controller. Accepts a document and manages its editing and
  * undo views as well as saving and loading.
@@ -173,7 +172,13 @@ public class EditingWindow {
 				return;
 			}
 
-			final JFileChooser fc = new JFileChooser();
+			final JFileChooser fc;
+			if (parentApp.getProjectExplorer().getCurrentFolder() == null) {
+				fc = new JFileChooser();
+			} else {
+				fc = new JFileChooser(parentApp.getProjectExplorer()
+						.getCurrentFolder());
+			}
 			fc.setFileFilter(new BrunoFileFilter());
 			if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
@@ -196,6 +201,10 @@ public class EditingWindow {
 		// Save metadata
 		metadataWriter.writeObject(undoController);
 		metadataWriter.close();
+
+		// Reload project explorer
+		parentApp.getProjectExplorer().showFolder(
+				parentApp.getProjectExplorer().getCurrentFolder());
 	}
 
 	public void save() throws IOException {
