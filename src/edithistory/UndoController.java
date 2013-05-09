@@ -204,7 +204,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 	setUndoAction(new UndoAction(this));
     }
 
-    /* revertAll script */
+    /* scripts */
     public void revertByComment(String comment)
     {
 	CompoundEdit edit = lastDisplayEdit;
@@ -221,5 +221,17 @@ public class UndoController implements UndoableEditListener, Serializable {
     {
 	Component[] nodeComponents = view.getNodeComponents();
 	view.compress((NodeComponent) nodeComponents[0], (NodeComponent) nodeComponents[nodeComponents.length - 1]);
+    }
+
+    public void showLastComment(String comment)
+    {
+	CompoundEdit edit = lastDisplayEdit;
+	while (edit != null){
+	    if (edit.getComment().equals(comment)){
+		view.showEdit(edit);
+		break;
+	    }
+	    edit = edit.getParent();
+	}
     }
 }

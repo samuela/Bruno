@@ -38,7 +38,7 @@ public class NodeComponent extends JPanel {
 	addMouseListener(new MouseAdapter() {
 		@Override
 		    public void mouseEntered(MouseEvent e) {
-		    NodeComponent.this.mouseEntered(e);
+		    NodeComponent.this.mouseEntered();
 		}
 
 		@Override
@@ -57,7 +57,7 @@ public class NodeComponent extends JPanel {
     /**
      * Selects this NodeComponent when the mouse enters it.
      */
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered() {
 	EditHistoryView view = undoController.getView();
 	if (view.getSelectedNode() != null){
 	    view.getSelectedNode().unselectedBorder();
