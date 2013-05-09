@@ -441,4 +441,40 @@ public class Bruno extends JFrame {
 
 		});
 	}
+
+    /* Scripts */
+    public void revertAll(String comment) throws IOException, ClassNotFoundException
+    {
+	File rootFolder = getProjectExplorer().getCurrentFolder();
+	process(rootFolder, comment);
+    }
+
+    private void process(File file, String comment) throws IOException, ClassNotFoundException
+    {
+	if (file.isFile()){
+	    DocumentModel doc1 = new DocumentModel(file);
+	    if (doc1.getMetadataFile().exists()){
+		EditingWindow ew = null;
+		DocumentModel doc2 = getEditingWindow().getDoc();
+		if (doc2 != null && !doc2.getFile().equals(file)){
+		    ew = new EditingWindow(null, doc1);
+		}
+		else{
+		    ew = getEditingWindow();
+		}
+		
+		//Do the revert
+		ew.getUndoController().revertByComment(comment);
+		//Save
+		ew.save();
+	    }
+	    else{
+		File[] fileList = file.listFiles();
+		for (int i=0; i<fileList.length; i++){
+		    process(fileList[i], comment);
+		}
+	    }
+	}
+    }
+
 }
