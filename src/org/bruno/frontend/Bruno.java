@@ -447,7 +447,7 @@ public class Bruno extends JFrame {
 	}
 
 	/* Scripts */
-	public void revertAll(String comment) throws IOException,
+    /*	public void revertAll(String comment) throws IOException,
 			ClassNotFoundException {
 		File rootFolder = getProjectExplorer().getCurrentFolder();
 		process(rootFolder, comment);
@@ -479,5 +479,20 @@ public class Bruno extends JFrame {
 			}
 		}
 	}
+    */
 
+    public static AbstractAction fooAction(final Fooable f)
+    {
+	return new AbstractAction(){
+	    private static final long serialVersionUID = 1L;
+	    
+	    @Override
+		public void actionPerformed(ActionEvent e) {
+		if (f != null){
+		    f.doAction();
+		}
+	    }
+	};
+    }
+	    
 }
