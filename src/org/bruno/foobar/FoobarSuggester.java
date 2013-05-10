@@ -39,12 +39,14 @@ public abstract class FoobarSuggester {
 			min = Integer.MAX_VALUE;
 
 			if (fooable instanceof FileFooable && query.startsWith("open ")) {
+				// add FileFooables only if the query begins with 'open '
 				for (String keyword : fooable.getKeywords()) {
 					dist = FoobarSuggester.weightedLevenshteinDistance(keyword
 							.toLowerCase(), query.substring(5).toLowerCase());
 					min = dist < min ? dist : min;
 				}
 			} else if (!(fooable instanceof FileFooable)) {
+				// add everything except FileFooables otherwise!
 				for (String keyword : fooable.getKeywords()) {
 					dist = FoobarSuggester.weightedLevenshteinDistance(
 							keyword.toLowerCase(), query.toLowerCase());
