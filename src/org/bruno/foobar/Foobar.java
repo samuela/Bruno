@@ -71,7 +71,6 @@ public final class Foobar extends JPanel {
 	 *            A Fooable
 	 */
 	public void addFooable(Fooable f) {
-		System.out.println(fooables.size());
 		this.fooables.add(f);
 	}
 

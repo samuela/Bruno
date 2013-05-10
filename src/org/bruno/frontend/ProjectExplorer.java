@@ -148,7 +148,7 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 	    pw = new PrintWriter(new BufferedWriter(new FileWriter(Bruno.SUPPORT_DIR+"/plugins/config/load folder.js")));
 	}
 	catch(IOException ex){
-	    ex.printStackTrace();
+	    //won't happen
 	}
 	if (folder == null){
 	    pw.println("");
