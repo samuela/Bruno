@@ -1,6 +1,5 @@
 importPackage(Packages.javax.swing);
 importPackage(Packages.java.awt.event);
-//import some stuff
 
 //key is something like KeyEvent.VK_N for n
 //mask is a string -- either "command" or "control"

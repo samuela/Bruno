@@ -161,7 +161,7 @@
             displayname="Bruno"
             mainclassname="org.bruno.frontend.Bruno"
 	   identifier="frontend.Bruno"
-	   icon="resources/large_bruno-review-sacha-baron-cohen-borat-ali-g-larry-charles.icns">
+	   icon="resources/bruno-no-background.icns">
 	  <classpath file="derived/*.jar"/>
             <classpath refid="app.lib"/>
            </bundleapp>
