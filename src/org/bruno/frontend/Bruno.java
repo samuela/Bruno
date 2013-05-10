@@ -115,7 +115,7 @@ public class Bruno extends JFrame {
 	ac.install(editingWindow.getTextArea());
 
 	setUpPlugins();
-	setUpKeybindings();
+	//	setUpKeybindings();
     }
 
     public void addJavaCompletion() {
@@ -186,7 +186,7 @@ public class Bruno extends JFrame {
 	return this.editingWindow.requestFocusInWindow();
     }
 
-    private void setUpKeybindings() {
+    public void setUpKeybindings() {
 	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 									 KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit
 												.getDefaultToolkit().getMenuShortcutKeyMask()), "new");
@@ -287,6 +287,12 @@ public class Bruno extends JFrame {
 									  % tabPane.getTabCount());
 					     }
 					 });
+    }
+
+    public void removeKeyBindings()
+    {
+	getRootPane().setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, new ComponentInputMap(getRootPane()));
+	getRootPane().setActionMap(new ActionMap());
     }
 
     public EditingWindow getEditingWindow() {
