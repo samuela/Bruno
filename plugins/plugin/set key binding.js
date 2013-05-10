@@ -21,7 +21,7 @@ function setBinding(){
     pw.println("bindKeyToScript(KeyEvent.VK_" + key + ", \"control\", \"" + script + "\");");
     pw.close();
 
-    bruno.executeScript("reload");
+    bruno.executeScript("key bindings");
 }
 
 setBinding();
