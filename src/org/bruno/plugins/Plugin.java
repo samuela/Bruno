@@ -58,10 +58,8 @@ public class Plugin {
 	}
 
 	/**
-	 * Get a ScriptFooable for every Script in the plugin to be handed off to
-	 * the Foobar.
 	 * 
-	 * @return
+	 * @return a set of fooables for each script
 	 */
 	public Set<Fooable> getScriptFooables() {
 		Set<Fooable> fooables = new HashSet<>();

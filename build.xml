@@ -18,10 +18,10 @@
   </target>
 
   <path id="class.path">
-  	<pathelement location="bin"/>
+  	<!--pathelement location="bin"/-->
     <fileset dir="lib">
       <include name="**/*.jar" />
-      <include name="**/*.zip" />
+      <!--include name="**/*.zip" /-->
       <!--include name="**/*.py" /-->
     </fileset>
   </path>
@@ -55,11 +55,17 @@
   </target>
 
   <target name="gen-doc">
-    <javadoc sourcepath="src" destdir="${derived.javadoc}"/>
+    <javadoc destdir="${derived.javadoc}">
+      <classpath refid="class.path"/>
+      <fileset dir="${app.src}">
+	<include name="**/*.java"/>
+	<exclude name="**/test/**/*.java"/>
+      </fileset>
+    </javadoc>
   </target>
 
   <target name="doc" depends="gen-doc">
-    <exec executable="firefox" spawn="yes">
+    <exec executable="open" spawn="yes">
       <arg line="${derived.javadoc}/index.html"/>
     </exec>
   </target>
