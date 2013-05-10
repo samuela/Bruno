@@ -26,7 +26,9 @@ function bindKeyToScript(key, mask, scriptName){
     bindNameToAction(scriptName, bruno.scriptAction(scriptName));
 }
 
-//some emacs commands (booo) 
+bruno.removeKeyBindings();
+bruno.setUpKeybindings();
+
 //bottom of file reserved for key bindings
 bindKeyToScript(KeyEvent.VK_E, "control", "end of line");
 bindKeyToScript(KeyEvent.VK_A, "control", "start of line");

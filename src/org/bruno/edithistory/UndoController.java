@@ -35,7 +35,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 
     public UndoController(RSyntaxTextArea textArea) {
 	this.textArea = textArea;
-	textArea.getDocument().addUndoableEditListener(this);
+	//	textArea.getDocument().addUndoableEditListener(this);
 	lastUndoEdit = new CompoundEdit();
 	lastDisplayEdit = new CompoundEdit();
 	toUndo = lastUndoEdit;

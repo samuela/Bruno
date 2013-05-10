@@ -81,7 +81,7 @@ public final class Foobar extends JPanel {
 	 *            A collection of Fooables
 	 */
 	public void addFooables(Collection<? extends Fooable> f) {
-	//	System.out.println(fooables.size());
+
 		this.fooables.addAll(f);
 	}
 

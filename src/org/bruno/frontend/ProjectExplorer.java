@@ -40,6 +40,9 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
      */
 	private static final long serialVersionUID = -6000650682129841885L;
 
+	private static final File configLoadingFile = new File(Bruno.SUPPORT_DIR
+			+ "/plugins/config/load folder.js");
+
 	private final Bruno parentApp;
 	private final CardLayout layout;
 	// private final DropTarget dropTarget;
@@ -131,10 +134,14 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 	public void printLoadFolder(File folder) {
 		PrintWriter pw = null;
 		try {
+			if (!configLoadingFile.exists()) {
+				configLoadingFile.getParentFile().mkdirs();
+				configLoadingFile.createNewFile();
+			}
 			pw = new PrintWriter(new BufferedWriter(new FileWriter(
-					Bruno.SUPPORT_DIR + "/plugins/config/load folder.js")));
+					configLoadingFile)));
 		} catch (IOException ex) {
-			// won't happen
+			ex.printStackTrace();
 		}
 		if (folder == null) {
 			pw.println("");
@@ -142,8 +149,13 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 			pw.close();
 		} else {
 			pw.println("importPackage(Packages.java.io);");
-			pw.println("bruno.getProjectExplorer().showFolder(new java.io.File("
-					+ "\"" + folder.getAbsolutePath() + "\"" + "));");
+			pw.println("var file = new java.io.File("+ "\"" + folder.getAbsolutePath() + "\"" + ");");
+			pw.println("if (file.exists()){");
+			pw.println("bruno.getProjectExplorer().showFolder(file);");
+			pw.println("}");
+			pw.println("else{");
+			pw.println("bruno.getProjectExplorer().showFolder(null);");
+			pw.println("}");
 			pw.flush();
 			pw.close();
 		}

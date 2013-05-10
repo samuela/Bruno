@@ -73,6 +73,7 @@ public class EditHistoryTester
     {
 	RSyntaxTextArea textArea = makeTextArea();
 	UndoController undoController = new UndoController(textArea);
+	textArea.getDocument().addUndoableEditListener(undoController);;
 	assertTrue(undoController.getTextArea() == textArea);
 	textArea.append("a few words");
 	CompoundEdit undoEdit = undoController.getLastUndoEdit();
@@ -88,6 +89,7 @@ public class EditHistoryTester
     {
 	RSyntaxTextArea textArea = makeTextArea();
 	UndoController undoController = new UndoController(textArea);
+	textArea.getDocument().addUndoableEditListener(undoController);;
 	textArea.append("a few words");
 	try{
 	    textArea.getDocument().remove(0, textArea.getDocument().getLength());
@@ -106,6 +108,7 @@ public class EditHistoryTester
     {
 	RSyntaxTextArea textArea = makeTextArea();
 	UndoController undoController = new UndoController(textArea);
+	textArea.getDocument().addUndoableEditListener(undoController);;
 	String toAdd = "lots of things";
 	for (String c : stringToList(toAdd)){
 	    textArea.append(c);
@@ -121,6 +124,7 @@ public class EditHistoryTester
     {
 	RSyntaxTextArea textArea = makeTextArea();
 	UndoController undoController = new UndoController(textArea);
+	textArea.getDocument().addUndoableEditListener(undoController);;
 	String toAdd = "lots of things";
 	for (String c : stringToList(toAdd)){
 	    textArea.append(c);
@@ -138,6 +142,7 @@ public class EditHistoryTester
     {
 	RSyntaxTextArea textArea = makeTextArea();
 	UndoController undoController = new UndoController(textArea);
+	textArea.getDocument().addUndoableEditListener(undoController);;
 	String toAdd = "lots of things";
 	for (String c : stringToList(toAdd)){
 	    textArea.append(c);
