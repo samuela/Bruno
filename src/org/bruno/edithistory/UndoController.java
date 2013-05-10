@@ -35,6 +35,7 @@ public class UndoController implements UndoableEditListener, Serializable {
 
     public UndoController(RSyntaxTextArea textArea) {
 	this.textArea = textArea;
+	textArea.getDocument().addUndoableEditListener(this);
 	lastUndoEdit = new CompoundEdit();
 	lastDisplayEdit = new CompoundEdit();
 	toUndo = lastUndoEdit;
@@ -233,5 +234,16 @@ public class UndoController implements UndoableEditListener, Serializable {
 	    }
 	    edit = edit.getParent();
 	}
+    }
+
+    /* Testing */
+    public RSyntaxTextArea getTextArea()
+    {
+	return textArea;
+    }
+
+    public CompoundEdit getLastUndoEdit()
+    {
+	return lastUndoEdit;
     }
 }

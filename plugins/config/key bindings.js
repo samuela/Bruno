@@ -1,6 +1,5 @@
 importPackage(Packages.javax.swing);
 importPackage(Packages.java.awt.event);
-//import some stuff
 
 //key is something like KeyEvent.VK_N for n
 //mask is a string -- either "command" or "control"
@@ -33,3 +32,5 @@ bindKeyToScript(KeyEvent.VK_A, "control", "start of line");
 bindKeyToScript(KeyEvent.VK_G, "control", "goto line");
 bindKeyToScript(KeyEvent.VK_K, "control", "kill");
 bindKeyToScript(KeyEvent.VK_Y, "control", "yank");
+
+
