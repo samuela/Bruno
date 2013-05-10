@@ -115,7 +115,7 @@ public class Bruno extends JFrame {
 		ac.install(editingWindow.getTextArea());
 
 		setUpPlugins();
-		// setUpKeybindings();
+		//setUpKeybindings();
 	}
 
 	public void addJavaCompletion() {
@@ -300,19 +300,13 @@ public class Bruno extends JFrame {
 	}
 
 	private void setUpPlugins() {
-
 		pluginManager.exposeVariable("bruno", this);
-		// loadPlugins();
 
 		Set<ScriptFooable> libraryScripts = pluginManager
 				.getAllScriptFooables(new File(SUPPORT_DIR + "/plugins/"));
-		Set<ScriptFooable> workingDirScripts = pluginManager
-				.getAllScriptFooables(new File("plugins/"));
-
+		
 		if (libraryScripts != null)
 			foobar.addFooables(libraryScripts);
-		if (workingDirScripts != null)
-			foobar.addFooables(workingDirScripts);
 
 		pluginManager.runAllScripts("config");
 	}
