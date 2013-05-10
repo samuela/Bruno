@@ -236,6 +236,13 @@ public class UndoController implements UndoableEditListener, Serializable {
 	}
     }
 
+    public void setLastComment(String comment)
+    {
+	Component[] nodeComponents = view.getNodeComponents();
+	NodeComponent last = (NodeComponent) nodeComponents[nodeComponents.length - 1];
+	last.setComment(comment);
+    }
+
     /* Testing */
     public RSyntaxTextArea getTextArea()
     {
