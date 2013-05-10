@@ -51,7 +51,7 @@ public class ScriptFooable implements Fooable {
 		Set<String> r = new HashSet<>();
 
 		r.add(script.getName());
-        r.add(script.getPluginName());
+        //r.add(script.getPluginName());
 
 		r.addAll(Arrays.asList(getName().split(" ")));
         return r;

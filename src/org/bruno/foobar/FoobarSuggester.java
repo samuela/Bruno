@@ -38,10 +38,18 @@ public abstract class FoobarSuggester {
 		for (Fooable fooable : fooables) {
 			min = Integer.MAX_VALUE;
 
-			for (String keyword : fooable.getKeywords()) {
-				dist = FoobarSuggester.weightedLevenshteinDistance(
-						keyword.toLowerCase(), query.toLowerCase());
-				min = dist < min ? dist : min;
+			if (fooable instanceof FileFooable && query.startsWith("open ")) {
+				for (String keyword : fooable.getKeywords()) {
+					dist = FoobarSuggester.weightedLevenshteinDistance(keyword
+							.toLowerCase(), query.substring(5).toLowerCase());
+					min = dist < min ? dist : min;
+				}
+			} else if (!(fooable instanceof FileFooable)) {
+				for (String keyword : fooable.getKeywords()) {
+					dist = FoobarSuggester.weightedLevenshteinDistance(
+							keyword.toLowerCase(), query.toLowerCase());
+					min = dist < min ? dist : min;
+				}
 			}
 
 			distances.put(fooable, min);
