@@ -35,5 +35,3 @@ bindKeyToScript(KeyEvent.VK_A, "control", "start of line");
 bindKeyToScript(KeyEvent.VK_G, "control", "goto line");
 bindKeyToScript(KeyEvent.VK_K, "control", "kill");
 bindKeyToScript(KeyEvent.VK_Y, "control", "yank");
-
-

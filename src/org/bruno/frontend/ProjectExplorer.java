@@ -149,8 +149,13 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 			pw.close();
 		} else {
 			pw.println("importPackage(Packages.java.io);");
-			pw.println("bruno.getProjectExplorer().showFolder(new java.io.File("
-					+ "\"" + folder.getAbsolutePath() + "\"" + "));");
+			pw.println("var file = new java.io.File("+ "\"" + folder.getAbsolutePath() + "\"" + ");");
+			pw.println("if (file.exists()){");
+			pw.println("bruno.getProjectExplorer().showFolder(file);");
+			pw.println("}");
+			pw.println("else{");
+			pw.println("bruno.getProjectExplorer().showFolder(null);");
+			pw.println("}");
 			pw.flush();
 			pw.close();
 		}

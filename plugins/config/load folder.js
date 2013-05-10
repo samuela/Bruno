@@ -1,3 +1,8 @@
 importPackage(Packages.java.io);
-
-//bruno.getProjectExplorer().showFolder(new java.io.File(path));
+var file = new java.io.File("/Users/mgscheer/Dropbox/Brown/CS/cs032/archiveMoved");
+if (file.exists()){
+bruno.getProjectExplorer().showFolder(file);
+}
+else{
+bruno.getProjectExplorer().showFolder(null);
+}
