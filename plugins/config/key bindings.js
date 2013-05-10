@@ -1,7 +1,7 @@
 importPackage(Packages.javax.swing);
 //import some stuff
 
-//key is something like KeyEvent.VK_N for command n
+//key is something like KeyEvent.VK_N for n
 //mask is a string -- either "command" or "control"
 //name is a string
 function bindKeyToName(key, mask, name){
@@ -20,10 +20,11 @@ function bindNameToAction(name, action){
     getRootPane().getActionMap().put(name, action);
 }
 
-//foo is a fooable
-function bindKeyToFooable(key, mask, name, foo){
-    bindKeyToName(key, mask, name);
-    bindNameToAction(name, bruno.fooAction(foo));
+//scriptName is a string, the name of a script
+function bindKeyToScript(key, mask, scriptName){
+    bindKeyToName(key, mask, scriptName);
+    bindNameToAction(scriptName, bruno.scriptAction(scriptName));
 }
 
-//want to bind name to a script
+bindKeyToScript(KeyEvent.VK_E, "control", "end of line");
+bindKeyToScript(KeyEvent.VK_A, "control", "start of line");
