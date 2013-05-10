@@ -66,7 +66,7 @@ public class EditingWindow {
         // Stay at the top of the document
         textArea.setCaretPosition(0);
 
-        // Setup undo tree
+        // Setup edit history
         if (doc.getMetadataFile() != null && doc.getMetadataFile().exists()) {
             // Read from metadata file if it exists
             ObjectInputStream metadataStream = new ObjectInputStream(
@@ -79,7 +79,7 @@ public class EditingWindow {
             undoController = new UndoController(textArea);
         }
 
-        textArea.getDocument().addUndoableEditListener(undoController);
+	//        textArea.getDocument().addUndoableEditListener(undoController);
 
         textArea.getInputMap().put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
