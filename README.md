@@ -17,8 +17,8 @@ been easier.
 Quick Start
 -----------
 
-You can run Bruno by executing "ant run". Tests can be run from the Eclipse 
-JUnit integrated tester.
+With the proper dependencies installed in `lib`, you can run Bruno by 
+executing "ant run". Tests can be run from the Eclipse JUnit integrated tester.
 
 Further Information
 -------------------
