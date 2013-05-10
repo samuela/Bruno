@@ -92,7 +92,7 @@ public class EditingWindow {
 			undoController = new UndoController(textArea);
 		}
 
-		// textArea.getDocument().addUndoableEditListener(undoController);
+		textArea.getDocument().addUndoableEditListener(undoController);
 
 		textArea.getInputMap().put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
