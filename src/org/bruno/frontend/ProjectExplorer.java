@@ -1,16 +1,15 @@
 package org.bruno.frontend;
 
-import org.bruno.foobar.FileFooable;
-import org.bruno.frontend.FileSystemTreeModel.TreeFileObject;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.CardLayout;
+import java.awt.Font;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.*;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -20,166 +19,199 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.TreePath;
+
+import org.bruno.foobar.FileFooable;
+import org.bruno.frontend.FileSystemTreeModel.TreeFileObject;
 
 public class ProjectExplorer extends JPanel implements DropTargetListener {
 
-    /**
+	/**
      *
      */
-    private static final long serialVersionUID = -6000650682129841885L;
+	private static final long serialVersionUID = -6000650682129841885L;
 
-    private final Bruno parentApp;
-    private final CardLayout layout;
-    // private final DropTarget dropTarget;
-    private final JTree fileTree;
-    private File currentFolder;
+	private static final Preferences prefs = Preferences.userRoot().node(
+			"projectExplorer");
 
-    public ProjectExplorer(final Bruno parentApp) {
-        this.parentApp = parentApp;
+	private final Bruno parentApp;
+	private final CardLayout layout;
+	// private final DropTarget dropTarget;
+	private final JTree fileTree;
+	private File currentFolder;
 
-        layout = new CardLayout();
-        setLayout(layout);
+	public ProjectExplorer(final Bruno parentApp) {
+		this.parentApp = parentApp;
 
-        // Empty label
-        JLabel emptyLabel = new JLabel(
-                "<html><div style=\"text-align: center; color: #888888;\">Drag and drop folders<br /> here to get started</div></html>");
-        emptyLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(emptyLabel, "empty");
+		layout = new CardLayout();
+		setLayout(layout);
 
-        // File tree
-        fileTree = new JTree();
+		// Empty label
+		JLabel emptyLabel = new JLabel(
+				"<html><div style=\"text-align: center; color: #888888;\">Drag and drop folders<br /> here to get started</div></html>");
+		emptyLabel.setFont(new Font("Arial", Font.BOLD, 14));
+		emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		add(emptyLabel, "empty");
 
-        fileTree.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int selectedRow = fileTree.getRowForLocation(e.getX(), e.getY());
-                TreePath selectedPath = fileTree.getPathForLocation(e.getX(),
-                        e.getY());
-                if (selectedRow != -1 && e.getClickCount() == 2) {
-                    File file = ((TreeFileObject) selectedPath
-                            .getLastPathComponent()).getFile();
-                    if (file.isFile()) {
-                        parentApp.openFile(file);
-                    }
-                }
-            }
-        });
+		// File tree
+		fileTree = new JTree();
 
-        fileTree.addKeyListener(new KeyListener() {
+		fileTree.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				int selectedRow = fileTree.getRowForLocation(e.getX(), e.getY());
+				TreePath selectedPath = fileTree.getPathForLocation(e.getX(),
+						e.getY());
+				if (selectedRow != -1 && e.getClickCount() == 2) {
+					File file = ((TreeFileObject) selectedPath
+							.getLastPathComponent()).getFile();
+					if (file.isFile()) {
+						parentApp.openFile(file);
+					}
+				}
+			}
+		});
 
-            @Override
-            public void keyTyped(KeyEvent e) {
+		fileTree.addKeyListener(new KeyListener() {
 
-            }
+			@Override
+			public void keyTyped(KeyEvent e) {
 
-            @Override
-            public void keyReleased(KeyEvent e) {
+			}
 
-            }
+			@Override
+			public void keyReleased(KeyEvent e) {
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-                TreePath selectedPath = fileTree.getSelectionPath();
-                if (e.getKeyCode() == KeyEvent.VK_ENTER && selectedPath != null) {
-                    TreeFileObject selected = (TreeFileObject) selectedPath
-                            .getLastPathComponent();
-                    File file = selected.getFile();
-                    if (file.isFile()) {
-                        parentApp.openFile(file);
-                    }
-                }
-            }
-        });
+			}
 
-        add(fileTree, "tree");
+			@Override
+			public void keyPressed(KeyEvent e) {
+				TreePath selectedPath = fileTree.getSelectionPath();
+				if (e.getKeyCode() == KeyEvent.VK_ENTER && selectedPath != null) {
+					TreeFileObject selected = (TreeFileObject) selectedPath
+							.getLastPathComponent();
+					File file = selected.getFile();
+					if (file.isFile()) {
+						parentApp.openFile(file);
+					}
+				}
+			}
+		});
 
-        new DropTarget(this, this);
-    }
+		add(fileTree, "tree");
 
-    public void showFolder(File folder) {
-        fileTree.setModel(new FileSystemTreeModel(folder));
-        layout.show(this, "tree");
+		// Set up drag n drop
+		new DropTarget(this, this);
 
-        if (currentFolder != null) {
-            removeFooables(currentFolder);
-        }
-        addFooables(folder);
-        currentFolder = folder;
-    }
+		// Load in previous folder
+		File prevCurrentFolder = new File(prefs.get("currentFolder", ""));
+		if (prevCurrentFolder.exists()) {
+			showFolder(prevCurrentFolder);
+		}
+	}
 
-    private Set<FileFooable> getAllFileFooables(File f) {
-        Set<FileFooable> r = new HashSet<>();
-        FileFilter bff = new BrunoFileFilter();
-        if (bff.accept(f)) {
-            if (f.isFile()) {
-                r.add(new FileFooable(parentApp, this, f));
-            } else {
-                for (File file : f.listFiles()) {
-                    r.addAll(getAllFileFooables(file));
-                }
-            }
-        }
-        return r;
-    }
+	public void showFolder(File folder) {
+		if (folder == null) {
+			layout.show(this, "empty");
+		} else {
+			fileTree.setModel(new FileSystemTreeModel(folder));
+			layout.show(this, "tree");
+			addFooables(folder);
+		}
 
-    private void addFooables(File f) {
-        for (FileFooable foo : getAllFileFooables(f)) {
-            parentApp.getFoobar().addFooable(foo);
-        }
-    }
+		if (currentFolder != null) {
+			removeFooables(currentFolder);
+		}
 
-    private void removeFooables(File f) {
-        for (FileFooable foo : getAllFileFooables(f)) {
-            parentApp.getFoobar().removeFooable(foo);
-        }
-    }
+		currentFolder = folder;
 
-    @Override
-    public void dragEnter(DropTargetDragEvent dtde) {
+		// Update Preferences
+		prefs.put("currentFolder",
+				currentFolder != null ? currentFolder.getAbsolutePath() : "");
+	}
 
-    }
+	private Set<FileFooable> getAllFileFooables(File f) {
+		Set<FileFooable> r = new HashSet<>();
+		FileFilter bff = new BrunoFileFilter();
+		if (bff.accept(f)) {
+			if (f.isFile()) {
+				r.add(new FileFooable(parentApp, this, f));
+			} else {
+				for (File file : f.listFiles()) {
+					r.addAll(getAllFileFooables(file));
+				}
+			}
+		}
+		return r;
+	}
 
-    @Override
-    public void dragOver(DropTargetDragEvent dtde) {
+	private void addFooables(File f) {
+		if (parentApp != null) {
+			for (FileFooable foo : getAllFileFooables(f)) {
+				parentApp.getFoobar().addFooable(foo);
+			}
+		}
+	}
 
-    }
+	private void removeFooables(File f) {
+		if (parentApp != null) {
+			for (FileFooable foo : getAllFileFooables(f)) {
+				parentApp.getFoobar().removeFooable(foo);
+			}
+		}
+	}
 
-    @Override
-    public void dropActionChanged(DropTargetDragEvent dtde) {
+	@Override
+	public void dragEnter(DropTargetDragEvent dtde) {
 
-    }
+	}
 
-    @Override
-    public void dragExit(DropTargetEvent dte) {
+	@Override
+	public void dragOver(DropTargetDragEvent dtde) {
 
-    }
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void drop(DropTargetDropEvent dtde) {
-        int dropAction = dtde.getDropAction();
-        dtde.acceptDrop(dropAction);
+	@Override
+	public void dropActionChanged(DropTargetDragEvent dtde) {
 
-        try {
-            Transferable data = dtde.getTransferable();
-            if (data.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                List<File> files = (List<File>) data
-                        .getTransferData(DataFlavor.javaFileListFlavor);
-                showFolder(files.get(0));
-            }
-        } catch (UnsupportedFlavorException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            dtde.dropComplete(true);
-            repaint();
-        }
-    }
+	}
 
-    public File getCurrentFolder() {
-        return currentFolder;
-    }
+	@Override
+	public void dragExit(DropTargetEvent dte) {
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void drop(DropTargetDropEvent dtde) {
+		int dropAction = dtde.getDropAction();
+		dtde.acceptDrop(dropAction);
+
+		try {
+			Transferable data = dtde.getTransferable();
+			if (data.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+				List<File> files = (List<File>) data
+						.getTransferData(DataFlavor.javaFileListFlavor);
+				showFolder(files.get(0));
+			}
+		} catch (UnsupportedFlavorException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			dtde.dropComplete(true);
+			repaint();
+		}
+	}
+
+	public File getCurrentFolder() {
+		return currentFolder;
+	}
 }
