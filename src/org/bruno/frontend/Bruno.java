@@ -272,6 +272,8 @@ public class Bruno extends JFrame {
             foobar.addFooables(workingDirScripts);
         if (libraryScripts != null)
             foobar.addFooables(libraryScripts);
+	
+	pluginManager.runAllScripts("config");
     }
 
     public void reloadPlugins() {
