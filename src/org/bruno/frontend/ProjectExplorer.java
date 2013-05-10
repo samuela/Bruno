@@ -228,3 +228,4 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
 		return currentFolder;
 	}
 }
+
