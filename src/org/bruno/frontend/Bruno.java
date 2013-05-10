@@ -1,17 +1,8 @@
 package org.bruno.frontend;
 
-import org.bruno.foobar.Foobar;
-import org.bruno.foobar.ScriptFooable;
-import org.bruno.plugins.PluginManager;
-import org.bruno.plugins.SimplePluginManager;
-import org.fife.ui.autocomplete.*;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.dnd.DropTargetDropEvent;
-
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -19,7 +10,9 @@ import java.io.IOException;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.BoxLayout;
+import javax.swing.ComponentInputMap;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -115,7 +108,8 @@ public class Bruno extends JFrame {
 		ac.install(editingWindow.getTextArea());
 
 		setUpPlugins();
-		//setUpKeybindings();
+
+		setUpKeybindings();
 	}
 
 	public void addJavaCompletion() {
@@ -304,7 +298,7 @@ public class Bruno extends JFrame {
 
 		Set<ScriptFooable> libraryScripts = pluginManager
 				.getAllScriptFooables(new File(SUPPORT_DIR + "/plugins/"));
-		
+
 		if (libraryScripts != null)
 			foobar.addFooables(libraryScripts);
 
