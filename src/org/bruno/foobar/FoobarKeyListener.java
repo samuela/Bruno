@@ -49,13 +49,17 @@ public final class FoobarKeyListener implements KeyListener {
 		} else if (e.getKeyCode() == KeyEvent.VK_UP) {
 
 			// Select the previous indexed Fooable when 'up' is released
-			foobar.getPopupManager().getSuggestions().setSelectedIndexPrevious();
+			if (foobar.getPopupManager().getSuggestions() != null) {
+				foobar.getPopupManager().getSuggestions().setSelectedIndexPrevious();
+			}
 			field.setCaretPosition(value.length());
 
 		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 
 			// Select the next indexed Fooable when 'down' is released
-			foobar.getPopupManager().getSuggestions().setSelectedIndexNext();
+			if (foobar.getPopupManager().getSuggestions() != null) {
+				foobar.getPopupManager().getSuggestions().setSelectedIndexNext();
+			}
 			field.setCaretPosition(value.length());
 
 		} else if (e.getKeyCode() != KeyEvent.VK_CONTROL
