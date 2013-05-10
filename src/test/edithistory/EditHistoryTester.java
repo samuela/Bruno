@@ -128,6 +128,38 @@ public class EditHistoryTester
 	int numNodes = numDisplayEdits(undoController);
 	undoController.undo();
 	assertTrue(numNodes + 1 == numDisplayEdits(undoController));
+	CompoundEdit displayEdit = undoController.getLastDisplayEdit();
+	assertTrue(displayEdit.getLength() == 1);
+	assertTrue(displayEdit.getType().equals("deletion"));
+    }
+
+    @Test
+	public void revertTest()
+    {
+	RSyntaxTextArea textArea = makeTextArea();
+	UndoController undoController = new UndoController(textArea);
+	String toAdd = "lots of things";
+	for (String c : stringToList(toAdd)){
+	    textArea.append(c);
+	}
+	CompoundEdit first = undoController.getLastDisplayEdit();
+	while (first.getParent() != null){
+	    first = first.getParent();
+	}
+	undoController.revert(first);
+	Document doc = undoController.restoreTo(undoController.getLastDisplayEdit());
+	String text = null;
+	try{
+	    text = doc.getText(0, doc.getLength());
+	}
+	catch(BadLocationException e){}
+	assertTrue(text.equals(""));
+    }
+
+    @Test
+	public void compressTest()
+    {
+	
     }
     
 }
