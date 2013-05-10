@@ -42,7 +42,7 @@ public class EditHistoryTester
 	}
 	return answer;
     }
-    
+
     @Test
 	public void testStringToList()
     {
@@ -57,6 +57,17 @@ public class EditHistoryTester
 	assertTrue(answer.equals(stringToList("example")));
     }
 
+    public int numDisplayEdits(UndoController undoController)
+    {
+	int answer = 0;
+	CompoundEdit displayEdit = undoController.getLastDisplayEdit();
+	while (displayEdit != null){
+	    answer++;
+	    displayEdit = displayEdit.getParent();
+	}
+	return answer;
+    }
+    
     @Test
 	public void addTextTest()
     {
@@ -108,7 +119,15 @@ public class EditHistoryTester
     @Test
 	public void undoTest()
     {
-
+	RSyntaxTextArea textArea = makeTextArea();
+	UndoController undoController = new UndoController(textArea);
+	String toAdd = "lots of things";
+	for (String c : stringToList(toAdd)){
+	    textArea.append(c);
+	}
+	int numNodes = numDisplayEdits(undoController);
+	undoController.undo();
+	assertTrue(numNodes + 1 == numDisplayEdits(undoController));
     }
     
 }

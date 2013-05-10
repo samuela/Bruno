@@ -68,6 +68,23 @@
 
   </target>
 
+
+<target name="edit" depends="compile, jar">
+    <junit>
+      <classpath refid="class.path"/>
+      <classpath>
+        <pathelement location="${derived.jar}"/>
+      </classpath>
+      <formatter type="brief" usefile="false"/>
+      <!--sysproperty key="java.awt.headless" value="true"/-->
+      <test name="${testcase}" if="testcase"/>
+      <batchtest unless="testcase">
+        <fileset dir="${derived.classes}" includes="test/edithistory/*Test*.class"/>
+      </batchtest>
+    </junit>
+  </target>
+
+
 <target name="plugins_unit_test" depends="compile, jar">
     <junit>
       <classpath refid="class.path"/>
