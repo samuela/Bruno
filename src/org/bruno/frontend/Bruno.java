@@ -301,6 +301,12 @@ public class Bruno extends JFrame {
 		if (libraryScripts != null)
 			foobar.addFooables(libraryScripts);
 
+		Set<ScriptFooable> localScripts = pluginManager
+				.getAllScriptFooables(new File("plugins/"));
+
+		if (localScripts != null)
+			foobar.addFooables(localScripts);
+
 		pluginManager.runAllScripts("config");
 	}
 
