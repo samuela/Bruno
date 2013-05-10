@@ -108,7 +108,12 @@ public class EditHistoryTester
     @Test
 	public void undoTest()
     {
-
+	RSyntaxTextArea textArea = makeTextArea();
+	UndoController undoController = new UndoController(textArea);
+	String toAdd = "lots of things";
+	for (String c : stringToList(toAdd)){
+	    textArea.append(c);
+	}
     }
     
 }
