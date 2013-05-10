@@ -2,7 +2,6 @@ package org.bruno.frontend;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -495,14 +494,5 @@ public class Bruno extends JFrame {
 
 	public void executeScript(String scriptName) {
 		pluginManager.executeScript(scriptName);
-	}
-
-	/**
-	 * 
-	 * @param dtde
-	 *            writes a script to the config plugin that, when run,
-	 */
-	public void rememberFileTree(DropTargetDropEvent dtde) {
-
 	}
 }
