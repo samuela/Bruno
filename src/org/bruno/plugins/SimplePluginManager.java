@@ -57,7 +57,8 @@ public class SimplePluginManager implements PluginManager {
         pluginsByName_ = new HashMap<>();
     }
 
-	public ScriptEngine getEngineByExtension(String ext) {
+
+    public ScriptEngine getEngineByExtension(String ext) {
 		return enginesByExtension_.get(ext);
 	}
 
@@ -78,17 +79,20 @@ public class SimplePluginManager implements PluginManager {
 		return enginesByExtension_.containsKey(extension);
 	}
 
+    public boolean supportsScript(Script s){
+        return supportsScript(s.getName());
+    }
 
-	public boolean supportsScript(Script s) {
+	public boolean supportsScript(String scriptName) {
         //manager contains plugin with a script with matching name
-        boolean hasPlugin = pluginsByScriptName_.containsKey(s.getName());
+        boolean hasPlugin = pluginsByScriptName_.containsKey(scriptName);
 
-        Plugin p = pluginsByScriptName_.get(s.getName());
+        Plugin p = pluginsByScriptName_.get(scriptName);
         //just to be safe
         //plugin contains script with matching name
-        Script found = p.getScriptByName(s.getName());
+        Script found = p.getScriptByName(scriptName);
 
-        return hasPlugin && found!=null && hasEngine(s.getExtension());
+        return hasPlugin && found!=null;
 	}
 
 	public void executeScript(String name) throws IllegalArgumentException {
