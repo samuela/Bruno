@@ -160,6 +160,8 @@ public class ProjectExplorer extends JPanel implements DropTargetListener {
     @Override
     public void drop(DropTargetDropEvent dtde) {
         int dropAction = dtde.getDropAction();
+        parentApp.rememberFileTree(dtde);
+
         dtde.acceptDrop(dropAction);
 
         try {

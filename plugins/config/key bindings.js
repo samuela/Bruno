@@ -27,6 +27,7 @@ function bindKeyToScript(key, mask, scriptName){
 }
 
 //some emacs commands (booo) 
+//bottom of file reserved for key bindings
 bindKeyToScript(KeyEvent.VK_E, "control", "end of line");
 bindKeyToScript(KeyEvent.VK_A, "control", "start of line");
 bindKeyToScript(KeyEvent.VK_G, "control", "goto line");

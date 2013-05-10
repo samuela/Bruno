@@ -8,6 +8,7 @@ import org.fife.ui.autocomplete.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -27,6 +28,7 @@ public class Bruno extends JFrame {
     private static final long serialVersionUID = 1987233037023049749L;
 
     public static final String FILE_EXT = ".bruno~";
+    public final String SUPPORT_DIR = System.getProperty("user.home") + "/Library/Application Support/Bruno";
 
     private final JTabbedPane tabPane;
     private final JSplitPane splitPane;
@@ -262,16 +264,17 @@ public class Bruno extends JFrame {
     private void setUpPlugins() {
         pluginManager.exposeVariable("bruno", this);
         // loadPlugins();
-        Set<ScriptFooable> workingDirScripts = pluginManager
-                .getAllScriptFooables(new File("plugins/"));
-        Set<ScriptFooable> libraryScripts = pluginManager
-                .getAllScriptFooables(new File(
-                        "/Library/Application Support/Bruno/plugins/"));
 
-        if (workingDirScripts != null)
-            foobar.addFooables(workingDirScripts);
+        Set<ScriptFooable> libraryScripts = pluginManager
+                .getAllScriptFooables(new File(SUPPORT_DIR + "/plugins/"));
+    //    Set<ScriptFooable> workingDirScripts = pluginManager
+     //           .getAllScriptFooables(new File("plugins/"));
+
         if (libraryScripts != null)
             foobar.addFooables(libraryScripts);
+     //   if (workingDirScripts != null)
+     //       foobar.addFooables(workingDirScripts);
+
 	
 	pluginManager.runAllScripts("config");
     }
@@ -480,4 +483,15 @@ public class Bruno extends JFrame {
         };
     }
 
+    public void executeScript(String scriptName){
+        pluginManager.executeScript(scriptName);
+    }
+    /**
+     *
+     * @param dtde
+     * writes a script to the config plugin that, when run,
+     */
+    public void rememberFileTree(DropTargetDropEvent dtde) {
+
+    }
 }
