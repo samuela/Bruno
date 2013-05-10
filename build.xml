@@ -78,7 +78,7 @@
       <!--sysproperty key="java.awt.headless" value="true"/-->
       <test name="${testcase}" if="testcase"/>
       <batchtest unless="testcase">
-        <fileset dir="${derived.classes}" includes="test/**/*Test*.class"/>
+        <fileset dir="${derived.classes}" includes="test/plugins/**/*Test*.class"/>
       </batchtest>
     </junit>
   </target>
