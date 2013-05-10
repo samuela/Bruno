@@ -44,8 +44,9 @@ public class FileFooable implements Fooable {
 		String[] splitFilename = file.getAbsolutePath().split(File.separator);
 		for (int i = splitFilename.length - 1; i >= 0; i--) {
 			String filenamePiece = splitFilename[i];
-			if (filenamePiece.equals(projectExplorer.getCurrentFolder()
-					.getName())) {
+			if (projectExplorer != null
+					&& filenamePiece.equals(projectExplorer.getCurrentFolder()
+							.getName())) {
 				break;
 			}
 			r.add(filenamePiece);
