@@ -95,7 +95,22 @@ public class SimplePluginManager implements PluginManager {
         return hasPlugin && found!=null;
 	}
 
-	public void executeScript(String name) throws IllegalArgumentException {
+    @Override
+    /**
+     * run all the scripts in the plugin in an arbitrary order
+     */
+    public void runAllScripts(String pluginName) {
+        Plugin p = pluginsByName_.get(pluginName);
+        if(p==null){
+            //plugin doesn't exist, fail silently
+        } else {
+            for(Script s: p.getScriptsByName().values()){
+                executeScript(s);
+            }
+        }
+    }
+
+    public void executeScript(String name) throws IllegalArgumentException {
         Plugin p = pluginsByScriptName_.get(name);
         if(p==null){
             throw new IllegalArgumentException("no plugin contains script " + name);

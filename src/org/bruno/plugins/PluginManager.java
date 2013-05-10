@@ -58,4 +58,6 @@ public interface PluginManager {
     void clear();
 
     boolean supportsScript(String scriptName);
+
+    void runAllScripts(String pluginName);
 }
