@@ -129,7 +129,7 @@
 
 	<target name="bundle" depends="clean,compile">
 		<mkdir dir="${app.dist}" />
-		<bundleapp outputdirectory="dist" name="Bruno" displayname="Bruno" mainclassname="org.bruno.frontend.Bruno" identifier="frontend.Bruno" icon="resources/bruno-no-background.icns">
+		<bundleapp outputdirectory="dist" name="Bruno" displayname="Bruno" mainclassname="org.bruno.frontend.Bruno" identifier="frontend.Bruno" icon="resources/bruno-icon-not-cut-off.icns">
 			<classpath file="derived/*.jar" />
 			<classpath refid="app.lib" />
 		</bundleapp>
