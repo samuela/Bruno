@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.BufferedWriter;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -50,6 +53,9 @@ public class Bruno extends JFrame {
 
 	public static final String SUPPORT_DIR = System.getProperty("user.home")
 			+ "/Library/Application Support/Bruno";
+
+	private static final File configLoadingFile = new File(Bruno.SUPPORT_DIR
+			+ "/plugins/config/load file.js");
 
 	private final JTabbedPane tabPane;
 	private final JSplitPane splitPane;
@@ -101,14 +107,15 @@ public class Bruno extends JFrame {
 		setContentPane(splitPane);
 
 		// Open blank initial document
-		openDocument(new DocumentModel());
+		openDocumentNoPrinting(new DocumentModel());
+		
 
 		// Set up Java autocompletion by default
 		ac.install(editingWindow.getTextArea());
-
+		
 		setUpPlugins();
 
-		setUpKeybindings();
+		//		setUpKeybindings();
 	}
 
 	public void addJavaCompletion() {
@@ -282,7 +289,7 @@ public class Bruno extends JFrame {
 				});
 	}
 
-	public void removeKeyBindings() {
+	public void removeKeybindings() {
 		getRootPane().setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW,
 				new ComponentInputMap(getRootPane()));
 		getRootPane().setActionMap(new ActionMap());
@@ -357,13 +364,8 @@ public class Bruno extends JFrame {
 		getRootPane().getActionMap().get("foobar").actionPerformed(null);
 	}
 
-	/**
-	 * Open a document in the editor, saving the current document and loading in
-	 * the new one.
-	 * 
-	 * @param doc
-	 */
-	public void openDocument(DocumentModel doc) {
+    public void openDocumentNoPrinting(DocumentModel doc)
+    {
 		// Don't allow opening the currently open file
 		if (doc != null && doc.getFile() != null && editingWindow != null
 				&& doc.getFile().equals(editingWindow.getDoc().getFile())) {
@@ -405,7 +407,52 @@ public class Bruno extends JFrame {
 
 		// Now focus the text area
 		editingWindow.getTextArea().requestFocus();
+
+    }
+
+	/**
+	 * Open a document in the editor, saving the current document and loading in
+	 * the new one.
+	 * 
+	 * @param doc
+	 */
+	public void openDocument(DocumentModel doc) {
+	    openDocumentNoPrinting(doc);
+
+	    //output javascript so same file is opened next time
+	    printLoadFile(doc.getFile());
 	}
+
+	public void printLoadFile(File file) {
+		PrintWriter pw = null;
+		try {
+			if (!configLoadingFile.exists()) {
+				configLoadingFile.getParentFile().mkdirs();
+				configLoadingFile.createNewFile();
+			}
+			pw = new PrintWriter(new BufferedWriter(new FileWriter(
+					configLoadingFile)));
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		if (file == null) {
+			pw.println("");
+			pw.flush();
+			pw.close();
+		} else {
+			pw.println("importPackage(Packages.java.io);");
+			pw.println("var file = new java.io.File("+ "\"" + file.getAbsolutePath() + "\"" + ");");
+			pw.println("if (file.exists()){");
+			pw.println("bruno.openFile(file);");
+			pw.println("}");
+			pw.println("else{");
+			pw.println("bruno.openFile(null);");
+			pw.println("}");
+			pw.flush();
+			pw.close();
+		}
+	}
+
 
 	/**
 	 * Open the specified file in the editing area

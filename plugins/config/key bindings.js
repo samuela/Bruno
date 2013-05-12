@@ -27,6 +27,9 @@ function bindKeyToScript(key, mask, scriptName) {
 	bindNameToAction(scriptName, bruno.scriptAction(scriptName));
 }
 
+bruno.removeKeybindings();
+bruno.setUpKeybindings();
+
 // bottom of file reserved for key bindings
 bindKeyToScript(KeyEvent.VK_E, "control", "end of line");
 bindKeyToScript(KeyEvent.VK_A, "control", "start of line");
