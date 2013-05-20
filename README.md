@@ -29,3 +29,7 @@ More information about Bruno can be found in
  * The requirements document at https://docs.google.com/document/d/1cLiuX4f9mBY8_Sf2yGCNacP9axUcXicoGOYjhnaazdM/edit?usp=sharing
  * The design presentation at https://docs.google.com/presentation/d/1UOHPyfgO3Ze4BA-ZXMqVmTOzjRbnXPFM4137bkX8JJg/edit?usp=sharing
  * The demo presentation at https://docs.google.com/presentation/d/1xhShdyaQD6WXG3znCJf1sK6BQ9awnI_AxOhusSSruR0/edit?usp=sharing
+
+License
+-------
+GPL
