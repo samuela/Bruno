@@ -14,6 +14,10 @@ basis. Through its extensive plugin, simple command, and intuitive edit
 history interfaces, teaching and demonstrating software development has never 
 been easier.
 
+Screenshots
+-----------
+[Screenshots here](http://imgur.com/a/2cWnd)
+
 Quick Start
 -----------
 
